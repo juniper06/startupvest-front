@@ -355,6 +355,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                         </Grid>
 
+                        <Grid item xs={12}>
+                            <Typography sx={{ color: '#007490'}}>
+                                A minimum share is the smallest amount of money you need to invest in a company to become a shareholder. For example, if the minimum share is P10,000, this means you have to spend P10,000 to buy just one share of that company.
+                            </Typography>
+                        </Grid>
+                        
                         <Grid item xs={8}>
                             <label><b>Minimum Share</b></label>
                                 <TextField
@@ -363,9 +369,8 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                     type='number'
                                     value={minimumShare}
                                     onChange={(e) => setMinimumShare(e.target.value)}
-                                    disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                />
+                                    disabled
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
                         </Grid>
                         <Grid item xs={4}>
                             <label><b>Currency</b></label>
