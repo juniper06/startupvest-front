@@ -612,7 +612,9 @@ function CreateBusinessProfile() {
         <SuccessCreateBusinessProfileDialog
             open={successDialogOpen}
             onClose={() => setSuccessDialogOpen(false)}
-            companyName={companyName}/>
+            companyName={companyName}
+            firstName={firstName}
+            lastName={lastName}/>
         </>
     );
 }
