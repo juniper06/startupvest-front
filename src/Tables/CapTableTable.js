@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Typography, FormControl, Select, MenuItem } from '@mui/material';
+import { tableStyles } from '../styles/tables'; 
 
 function CapTable({
   filteredCapTables = [],
@@ -53,8 +54,7 @@ function CapTable({
             value={filterValue}
             onChange={handleFilterChange}
             variant="outlined"
-            sx={{ minWidth: 150, height: '45px' }}
-          >
+            sx={{ minWidth: 150, height: '45px' }}>
             <MenuItem value="All">All</MenuItem>
             {businessProfiles.filter(profile => profile.type === 'Startup').map((startup) => (
               <MenuItem key={startup.id} value={startup.id}>{startup.companyName}</MenuItem>
@@ -64,21 +64,21 @@ function CapTable({
       </Box>
 
       {/* Table */}
-      <TableContainer sx={{ borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+      <TableContainer sx={tableStyles.container}>
         <Table>
-          <TableHead sx={{ backgroundColor: '#007490' }}>
+          <TableHead sx={tableStyles.head}>
             <TableRow>
-              <TableCell sx={{ textAlign: 'center' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#F2F2F2' }}>Shareholder's Name</Typography>
+              <TableCell sx={tableStyles.cell}>
+                <Typography sx={tableStyles.typography}>Shareholder's Name</Typography>
               </TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#F2F2F2' }}>Title</Typography>
+              <TableCell sx={tableStyles.cell}>
+                <Typography sx={tableStyles.typography}>Title</Typography>
               </TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#F2F2F2' }}>Total Share</Typography>
+              <TableCell sx={tableStyles.cell}>
+                <Typography sx={tableStyles.typography}>Total Share</Typography>
               </TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#F2F2F2' }}>Percentage</Typography>
+              <TableCell sx={tableStyles.cell}>
+                <Typography sx={tableStyles.typography}>Percentage</Typography>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -87,17 +87,17 @@ function CapTable({
             {paginatedCapTables.length > 0 ? (
               paginatedCapTables.map((table) => (
                 <TableRow key={table.id}>
-                  <TableCell sx={{ textAlign: 'center' }}>{table.name}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>{table.title}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>{table.totalShares}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>
+                  <TableCell sx={tableStyles.cell}>{table.name}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{table.title}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{table.totalShares}</TableCell>
+                  <TableCell sx={tableStyles.cell}>
                     {table.percentage !== undefined ? table.percentage.toFixed(2) : 'N/A'}%
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} sx={{ textAlign: 'center' }}>
+                <TableCell colSpan={4} sx={tableStyles.cell}>
                   <Typography variant="body2">No investors found in this company.</Typography>
                 </TableCell>
               </TableRow>
@@ -112,8 +112,7 @@ function CapTable({
           rowsPerPage={localCapRowsPerPage}
           page={localCapPage}
           onPageChange={handleCapPageChange}
-          onRowsPerPageChange={handleCapRowsPerPageChange}
-        />
+          onRowsPerPageChange={handleCapRowsPerPageChange}/>
       </TableContainer>
     </Box>
   );

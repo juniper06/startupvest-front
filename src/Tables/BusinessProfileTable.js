@@ -3,6 +3,7 @@ import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
 import ViewStartupProfileDialog from '../Dialogs/ViewStartupProfileDialog';
 import ViewInvestorProfileDialog from '../Dialogs/ViewInvestorProfileDialog';
 import ConfirmDeleteDialog from '../Dialogs/ConfirmDeleteProfileDialog';
+import { tableStyles } from '../styles/tables';
 
 function BusinessProfileTable({
   businessProfiles,
@@ -35,21 +36,21 @@ function BusinessProfileTable({
   return (
     <Box component="main" sx={{ display: 'flex', flexDirection: 'column' }}>
       <Box>
-        <TableContainer sx={{ borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+        <TableContainer sx={tableStyles.container}>
           <Table>
-            <TableHead sx={{ backgroundColor: '#007490' }}>
+            <TableHead sx={tableStyles.head}>
               <TableRow>
-                <TableCell sx={{ textAlign: 'center' }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#F2F2F2' }}>Type</Typography>
+                <TableCell sx={tableStyles.cell}>
+                  <Typography sx={tableStyles.typography}>Type</Typography>
                 </TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#F2F2F2' }}>Company Name</Typography>
+                <TableCell sx={tableStyles.cell}>
+                  <Typography sx={tableStyles.typography}>Company Name</Typography>
                 </TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#F2F2F2' }}>Industry</Typography>
+                <TableCell sx={tableStyles.cell}>
+                  <Typography sx={tableStyles.typography}>Industry</Typography>
                 </TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#F2F2F2' }}>Action</Typography>
+                <TableCell sx={tableStyles.cell}>
+                  <Typography sx={tableStyles.typography}>Action</Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -60,15 +61,15 @@ function BusinessProfileTable({
                 .map((profile) => (
                   <TableRow
                     key={`${profile.type}-${profile.id}`}
-                    sx={{ backgroundColor: profile.type === 'Investor' ? 'rgba(0, 116, 144, .1)' : 'inherit' }}>
-                    <TableCell sx={{ textAlign: 'center' }}>{profile.type}</TableCell>
-                    <TableCell sx={{ textAlign: 'center' }}>{profile.companyName || '---'}</TableCell>
-                    <TableCell sx={{ textAlign: 'center' }}>{profile.industry || '---'}</TableCell>
-                    <TableCell sx={{ textAlign: 'center' }}>
+                    sx={tableStyles.row(profile.type)}>
+                    <TableCell sx={tableStyles.cell}>{profile.type}</TableCell>
+                    <TableCell sx={tableStyles.cell}>{profile.companyName || '---'}</TableCell>
+                    <TableCell sx={tableStyles.cell}>{profile.industry || '---'}</TableCell>
+                    <TableCell sx={tableStyles.cell}>
                       {profile.type === 'Investor' ? (
                         <Button
                           variant="contained"
-                          sx={{ width: 'calc(50% - 25px)', background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }}
+                          sx={{ width: 'calc(50% - 25px)', ...tableStyles.actionButton }}
                           onClick={() => handleOpenInvestor(profile)}>
                           View
                         </Button>
@@ -76,13 +77,13 @@ function BusinessProfileTable({
                         <>
                           <Button
                             variant="contained"
-                            sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }}
+                            sx={tableStyles.actionButton}
                             onClick={() => handleOpenStartUp(profile)}>
                             View
                           </Button>
                           <Button
                             variant="outlined"
-                            sx={{ marginLeft: '20px', color: 'rgba(0, 116, 144, 1)', borderColor: 'rgba(0, 116, 144, 1)' }}
+                            sx={tableStyles.deleteButton}
                             onClick={() => handleOpenDeleteDialog(profile)}>
                             Delete
                           </Button>
@@ -101,14 +102,12 @@ function BusinessProfileTable({
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+            onRowsPerPageChange={handleChangeRowsPerPage}/>
         </TableContainer>
       </Box>
 
       <ViewStartupProfileDialog open={openViewStartup} profile={selectedBusinessProfile} onClose={handleCloseStartUp} />
       <ViewInvestorProfileDialog open={openViewInvestor} profile={selectedBusinessProfile} onClose={handleCloseInvestor} />
-
       <ConfirmDeleteDialog
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Button, Typography, FormControl, Select, MenuItem } from '@mui/material';
 import ViewFundingRoundDialog from '../Dialogs/ViewFundingRoundDialog';
 import ConfirmDeleteDialog from '../Dialogs/ConfirmDeleteFundingRoundDialog';
+import { tableStyles } from '../styles/tables';
 
 function FundingRoundTable({
   fundingRounds = [], 
@@ -39,7 +40,7 @@ function FundingRoundTable({
     ? fundingRounds.filter(round => round.startup && userCreatedStartupIds.includes(round.startup.id))
     : fundingRounds.filter(round => round.startup && round.startup.id === selectedStartupFunding);
 
-    // Calculate the total amount funded from filtered funding rounds
+  // Calculate the total amount funded from filtered funding rounds
   useEffect(() => {
     const totalFunded = filteredFundingRounds.reduce((sum, round) => sum + (round.moneyRaised || 0), 0);
     setTotalAmountFunded(totalFunded);
@@ -102,21 +103,21 @@ function FundingRoundTable({
         </Box>
       </Box>
 
-      <TableContainer sx={{borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'}}>
+      <TableContainer sx={tableStyles.container}>
         <Table>
-          <TableHead sx={{ backgroundColor: '#007490' }}>
+          <TableHead sx={tableStyles.head}>
             <TableRow>
-              <TableCell sx={{ textAlign: 'center' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#F2F2F2' }}>Funding Type</Typography>
+              <TableCell sx={tableStyles.cell}>
+                <Typography sx={tableStyles.typography}>Funding Type</Typography>
               </TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#F2F2F2' }}>Money Raised</Typography>
+              <TableCell sx={tableStyles.cell}>
+                <Typography sx={tableStyles.typography}>Money Raised</Typography>
               </TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#F2F2F2' }}>Target Funding</Typography>
+              <TableCell sx={tableStyles.cell}>
+                <Typography sx={tableStyles.typography}>Target Funding</Typography>
               </TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#F2F2F2' }}>Action</Typography>
+              <TableCell sx={tableStyles.cell}>
+                <Typography sx={tableStyles.typography}>Action</Typography>
               </TableCell>        
             </TableRow>
           </TableHead>
@@ -125,19 +126,19 @@ function FundingRoundTable({
           {paginatedFundingRounds.length > 0 ? (
               paginatedFundingRounds.map((round) => (
                 <TableRow key={round.id}>
-                  <TableCell sx={{ textAlign: 'center' }}>{round.fundingType}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>{round.moneyRaised}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>{round.targetFunding}</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>
+                  <TableCell sx={tableStyles.cell}>{round.fundingType}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{round.moneyRaised}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{round.targetFunding}</TableCell>
+                  <TableCell sx={tableStyles.cell}>
                     <Button
                       variant="contained"
-                      sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }}
+                      sx={tableStyles.actionButton}
                       onClick={() => handleViewFundingRound(round.id)}>
                       View
                     </Button>
                     <Button
                       variant="outlined"
-                      sx={{ marginLeft: '20px', color: 'rgba(0, 116, 144, 1)', borderColor: 'rgba(0, 116, 144, 1)' }}
+                      sx={tableStyles.deleteButton}
                       onClick={() => handleOpenDeleteFundingRoundDialog(round)}>
                       Delete
                     </Button>
@@ -146,7 +147,7 @@ function FundingRoundTable({
               ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} sx={{ textAlign: 'center' }}>
+                  <TableCell colSpan={4} sx={tableStyles.cell}>
                     No funding rounds available for your startups.
                   </TableCell>
                 </TableRow>
