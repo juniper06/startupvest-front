@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import StarsIcon from '@mui/icons-material/Stars';
-import { Box, Typography, Toolbar, Grid, Button, Menu, MenuItem,Tabs, Tab, ListItemText, List, ListItemIcon, ListItem } from '@mui/material';
+import { Box, Typography, Toolbar, Grid, Button, Menu, MenuItem,Tabs, Tab, ListItemText, ListItem } from '@mui/material';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import StarIcon from '@mui/icons-material/Star';
 import Person2Icon from '@mui/icons-material/Person2';
-import HistoryIcon from '@mui/icons-material/History'; 
 
 import Navbar from "../Navbar/Navbar";
 import CreateFundingRoundDialog from '../Dialogs/CreateFundingRoundDialog';
@@ -14,7 +13,7 @@ import BusinessProfileTable from '../Tables/BusinessProfileTable';
 import FundingRoundTable from '../Tables/FundingRoundTable';
 import CapTable from '../Tables/CapTableTable';
 
-const drawerWidth = 300;
+import { Container, HeaderBox, StatsBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle, CreateButton, GraphTitle, RecentActivityTitle} from '../styles/UserDashboard';
 
 function UserDashboard() {
     const [tabValue, setTabValue] = useState(0);
@@ -36,7 +35,7 @@ function UserDashboard() {
     const [filteredFundingRounds, setFilteredFundingRounds] = useState([]);
 
     // CAP TABLE
-    const [selectedStartupCapTable, setSelectedStartupCapTable] = useState('All');
+    const [selectedStartupCapTable, setSelectedStartupCapTable] = useState('Select Company');
     const [capTables, setCapTables] = useState([]);
     const [filteredCapTables, setFilteredCapTables] = useState([]);
 
@@ -283,83 +282,74 @@ function UserDashboard() {
             <Navbar />
             <Toolbar />
 
-            <Box 
-                component="main" 
-                sx={{ display: 'flex', flexGrow: 1, pr: 7, pt: 5, pb: 8, paddingLeft: `${drawerWidth}px`, overflowX: 'hidden' }}>
-
+            <Container>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                        <HeaderBox>
                             <Typography variant="h5">User Dashboard</Typography>
                             <PopupState variant="popover" popupId="demo-popup-menu">
                                 {(popupState) => (
                                     <>
-                                        <Button variant="contained" startIcon={<StarsIcon />} {...bindTrigger(popupState)} 
-                                        sx={{ width: '150px', backgroundColor: '#007490', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }}>Create</Button>
+                                        <CreateButton startIcon={<StarsIcon />} {...bindTrigger(popupState)}>Create</CreateButton>
                                         <Menu {...bindMenu(popupState)}>
-                                            <MenuItem onClick={handleOpenBusinessProfile}>Business Profile</MenuItem>
-                                            <MenuItem onClick={handleOpenFundingRound}>Funding Round</MenuItem>
+                                            <MenuItem onClick={() => 
+                                                {handleOpenBusinessProfile(); popupState.close(); }}>Business Profile</MenuItem>
+                                            <MenuItem onClick={() => 
+                                                {handleOpenFundingRound(); popupState.close();}}>Funding Round</MenuItem>
                                         </Menu>
                                     </>
                                 )}
                             </PopupState>
-                        </Box>
+                        </HeaderBox>
                     </Grid>
 
                     {/* Top Row - 5 Boxes */}
                     <Grid item xs={12} sm={3}>
-                        <Box sx={{ background: 'linear-gradient(to bottom, #0093d0, #00779d, #005b6e)', color: 'white', height: 80, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                        <StatsBox>
                             <Typography>Funded Companies</Typography>
-                            <Typography variant="h5">{fundedCompaniesCount} out of {companyCount}</Typography>
-                        </Box>
+                            <Typography variant="h6">{fundedCompaniesCount} out of {companyCount}</Typography>
+                        </StatsBox>
                     </Grid>
 
                     <Grid item xs={12} sm={2}>
-                        <Box sx={{ background: 'linear-gradient(to bottom, #0093d0, #00779d, #005b6e)', color: 'white', height: 80, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                        <StatsBox>
                             <Typography>Company Count</Typography>
-                            <Typography variant="h5">{companyCount}</Typography>
-                        </Box>
+                            <Typography variant="h6">{companyCount}</Typography>
+                        </StatsBox>
                     </Grid>
 
                     <Grid item xs={12} sm={2}>
-                        <Box sx={{ background: 'linear-gradient(to bottom, #0093d0, #00779d, #005b6e)', color: 'white', height: 80, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                        <StatsBox>
                             <Typography>Investor Count</Typography>
-                            <Typography variant="h5">{investorCount}</Typography>
-                        </Box>
+                            <Typography variant="h6">{investorCount}</Typography>
+                        </StatsBox>
                     </Grid>
 
                     <Grid item xs={12} sm={2}>
-                        <Box sx={{ background: 'linear-gradient(to bottom, #0093d0, #00779d, #005b6e)', color: 'white', height: 80, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                        <StatsBox>
                             <Typography>Funding Rounds</Typography>
-                            <Typography variant="h5">{fundedCompaniesCount}</Typography>
-                        </Box>
+                            <Typography variant="h6">{fundedCompaniesCount}</Typography>
+                        </StatsBox>
                     </Grid>
 
                     <Grid item xs={12} sm={3}>
-                        <Box sx={{ background: 'linear-gradient(to bottom, #0093d0, #00779d, #005b6e)', color: 'white', height: 80, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                        <StatsBox>
                             <Typography>Total Amount Funded</Typography>
-                            <Typography variant="h5">{totalAmountFunded.toLocaleString()}</Typography>
-                        </Box>
+                            <Typography variant="h6">{totalAmountFunded.toLocaleString()}</Typography>
+                        </StatsBox>
                     </Grid>
 
                     {/* Middle Row - Two Boxes */}
                     <Grid item xs={12} sm={9}>
                         <Box sx={{ backgroundColor: 'white', height: 420, display: 'flex', flexDirection: 'column', borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', overflow: 'hidden' }}>
-                        <Typography variant="h6"
-                            sx={{ p: 1 , background: 'linear-gradient(to top, #0093d0, #00779d, #005b6e)', color: 'white', fontWeight: 'bold' }}>
-                               Total Investment Graph
-                            </Typography>
+                            <GraphTitle variant="h6">Total Investment Graph</GraphTitle>
                         </Box>
                     </Grid>
 
                     <Grid item xs={12} sm={3}>
-                        <Box sx={{ backgroundColor: 'white', height: 420, display: 'flex', flexDirection: 'column', borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', overflow: 'hidden' }}>
-                            <Typography variant="h6"
-                            sx={{ p: 1 , background: 'linear-gradient(to top, #0093d0, #00779d, #005b6e)', color: 'white', fontWeight: 'bold' }}>
-                                Recent Activity
-                            </Typography>
-                            
-                             <List sx={{ pl: 1, overflowY: 'auto', flex: 1 }}>
+                        <RecentActivityBox>
+                            <RecentActivityTitle variant="h6">Recent Activity</RecentActivityTitle>
+                            <RecentActivityList>
                                 {recentActivities.length === 0 ? (
                                     <ListItem>
                                         <ListItemText primary="No recent activity" />
@@ -371,41 +361,12 @@ function UserDashboard() {
                                         </ListItem>
                                     ))
                                 )}
-                            </List>
-                        </Box>
-                    </Grid>
-
-                    {/* Bottom Row - Two Boxes */}
-                    <Grid item xs={12} sm={6}>
-                        <Box sx={{ background: 'linear-gradient(135deg, #0093d0, #005b6e)', height: 100, display: 'flex',  flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 3, boxShadow: '0 12px 24px rgba(0, 0, 0, 0.4)', border: '1px solid rgba(255, 255, 255, 0.2)', position: 'relative', overflow: 'hidden' }}>
-                            <Box sx={{ position: 'absolute', top: 15, right: 15, width: 60, height: 60, borderRadius: '50%',backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)', zIndex: 1, transform: 'rotate(15deg)', transition: 'transform 0.3s, box-shadow 0.3s', '&:hover': { transform: 'rotate(0deg)', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.6)'}}}>
-                                <StarIcon sx={{ color: '#005b6e', fontSize: 36, filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))' }} />
-                            </Box>
-                            <Typography sx={{ color: '#ffffff', textAlign: 'center', fontSize: 14, mb: 0.5 }}>
-                                Highest-Funded Company
-                            </Typography>
-                            <Typography variant="h5" sx={{  color: '#ffffff', fontWeight: 'bold', textAlign: 'center' }}>
-                                Shell Company
-                            </Typography>
-                        </Box>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <Box sx={{ background: 'linear-gradient(135deg, #0093d0, #005b6e)', height: 100, display: 'flex',  flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 3, boxShadow: '0 12px 24px rgba(0, 0, 0, 0.4)', border: '1px solid rgba(255, 255, 255, 0.2)', position: 'relative', overflow: 'hidden', mb: 5 }}>
-                            <Box sx={{ position: 'absolute', top: 15, right: 15, width: 60, height: 60, borderRadius: '50%',backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)', zIndex: 1, transform: 'rotate(15deg)', transition: 'transform 0.3s, box-shadow 0.3s', '&:hover': { transform: 'rotate(0deg)', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.6)'}}}>
-                                <Person2Icon sx={{ color: '#005b6e', fontSize: 36, filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))' }} />
-                        </Box>
-                            <Typography sx={{ color: '#ffffff', textAlign: 'center', fontSize: 14, mb: 0.5 }}>
-                                Top Investment Contributor
-                            </Typography>
-                            <Typography variant="h5" sx={{  color: '#ffffff', fontWeight: 'bold', textAlign: 'center' }}>
-                                Hazelyn Balingcasag
-                            </Typography>
-                        </Box>
+                            </RecentActivityList>
+                        </RecentActivityBox>
                     </Grid>
 
                     <Grid item xs={12}>
-                    <Tabs value={tabValue} onChange={handleTabChange} aria-label="tabs" sx={{ '& .MuiTabs-indicator': { backgroundColor: '#007490' } }}>
+                    <Tabs value={tabValue} onChange={handleTabChange} aria-label="tabs" sx={{ mt: 2, '& .MuiTabs-indicator': { backgroundColor: '#007490' } }}>
                         <Tab label="My Profile" sx={{ color: tabValue === 0 ? '#007490' : 'text.secondary', '&.Mui-selected': {
                             color: '#007490' } }}/>
                         <Tab label="My Funding Round" sx={{ color: tabValue === 1 ? '#007490' : 'text.secondary', '&.Mui-selected': {
@@ -454,12 +415,32 @@ function UserDashboard() {
                                 handleStartupChangeCapTable={handleStartupChangeCapTable} />
                             )}
                     </Box>
-                </Grid>
-                </Grid>
-            </Box>
+                    </Grid>
+                    
+                    <Grid item xs={12} sm={6}>
+                        <TopInfoBox>
+                            <TopInfoIcon>
+                                <StarIcon sx={{ color: '#005b6e', fontSize: 36 }} />
+                            </TopInfoIcon>
+                            <TopInfoText>Highest-Funded Company</TopInfoText>
+                            <TopInfoTitle>Shell Company</TopInfoTitle>
+                        </TopInfoBox>
+                    </Grid>
 
-            <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} />
-            <CreateFundingRoundDialog open={openCreateFundingRound} onClose={handleCloseFundingRound} />
+                    <Grid item xs={12} sm={6}>
+                        <TopInfoBox>
+                            <TopInfoIcon>
+                                <Person2Icon sx={{ color: '#005b6e', fontSize: 36 }} />
+                            </TopInfoIcon>
+                            <TopInfoText>Top Investment Contributor</TopInfoText>
+                            <TopInfoTitle>Hazelyn Balingcasag</TopInfoTitle>
+                        </TopInfoBox>
+                    </Grid>
+                </Grid>
+
+                <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} />
+                <CreateFundingRoundDialog open={openCreateFundingRound} onClose={handleCloseFundingRound} />
+            </Container>
         </>
     );
 }
