@@ -4,9 +4,10 @@ import axios from 'axios';
 import { Grid, Typography, TextField, Button, Select, MenuItem, FormControl, InputAdornment, IconButton } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { styles } from '../styles/Signup';
 
 function Signup() {
-  const [error, setError] = useState(''); // Error state for managing error messages
+  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [emailExists, setEmailExists] = useState(false);
   const [passwordError, setPasswordError] = useState('');
@@ -25,7 +26,6 @@ function Signup() {
       password: e.target.elements.password.value,
     };
 
-    // Enhanced Email Validation Regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(userData.email)) {
       setError('Please enter a valid email address with a domain (e.g., .com, .net).');
@@ -34,7 +34,6 @@ function Signup() {
       setError('');
     }
 
-    // Validate password strength using regex
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(userData.password)) {
       setPasswordError(
@@ -45,10 +44,9 @@ function Signup() {
       setPasswordError('');
     }
 
-    // Check if email already exists before submitting
     if (emailExists) {
       setError('Email already exists. Please enter a different email.');
-      return; // Do not proceed if the email already exists
+      return;
     }
 
     try {
@@ -82,20 +80,19 @@ function Signup() {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+    <div style={styles.container}>
       <Grid container>
-        <Grid item xs={12} sm={1} sx={{ background: '#007490', borderRadius: '0 10px 10px 0', boxShadow: '10px 3px 8px rgba(0,0,0,.15)' }}>
+        <Grid item xs={12} sm={1} sx={styles.sideBar}>
         </Grid>
 
-        <Grid item xs={12} sm={6} sx={{ textAlign: 'center', color: '#007490', mt: 8 }}>
-          <Typography sx={{ fontSize: '4.5em', fontWeight: 'bold' }}>
+        <Grid item xs={12} sm={6} sx={styles.titleContainer}>
+          <Typography sx={styles.title}>
             "Empowering <br /> Startups, <br /> Tracking <br /> Investments"
           </Typography>
         </Grid>
 
-        <Grid item xs={12} sm={4}
-          sx={{ p: 6, background: 'rgba(0, 116, 144, 1)', borderRadius: 2,boxShadow: '10px 3px 8px rgba(0,0,0,.15)', }}>
-          <Typography variant="h5" component="header" sx={{ fontWeight: 'bold', color: '#F2F2F2', pb: 3 }}>
+        <Grid item xs={12} sm={4} sx={styles.formContainer}>
+          <Typography variant="h5" component="header" sx={styles.formTitle}>
             Create Account
           </Typography>
 
@@ -103,76 +100,20 @@ function Signup() {
             <Grid container spacing={2} className="signup-details">
               <Grid item xs={6}>
                 <Typography sx={{ color: '#F2F2F2' }}>First Name</Typography>
-                <TextField fullWidth name="firstName" placeholder="John" required
-                  sx={{
-                    background: '#F2F2F2',
-                    borderRadius: 1,
-                    height: '45px',
-                    '& .MuiInputBase-root': { height: '45px' },
-                    '& .MuiInputBase-input': { padding: '12px 14px' },
-                    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#fff',
-                    },
-                    '& input:-webkit-autofill': {
-                      WebkitBoxShadow: '0 0 0 30px #F2F2F2 inset',
-                      WebkitTextFillColor: '#000',
-                    },
-                    '& input:-moz-autofill': {
-                      boxShadow: '0 0 0 30px #F2F2F2 inset',
-                      color: '#000',
-                    },
-                  }}/>
+                <TextField fullWidth name="firstName" placeholder="John" required sx={styles.textField} />
               </Grid>
 
               <Grid item xs={6}>
                 <Typography sx={{ color: '#F2F2F2' }}>Last Name</Typography>
-                <TextField fullWidth name="lastName" placeholder="Doe"required
-                  sx={{
-                    background: '#F2F2F2',
-                    borderRadius: 1,
-                    height: '45px',
-                    '& .MuiInputBase-root': { height: '45px' },
-                    '& .MuiInputBase-input': { padding: '12px 14px' },
-                    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#fff',
-                    },
-                    '& input:-webkit-autofill': {
-                      WebkitBoxShadow: '0 0 0 30px #F2F2F2 inset',
-                      WebkitTextFillColor: '#000',
-                    },
-                    '& input:-moz-autofill': {
-                      boxShadow: '0 0 0 30px #F2F2F2 inset',
-                      color: '#000',
-                    },
-                  }}/>
+                <TextField fullWidth name="lastName" placeholder="Doe" required sx={styles.textField} />
               </Grid>
 
               <Grid item xs={12}>
                 <Typography sx={{ color: '#F2F2F2' }}>Email</Typography>
                 <TextField fullWidth name="email" placeholder="johndoe@gmail.com" type="email" required value={email}   
-                error={emailExists || !!error} onChange={(e) => setEmail(e.target.value)} onBlur={checkEmailExists}
-                  sx={{
-                    background: '#F2F2F2',
-                    borderRadius: 1,
-                    height: '45px',
-                    '& .MuiInputBase-root': { height: '45px' },
-                    '& .MuiInputBase-input': { padding: '12px 14px' },
-                    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#fff',
-                    },
-                    '& input:-webkit-autofill': {
-                      WebkitBoxShadow: '0 0 0 30px #F2F2F2 inset',
-                      WebkitTextFillColor: '#000',
-                    },
-                    '& input:-moz-autofill': {
-                      boxShadow: '0 0 0 30px #F2F2F2 inset',
-                      color: '#000',
-                    },
-                  }}/>
-
-                {/* Display Error Message */}
+                error={emailExists || !!error} onChange={(e) => setEmail(e.target.value)} onBlur={checkEmailExists} sx={styles.textField} />
                 {error && (
-                  <Typography sx={{ color: '#f2f2f2', fontSize: '10px', mt: 1, fontWeight: 'bold' }}>
+                  <Typography sx={styles.errorText}>
                     {error}
                   </Typography>
                 )}
@@ -180,37 +121,13 @@ function Signup() {
 
               <Grid item xs={6}>
                 <Typography sx={{ color: '#F2F2F2' }}>Phone Number</Typography>
-                <TextField fullWidth name="contactNumber" placeholder="09362677352" type="tel" required
-                  sx={{
-                    background: '#F2F2F2',
-                    borderRadius: 1,
-                    height: '45px',
-                    '& .MuiInputBase-root': { height: '45px' },
-                    '& .MuiInputBase-input': { padding: '12px 14px' },
-                    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#fff',
-                    },
-                    '& input:-webkit-autofill': {
-                      WebkitBoxShadow: '0 0 0 30px #F2F2F2 inset',
-                      WebkitTextFillColor: '#000',
-                    },
-                    '& input:-moz-autofill': {
-                      boxShadow: '0 0 0 30px #F2F2F2 inset',
-                      color: '#000',
-                    },
-                  }}/>
+                <TextField fullWidth name="contactNumber" placeholder="09362677352" type="tel" required sx={styles.textField} />
               </Grid>
 
               <Grid item xs={6}>
                 <Typography sx={{ color: '#F2F2F2' }}>Gender</Typography>
                 <FormControl fullWidth>
-                  <Select name="gender"
-                    sx={{ background: '#F2F2F2', borderRadius: 1, height: '45px',
-                      '& .MuiInputBase-root': { height: '45px' },
-                      '& .MuiInputBase-input': { padding: '12px 14px' },
-                      '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#fff',
-                      },}}>
+                  <Select name="gender" sx={styles.select}>
                     <MenuItem value="Male">Male</MenuItem>
                     <MenuItem value="Female">Female</MenuItem>
                     <MenuItem value="Other">Other</MenuItem>
@@ -221,61 +138,34 @@ function Signup() {
               <Grid item xs={12}>
                 <Typography sx={{ color: '#F2F2F2' }}>Password</Typography>
                 <TextField fullWidth name="password" placeholder="Your Password" type={showPassword ? 'text' : 'password'} 
-                error={!!passwordError} required
-                  sx={{
-                    background: '#F2F2F2',
-                    borderRadius: 1,
-                    height: '45px',
-                    '& .MuiInputBase-root': { height: '45px' },
-                    '& .MuiInputBase-input': { padding: '12px 14px' },
-                    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#fff',
-                    },
-                    '& input:-webkit-autofill': {
-                      WebkitBoxShadow: '0 0 0 30px #F2F2F2 inset',
-                      WebkitTextFillColor: '#000',
-                    },
-                    '& input:-moz-autofill': {
-                      boxShadow: '0 0 0 30px #F2F2F2 inset',
-                      color: '#000',
-                    },
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={togglePasswordVisibility}
-                          edge="end"
-                          sx={{ p: '10px' }}
-                        >
-                          {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}/>
-
-                {/* Display Password Error */}
+                error={!!passwordError} required sx={styles.passwordField}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={togglePasswordVisibility}
+                        edge="end"
+                        sx={{ p: '10px' }}>
+                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }} />
                 {passwordError && (
-                  <Typography sx={{ color: '#f2f2f2', fontSize: '10px', mt: 1, fontWeight: 'bold' }}>
+                  <Typography sx={styles.errorText}>
                     {passwordError}
                   </Typography>
                 )}
               </Grid>
             </Grid>
 
-            <Button type="submit" fullWidth
-              sx={{ mt: 3, mb: 2, background: '#f2f2f2', color: '#007490', borderRadius: 1,
-                '&:hover': {
-                  backgroundColor: '#f2f2f2',
-                  color: '#007490',
-                  boxShadow: '0 0 10px rgba(0,0,0,0.5)'
-                },}}>
+            <Button type="submit" fullWidth sx={styles.submitButton}>
               Sign up
             </Button>
 
-            <Typography sx={{ textAlign: 'center', color: '#F2F2F2', fontSize: '0.8rem' }}>
+            <Typography sx={styles.titleLink}>
               Already have an account?{' '}
-              <Link to="/login" style={{ color: '#F2F2F2', textDecoration: 'underine', fontWeight: 'bold' }}>
+              <Link to="/login" style={styles.linkText}>
                 Sign in
               </Link>
             </Typography>
