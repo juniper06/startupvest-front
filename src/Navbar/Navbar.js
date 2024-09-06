@@ -146,7 +146,7 @@ export default function Navbar() {
                 <ListItemIcon>
                   <SpaceDashboardIcon sx={{ color: '#F2F2F2' }} />
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" />
+                <ListItemText primary="Dashboard" sx={{ p: 1}}/>
                 {openDashboard ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
             </ListItem>
@@ -154,7 +154,7 @@ export default function Navbar() {
             {openDashboard && (
               <List component="div" disablePadding>
                 {dashboardSubItems.map((item) => (
-                  <ListItem key={item.text} disablePadding sx={{ pl: 4 }}>
+                  <ListItem key={item.text} disablePadding sx={{ pl: 6.5 }}>
                     <ListItemButton component={Link} to={item.path}>
                       <ListItemText primary={item.text} />
                     </ListItemButton>
@@ -164,7 +164,7 @@ export default function Navbar() {
             )}
 
             {menuItems.map((item) => (
-              <ListItem key={item.text} disablePadding>
+              <ListItem key={item.text} disablePadding sx={{ p: 1}}>
                 <ListItemButton component={Link} to={item.path}>
                   <ListItemIcon>
                       {item.icon}
@@ -174,12 +174,12 @@ export default function Navbar() {
               </ListItem>
             ))}
             <Divider />
-            <ListItem disablePadding sx={{ p: 1 }}>
+            <ListItem disablePadding sx={{ p: 1}}>
               <ListItemButton component={Link} to="/" onClick={handleLogout}>
-                <ListItemText primary="Logout" />
                 <ListItemIcon>
-                  <LogoutIcon sx={{ color: '#F2F2F2' }} />
-                </ListItemIcon>
+                    <LogoutIcon sx={{ color: '#F2F2F2' }} />
+                  </ListItemIcon>
+                <ListItemText primary="Logout" />
               </ListItemButton>
             </ListItem>
           </List>
