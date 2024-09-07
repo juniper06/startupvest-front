@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, Toolbar, Typography, Paper, TextField, Avatar } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Toolbar, Typography, Paper, TextField, Avatar, Stack, Pagination } from '@mui/material';
 import PropTypes from 'prop-types';
 import SearchIcon from '@mui/icons-material/Search';
 import { visuallyHidden } from '@mui/utils';
@@ -32,11 +32,11 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'startup', numeric: false, disablePadding: false, label: 'StartUp Name', },
+  { id: 'startup', numeric: false, disablePadding: false, label: 'StartUp Name' },
   { id: 'industry', numeric: false, disablePadding: false, label: 'Industry' },
   { id: 'location', numeric: false, disablePadding: false, label: 'Location' },
   { id: 'founded', numeric: false, disablePadding: false, label: 'Founded Date' },
-  { id: 'description', numeric: false, disablePadding: false, label: 'Description', width: '45%' },
+  { id: 'description', numeric: false, disablePadding: false, label: 'Description', width: '40%' },
 ];
 
 function EnhancedTableHead(props) {
@@ -54,12 +54,12 @@ function EnhancedTableHead(props) {
             align="left"
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
-            style={{ width: headCell.width, fontWeight: 'bold', backgroundColor: '#007490', color: '#ffffff'}}>
+            style={{ width: headCell.width, fontWeight: 'bold', backgroundColor: '#007490', color: '#ffffff' }}>
             <TableSortLabel
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
               onClick={createSortHandler(headCell.id)}
-              style={{ color: '#ffffff'}}>
+              style={{ color: '#ffffff' }}>
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
@@ -90,20 +90,12 @@ function EnhancedTableToolbar({ onRequestSearch }) {
 
   return (
     <Toolbar sx={{ pt: 5, mb: 3 }}>
-      <Typography
-        sx={{ flex: '1 1 100%', color: 'rgba(0, 116, 144, 1)', fontWeight: 'bold' }}
-        variant="h5">
+      <Typography sx={{ flex: '1 1 100%', color: 'rgba(0, 116, 144, 1)', fontWeight: 'bold' }} variant="h5">
         Search Companies
       </Typography>
 
-      <TextField variant="standard"
-        placeholder="Search…"
-        onChange={handleSearch}
-        value={searchText}
-        sx={{ width: 350 }}
-        InputProps={{
-          startAdornment: <SearchIcon />,
-        }} />
+      <TextField variant="standard" placeholder="Search…" onChange={handleSearch} value={searchText} sx={{ width: 350 }}
+        InputProps={{ startAdornment: <SearchIcon /> }} />
     </Toolbar>
   );
 }
@@ -112,7 +104,7 @@ export default function Companies() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('startup');
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
   const [filteredRows, setFilteredRows] = useState([]);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -138,12 +130,7 @@ export default function Companies() {
   };
 
   const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setPage(newPage - 1);
   };
 
   const handleSearch = (searchText) => {
@@ -182,27 +169,16 @@ export default function Companies() {
       <Paper sx={{ width: '100%', p: 3 }} elevation={0}>
         <EnhancedTableToolbar onRequestSearch={handleSearch} />
         <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size="medium">
-            <EnhancedTableHead
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-            />
+          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
+            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort}/>
             <TableBody>
               {visibleRows.map((row, index) => (
-                <TableRow
-                  hover
-                  tabIndex={-1}
-                  key={row.id}
-                  sx={{ cursor: 'pointer', height: '75px',  }}
+                <TableRow hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', height: '75px' }}
                   onClick={() => handleRowClick(row)}>
                   <TableCell component="th" scope="row" padding="none">
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Avatar variant='rounded' sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }}>
-                        {row.avatar} 
+                        {row.avatar}
                         {/* wla pa ang avatar chichu */}
                       </Avatar>
                       {row.companyName}
@@ -211,28 +187,22 @@ export default function Companies() {
                   <TableCell align="left">{row.industry}</TableCell>
                   <TableCell align="left">{row.streetAddress}</TableCell>
                   <TableCell align="left">{row.foundedDate}</TableCell>
-                  <TableCell align="left">{row.companyDescription.split(' ').slice(0, 25).join(' ')}...
-                  </TableCell>
+                  <TableCell align="left">{row.companyDescription.split(' ').slice(0, 25).join(' ')}...</TableCell>
                 </TableRow>
               ))}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={headCells.length} />
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </TableContainer>
 
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={filteredRows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        {/* Pagination controls */}
+        <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
+          <Pagination count={Math.ceil(filteredRows.length / rowsPerPage)} page={page + 1} onChange={handleChangePage} size="large"/>
+        </Stack>
       </Paper>
     </Box>
   );
