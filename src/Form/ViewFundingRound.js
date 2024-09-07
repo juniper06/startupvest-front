@@ -437,6 +437,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 <TextField
                                     fullWidth
                                     variant="outlined"
+                                    type="number"
                                     value={investor.shares}
                                     onChange={(e) => handleSharesChange(index, e.target.value)}
                                     disabled={!isEditMode}
