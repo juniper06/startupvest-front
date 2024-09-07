@@ -306,11 +306,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 onChange={(e) => setCurrency(e.target.value)}
                                 disabled
                                 sx={{ height: '45px' }}>
-                                <MenuItem value="PESO">PESO</MenuItem>                                    
-                                <MenuItem value="USD">USD</MenuItem>
-                                <MenuItem value="EUR">EUR</MenuItem>
-                                <MenuItem value="GBP">GBP</MenuItem>
-                                <MenuItem value="JPY">JPY</MenuItem>
+                                <MenuItem value="₱">PESO</MenuItem>
+                                <MenuItem value="$">USD</MenuItem>
+                                <MenuItem value="€">EUR</MenuItem>
+                                <MenuItem value="£">GBP</MenuItem>
+                                <MenuItem value="¥">JPY</MenuItem>
+                                <MenuItem value="₩">KRW</MenuItem>
                             </Select>
                         </Grid>
 
@@ -336,10 +337,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 onChange={(e) => setCurrency(e.target.value)}
                                 disabled={!isEditMode}
                                 sx={{ height: '45px' }}>
-                                <MenuItem value="PESO">PESO</MenuItem>
-                                <MenuItem value="EUR">EUR</MenuItem>
-                                <MenuItem value="GBP">GBP</MenuItem>
-                                <MenuItem value="JPY">JPY</MenuItem>
+                                <MenuItem value="₱">PESO</MenuItem>
+                                <MenuItem value="$">USD</MenuItem>
+                                <MenuItem value="€">EUR</MenuItem>
+                                <MenuItem value="£">GBP</MenuItem>
+                                <MenuItem value="¥">JPY</MenuItem>
+                                <MenuItem value="₩">KRW</MenuItem>
                             </Select>
                         </Grid>
 
@@ -381,11 +384,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 onChange={(e) => setCurrency(e.target.value)}
                                 disabled
                                 sx={{ height: '45px' }}>
-                                <MenuItem value="PESO">PESO</MenuItem>
-                                <MenuItem value="USD">USD</MenuItem>
-                                <MenuItem value="EUR">EUR</MenuItem>
-                                <MenuItem value="GBP">GBP</MenuItem>
-                                <MenuItem value="JPY">JPY</MenuItem>
+                                <MenuItem value="₱">PESO</MenuItem>
+                                <MenuItem value="$">USD</MenuItem>
+                                <MenuItem value="€">EUR</MenuItem>
+                                <MenuItem value="£">GBP</MenuItem>
+                                <MenuItem value="¥">JPY</MenuItem>
+                                <MenuItem value="₩">KRW</MenuItem>
                             </Select>
                         </Grid>
                     </Grid>
