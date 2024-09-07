@@ -15,7 +15,7 @@ function CreateFundingRound() {
     const [closedDay, setClosedDay] = useState('');
     const [closedYear, setClosedYear] = useState('');
     const [moneyRaised, setMoneyRaised] = useState(0);
-    const [currency, setCurrency] = useState('PESO'); 
+    const [currency, setCurrency] = useState('₱'); 
     const [targetFunding, setTargetFunding] = useState('');
     const [preMoneyValuation, setPreMoneyValuation] = useState('');
     const [minimumShare, setMinimumShare] = useState('');
@@ -79,8 +79,12 @@ function CreateFundingRound() {
     
         if (!selectedStartupId) newErrors.selectedStartupId = requiredErrorMessage;
         if (!fundingType) newErrors.fundingType = requiredErrorMessage;
-        if (!announcedMonth || !announcedDay || !announcedYear) newErrors.announcedDate = requiredErrorMessage;
-        if (!closedMonth || !closedDay || !closedYear) newErrors.closedDate = requiredErrorMessage;
+        if (!announcedMonth) newErrors.announcedMonth = requiredErrorMessage;
+        if (!announcedDay) newErrors.announcedDay = requiredErrorMessage;
+        if (!announcedYear) newErrors.announcedYear = requiredErrorMessage;
+        if (!closedMonth) newErrors.closedMonth = requiredErrorMessage;
+        if (!closedDay) newErrors.closedDay = requiredErrorMessage;
+        if (!closedYear) newErrors.closedYear = requiredErrorMessage;
         if (!targetFunding) newErrors.targetFunding = requiredErrorMessage;
         if (!preMoneyValuation) newErrors.preMoneyValuation = requiredErrorMessage;
         if (!minimumShare) newErrors.minimumShare = requiredErrorMessage;
@@ -181,69 +185,73 @@ function CreateFundingRound() {
                         <Grid item xs={4}>
                             
                             <label><b>Announced Date</b><br />Month</label>
-                            <FormControl fullWidth variant="outlined" error={!!errors.announcedDate}>
+                            <FormControl fullWidth variant="outlined" error={!!errors.announcedMonth}>
                                 <Select labelId="month-label" value={announcedMonth} onChange={(e) => setAnnouncedMonth(e.target.value)} sx={{ height: '45px' }}>
                                     {months.map((month, index) => (
                                         <MenuItem key={index} value={index + 1}>{month}</MenuItem>
                                     ))}
                                 </Select>
-                             {errors.announcedDate && <FormHelperText>{errors.announcedDate}</FormHelperText>}
+                             {errors.announcedMonth && <FormHelperText>{errors.announcedMonth}</FormHelperText>}
                             </FormControl>
                         </Grid>
 
                         <Grid item xs={4}>
                             <label><br />Day</label>
-                            <FormControl fullWidth variant="outlined" error={!!errors.announcedDate}>
+                            <FormControl fullWidth variant="outlined" error={!!errors.announcedDay}>
                                 <Select labelId="day-label" value={announcedDay} onChange={(e) => setAnnouncedDay(e.target.value)} sx={{ height: '45px' }}>
                                     {days.map((day) => (
                                         <MenuItem key={day} value={day}>{day}</MenuItem>
                                     ))}
                                 </Select>
+                                {errors.announcedDay && <FormHelperText>{errors.announcedDay}</FormHelperText>}
                             </FormControl>
                         </Grid>
 
                         <Grid item xs={4}>
                             <label><br />Year</label>
-                            <FormControl fullWidth variant="outlined" error={!!errors.announcedDate}>
+                            <FormControl fullWidth variant="outlined" error={!!errors.announcedYear}>
                                 <Select labelId="year-label" value={announcedYear} onChange={(e) => setAnnouncedYear(e.target.value)} sx={{ height: '45px' }}>
                                     {years.map((year) => (
                                         <MenuItem key={year} value={year}>{year}</MenuItem>
                                     ))}
                                 </Select>
+                                {errors.announcedYear && <FormHelperText>{errors.announcedYear}</FormHelperText>}
                             </FormControl>
                         </Grid>
 
                         <Grid item xs={4}>
                             <label><b>Closed on Date</b><br />Month</label>
-                            <FormControl fullWidth variant="outlined" error={!!errors.closedDate}>
+                            <FormControl fullWidth variant="outlined" error={!!errors.closedMonth}>
                                 <Select labelId="month-label" value={closedMonth} onChange={(e) => setClosedMonth(e.target.value)} sx={{ height: '45px' }}>
                                     {months.map((month, index) => (
                                         <MenuItem key={index} value={index + 1}>{month}</MenuItem>
                                     ))}
                                 </Select>
-                                {errors.closedDate && <FormHelperText>{errors.closedDate}</FormHelperText>}
+                                {errors.closedMonth && <FormHelperText>{errors.closedMonth}</FormHelperText>}
                             </FormControl>
                         </Grid>
 
                         <Grid item xs={4}>
                             <label><br />Day</label>
-                            <FormControl fullWidth variant="outlined" error={!!errors.closedDate}>
+                            <FormControl fullWidth variant="outlined" error={!!errors.closedDay}>
                                 <Select labelId="day-label" value={closedDay} onChange={(e) => setClosedDay(e.target.value)} sx={{ height: '45px' }}>
                                     {days.map((day) => (
                                         <MenuItem key={day} value={day}>{day}</MenuItem>
                                     ))}
                                 </Select>
+                                {errors.closedDay && <FormHelperText>{errors.closedDay}</FormHelperText>}
                             </FormControl>
                         </Grid>
 
                         <Grid item xs={4}>
                             <label><br />Year</label>
-                            <FormControl fullWidth variant="outlined" error={!!errors.closedDate}>
+                            <FormControl fullWidth variant="outlined" error={!!errors.closedYear}>
                                 <Select labelId="year-label" value={closedYear} onChange={(e) => setClosedYear(e.target.value)} sx={{ height: '45px' }}>
                                     {years.map((year) => (
                                         <MenuItem key={year} value={year}>{year}</MenuItem>
                                     ))}
                                 </Select>
+                                {errors.closedYear && <FormHelperText>{errors.closedYear}</FormHelperText>}
                             </FormControl>
                         </Grid>
 
@@ -270,11 +278,12 @@ function CreateFundingRound() {
                                 value={currency}
                                 onChange={(e) => setCurrency(e.target.value)}
                                 sx={{ height: '45px' }}>
-                                <MenuItem value="PESO">PESO</MenuItem>
-                                <MenuItem value="USD">USD</MenuItem>
-                                <MenuItem value="EUR">EUR</MenuItem>
-                                <MenuItem value="GBP">GBP</MenuItem>
-                                <MenuItem value="JPY">JPY</MenuItem>
+                                <MenuItem value="₱">PESO</MenuItem>
+                                <MenuItem value="$">USD</MenuItem>
+                                <MenuItem value="€">EUR</MenuItem>
+                                <MenuItem value="£">GBP</MenuItem>
+                                <MenuItem value="¥">JPY</MenuItem>
+                                <MenuItem value="₩">KRW</MenuItem>
                             </Select>
                         </Grid>
 
@@ -324,11 +333,12 @@ function CreateFundingRound() {
                                 onChange={(e) => setCurrency(e.target.value)}
                                 disabled
                                 sx={{ height: '45px' }}>
-                                <MenuItem value="PESO">PESO</MenuItem>
-                                <MenuItem value="USD">USD</MenuItem>
-                                <MenuItem value="EUR">EUR</MenuItem>
-                                <MenuItem value="GBP">GBP</MenuItem>
-                                <MenuItem value="JPY">JPY</MenuItem>
+                                <MenuItem value="₱">PESO</MenuItem>
+                                <MenuItem value="$">USD</MenuItem>
+                                <MenuItem value="€">EUR</MenuItem>
+                                <MenuItem value="£">GBP</MenuItem>
+                                <MenuItem value="¥">JPY</MenuItem>
+                                <MenuItem value="₩">KRW</MenuItem>
                             </Select>
                         </Grid>
                     </Grid>
