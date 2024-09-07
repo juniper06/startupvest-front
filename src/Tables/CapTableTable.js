@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Typography, FormControl, Select, MenuItem } from '@mui/material';
-import { tableStyles } from '../styles/tables'; 
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, FormControl, Select, MenuItem, Stack, Pagination } from '@mui/material';
+import { tableStyles } from '../styles/tables';
 
 function CapTable({
   filteredCapTables = [],
@@ -29,13 +29,7 @@ function CapTable({
 
   // Handle page change
   const handleCapPageChange = (event, newPage) => {
-    setLocalCapPage(newPage);
-  };
-
-  // Handle rows per page change
-  const handleCapRowsPerPageChange = (event) => {
-    setLocalCapRowsPerPage(parseInt(event.target.value, 10));
-    setLocalCapPage(0);
+    setLocalCapPage(newPage - 1);
   };
 
   // Calculate the index of the first and last row to display
@@ -44,6 +38,9 @@ function CapTable({
 
   // Slice the filtered data to display only the rows for the current page
   const paginatedCapTables = filteredCapTables.slice(startIndex, endIndex);
+
+  // Calculate total pages for pagination
+  const totalPageCount = Math.ceil(filteredCapTables.length / localCapRowsPerPage);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -105,14 +102,9 @@ function CapTable({
           </TableBody>
         </Table>
 
-        <TablePagination
-          rowsPerPageOptions={[5]}
-          component="div"
-          count={filteredCapTables.length}
-          rowsPerPage={localCapRowsPerPage}
-          page={localCapPage}
-          onPageChange={handleCapPageChange}
-          onRowsPerPageChange={handleCapRowsPerPageChange}/>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
+          <Pagination count={totalPageCount} page={localCapPage + 1} onChange={handleCapPageChange} ssize="medium"/>
+        </Box>
       </TableContainer>
     </Box>
   );
