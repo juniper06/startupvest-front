@@ -103,7 +103,7 @@ function CapTable({
         </Table>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
-          <Pagination count={totalPageCount} page={localCapPage + 1} onChange={handleCapPageChange} ssize="medium"/>
+          <Pagination count={totalPageCount} page={localCapPage + 1} onChange={handleCapPageChange} size="medium"/>
         </Box>
       </TableContainer>
     </Box>

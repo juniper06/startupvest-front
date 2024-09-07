@@ -91,11 +91,7 @@ function BusinessProfileTable({
         </Table>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
-          <Pagination
-            count={totalPageCount}
-            page={page}
-            onChange={handleChangePage}
-            size="medium"/>
+          <Pagination count={totalPageCount} page={page} onChange={handleChangePage} size="medium"/>
         </Box>
       </TableContainer>
 

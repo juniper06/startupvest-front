@@ -28,7 +28,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const months = Array.from({ length: 12 }, (_, i) => {
         return new Intl.DateTimeFormat('en', { month: 'long' }).format(new Date(2000, i, 1));
     });
-    const years = [...Array(51).keys()].map(i => new Date().getFullYear() - i);
+    const years = [...Array(51).keys()].map(i => new Date().getFullYear() + i);
 
     const announcedDate = new Date(fundingRoundDetails?.announcedDate);
     const closedDate = new Date(fundingRoundDetails?.closedDate);

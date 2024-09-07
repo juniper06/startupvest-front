@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, FormControl,Select,MenuItem, Pagination, } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, FormControl, Select, MenuItem, Stack, Pagination } from '@mui/material';
 import ViewFundingRoundDialog from '../Dialogs/ViewFundingRoundDialog';
 import ConfirmDeleteDialog from '../Dialogs/ConfirmDeleteFundingRoundDialog';
 import { tableStyles } from '../styles/tables';
 
 function FundingRoundTable({
-  fundingRounds = [],
-  fundingRowsPerPage = 5,
+  fundingRounds = [], 
+  fundingRowsPerPage = 5, 
   fundingPage = 0,
   handleViewFundingRound,
   handleSoftDeleteFundingRound,
@@ -14,7 +14,7 @@ function FundingRoundTable({
   openViewFundingRound,
   handleCloseFundingProfile,
   businessProfiles,
-  onTotalAmountFundedChange,
+  onTotalAmountFundedChange
 }) {
   const [localFundingPage, setLocalFundingPage] = useState(fundingPage);
   const [localFundingRowsPerPage, setLocalFundingRowsPerPage] = useState(fundingRowsPerPage);
@@ -32,14 +32,13 @@ function FundingRoundTable({
 
   // Get list of startup IDs the user created
   const userCreatedStartupIds = businessProfiles
-    .filter((profile) => profile.type === 'Startup')
-    .map((startup) => startup.id);
+    .filter(profile => profile.type === 'Startup')
+    .map(startup => startup.id);
 
   // Filter funding rounds based on the selected startup
-  const filteredFundingRounds =
-    selectedStartupFunding === 'All'
-      ? fundingRounds.filter((round) => round.startup && userCreatedStartupIds.includes(round.startup.id))
-      : fundingRounds.filter((round) => round.startup && round.startup.id === selectedStartupFunding);
+  const filteredFundingRounds = selectedStartupFunding === 'All'
+    ? fundingRounds.filter(round => round.startup && userCreatedStartupIds.includes(round.startup.id))
+    : fundingRounds.filter(round => round.startup && round.startup.id === selectedStartupFunding);
 
   // Calculate the total amount funded from filtered funding rounds
   useEffect(() => {
@@ -55,6 +54,9 @@ function FundingRoundTable({
 
   // Slice the filtered data to display only the rows for the current page
   const paginatedFundingRounds = filteredFundingRounds.slice(startIndex, endIndex);
+
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(filteredFundingRounds.length / localFundingRowsPerPage);
 
   const handleOpenDeleteFundingRoundDialog = (round) => {
     setFundingRoundToDelete(round);
@@ -78,29 +80,26 @@ function FundingRoundTable({
     setLocalFundingPage(newPage - 1);
   };
 
-  // Calculate total pages for pagination
-  const totalPageCount = Math.ceil(filteredFundingRounds.length / localFundingRowsPerPage);
+  const handleFundingRowsPerPageChange = (event) => {
+    setLocalFundingRowsPerPage(parseInt(event.target.value, 10));
+    setLocalFundingPage(0);
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="subtitle1" sx={{ pr: 1 }}>
-            By Company:
-          </Typography>
+          <Typography variant="subtitle1" sx={{ pr: 1 }}>By Company:</Typography>
           <FormControl sx={{ minWidth: 200 }}>
-            <Select
-              value={selectedStartupFunding}
-              onChange={handleStartupChangeFunding}
-              variant="outlined"
+            <Select 
+              value={selectedStartupFunding} 
+              onChange={handleStartupChangeFunding} 
+              variant="outlined" 
               sx={{ minWidth: 150, height: '45px' }}>
               <MenuItem value="All">All</MenuItem>
-              {businessProfiles
-                .filter((profile) => profile.type === 'Startup')
+              {businessProfiles.filter(profile => profile.type === 'Startup')
                 .map((startup) => (
-                  <MenuItem key={startup.id} value={startup.id}>
-                    {startup.companyName}
-                  </MenuItem>
+                  <MenuItem key={startup.id} value={startup.id}>{startup.companyName}</MenuItem>
                 ))}
             </Select>
           </FormControl>
@@ -122,54 +121,55 @@ function FundingRoundTable({
               </TableCell>
               <TableCell sx={tableStyles.cell}>
                 <Typography sx={tableStyles.typography}>Action</Typography>
-              </TableCell>
+              </TableCell>        
             </TableRow>
           </TableHead>
-
+          
           <TableBody>
-            {paginatedFundingRounds.length > 0 ? (
+          {paginatedFundingRounds.length > 0 ? (
               paginatedFundingRounds.map((round) => (
                 <TableRow key={round.id}>
                   <TableCell sx={tableStyles.cell}>{round.fundingType}</TableCell>
                   <TableCell sx={tableStyles.cell}>{round.moneyRaised}</TableCell>
                   <TableCell sx={tableStyles.cell}>{round.targetFunding}</TableCell>
                   <TableCell sx={tableStyles.cell}>
-                    <Button variant="contained" sx={tableStyles.actionButton}
+                    <Button
+                      variant="contained"
+                      sx={tableStyles.actionButton}
                       onClick={() => handleViewFundingRound(round.id)}>
                       View
                     </Button>
-                    <Button variant="outlined" sx={tableStyles.deleteButton}
+                    <Button
+                      variant="outlined"
+                      sx={tableStyles.deleteButton}
                       onClick={() => handleOpenDeleteFundingRoundDialog(round)}>
                       Delete
                     </Button>
                   </TableCell>
                 </TableRow>
               ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={4} sx={tableStyles.cell}>
-                  No funding rounds available for your startups.
-                </TableCell>
-              </TableRow>
-            )}
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} sx={tableStyles.cell}>
+                    No funding rounds available for your startups.
+                  </TableCell>
+                </TableRow>
+              )}
           </TableBody>
         </Table>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
-          <Pagination count={totalPageCount} page={localFundingPage + 1} onChange={handleFundingPageChange} size="medium"/>
-        </Box>
+        <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
+          <Pagination count={totalPages} page={localFundingPage + 1} onChange={handleFundingPageChange} size="medium" />
+        </Stack>
       </TableContainer>
 
-      <ViewFundingRoundDialog
-        open={openViewFundingRound}
-        fundingRoundDetails={selectedFundingRoundDetails}
-        onClose={handleCloseFundingProfile}/>
+      <ViewFundingRoundDialog open={openViewFundingRound} fundingRoundDetails={selectedFundingRoundDetails} onClose={handleCloseFundingProfile} />
 
       <ConfirmDeleteDialog
         open={openDeleteFundingRoundDialog}
         onClose={handleCloseDeleteFundingRoundDialog}
         onConfirm={handleConfirmDelete}
-        companyName={fundingRoundToDelete ? fundingRoundToDelete.companyName : ''}/>
+        companyName={fundingRoundToDelete ? fundingRoundToDelete.companyName : ''} />
     </Box>
   );
 }
