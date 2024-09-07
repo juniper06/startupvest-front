@@ -408,23 +408,16 @@ function ViewFundingRound({ fundingRoundDetails }) {
                             <Grid item xs={4}>
                                 <label>Shareholder Name</label>
                                 <FormControl fullWidth variant="outlined">
-                                    <Select
-                                        sx={{ height: '45px'}}
-                                        displayEmpty
-                                        value={investor.name}
-                                        onChange={(event) => handleInvestorChange(index, 'name', event.target.value)}
+                                    <Autocomplete disablePortal options={allInvestors}
+                                        sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                        getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
+                                        value={allInvestors.find(inv => inv.id === investor.name) || null}
+                                        onChange={(event, newValue) => handleInvestorChange(index, 'name', newValue ? newValue.id : '')}
                                         disabled={!isEditMode}
-                                        renderValue={selected => {
-                                            if (selected === '') {
-                                                return <em>Shareholder's Name</em>;
-                                            }
-                                            const selectedInvestor = allInvestors.find(inv => inv.id === selected);
-                                            return selectedInvestor ? `${selectedInvestor.firstName} ${selectedInvestor.lastName}` : <em>Shareholder's Name</em>;
-                                        }}>
-                                        {allInvestors.map((inv) => (
-                                            <MenuItem key={inv.id} value={inv.id}>{inv.firstName} {inv.lastName}</MenuItem>
-                                        ))}
-                                    </Select>
+                                        renderInput={(params) => (
+                                        <TextField  {...params} variant="outlined" />
+                                        )}
+                                        isOptionEqualToValue={(option, value) => option.id === value.id}/>
                                 </FormControl>
                             </Grid>
                             
@@ -436,8 +429,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                     value={investor.title}
                                     onChange={(e) => handleInvestorChange(index, 'title', e.target.value)}
                                     disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} 
-                                />
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                             </Grid>
                             
                             <Grid item xs={4}>
@@ -448,8 +440,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                     value={investor.shares}
                                     onChange={(e) => handleSharesChange(index, e.target.value)}
                                     disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} 
-                                />
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -461,11 +452,9 @@ function ViewFundingRound({ fundingRoundDetails }) {
                 </Grid>
             </Grid>
 
-            <Button
-                variant="contained"
+            <Button variant="contained"
                 sx={{ width: 150, background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }} style={{marginLeft: '80%'}}
-                onClick={isEditMode ? handleUpdateFundingRound : toggleEditMode}
-            >
+                onClick={isEditMode ? handleUpdateFundingRound : toggleEditMode}>
                 {isEditMode ? 'Save Changes' : 'Edit Funding'}
             </Button>
         </Box>
