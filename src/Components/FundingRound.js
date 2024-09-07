@@ -128,7 +128,7 @@ function EnhancedTableToolbar({ onRequestSearch }) {
 export default function FundingRound() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('transactionName');
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
