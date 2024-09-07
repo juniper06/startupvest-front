@@ -5,6 +5,7 @@ import { Box, Typography, Toolbar, Grid, Button, Menu, MenuItem,Tabs, Tab, ListI
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import StarIcon from '@mui/icons-material/Star';
 import Person2Icon from '@mui/icons-material/Person2';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOnRounded';
 
 import Navbar from "../Navbar/Navbar";
 import CreateFundingRoundDialog from '../Dialogs/CreateFundingRoundDialog';
@@ -293,9 +294,13 @@ function UserDashboard() {
                                         <CreateButton startIcon={<StarsIcon />} {...bindTrigger(popupState)}>Create</CreateButton>
                                         <Menu {...bindMenu(popupState)}>
                                             <MenuItem onClick={() => 
-                                                {handleOpenBusinessProfile(); popupState.close(); }}>Business Profile</MenuItem>
+                                                {handleOpenBusinessProfile(); popupState.close(); }}>
+                                                    <Person2Icon sx={{ mr: 1, color: '#007490'}}/>Business Profile
+                                                    </MenuItem>
                                             <MenuItem onClick={() => 
-                                                {handleOpenFundingRound(); popupState.close();}}>Funding Round</MenuItem>
+                                                {handleOpenFundingRound(); popupState.close();}}>
+                                                    <MonetizationOnIcon sx={{ mr: 1, color: '#007490'}}/>Funding Round
+                                            </MenuItem>
                                         </Menu>
                                     </>
                                 )}
