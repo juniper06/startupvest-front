@@ -1,23 +1,20 @@
 import React, { useState } from 'react';
-import { Typography, Toolbar, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Button, Box } from "@mui/material";
+import { Typography, Toolbar, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Avatar, Box, Pagination, Stack } from "@mui/material";
 import Navbar from "../Navbar/Navbar";
 import { tableStyles } from '../styles/tables';
 import { StatsBox } from '../styles/UserDashboard';
 
 const drawerWidth = 310;
 
-
 function InvestorOverview() {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [page, setPage] = useState(1);
+    const [rowsPerPage] = useState(5); 
 
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
+    const totalItems = 10; 
+    const totalPages = Math.ceil(totalItems / rowsPerPage);
 
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+    const handleChangePage = (event, value) => {
+        setPage(value);
     };
 
     return (
@@ -42,13 +39,6 @@ function InvestorOverview() {
 
                     <Grid item xs={12} sm={3}>
                         <StatsBox>
-                            <Typography sx={{ fontWeight: 'bold'}}>Total Investment Amount</Typography>
-                            <Typography>P50,000</Typography>
-                        </StatsBox>
-                    </Grid>
-
-                    <Grid item xs={12} sm={3}>
-                        <StatsBox>
                             <Typography sx={{ fontWeight: 'bold'}}>Top Company Invested</Typography>
                             <Typography>Shell Company 2.0</Typography>
                         </StatsBox>
@@ -60,9 +50,15 @@ function InvestorOverview() {
                             <Typography>P5,000</Typography>
                         </StatsBox>
                     </Grid>
+
+                    <Grid item xs={12} sm={3}>
+                        <StatsBox>
+                            <Typography sx={{ fontWeight: 'bold'}}>Total Investment Amount</Typography>
+                            <Typography>P50,000</Typography>
+                        </StatsBox>
+                    </Grid>
                 </Grid>
                 
-
                 {/* My Investments Header */}
                 <Grid item xs={12}>
                     <Typography variant="h5" sx={{ mt: 4, mb: 2 }}>
@@ -75,7 +71,7 @@ function InvestorOverview() {
                         <TableHead sx={tableStyles.head}>
                             <TableRow>
                                 <TableCell sx={tableStyles.cell}>
-                                    <Typography sx={tableStyles.typography}>Company</Typography>
+                                    <Typography sx={tableStyles.typography}>Company Name</Typography>
                                 </TableCell>
                                 <TableCell sx={tableStyles.cell}>
                                     <Typography sx={tableStyles.typography}>Shares</Typography>
@@ -91,7 +87,11 @@ function InvestorOverview() {
 
                         <TableBody>
                             <TableRow sx={tableStyles.row}>
-                                <TableCell sx={tableStyles.cell}>Shell Company 2.0</TableCell>
+                                <TableCell sx={tableStyles.cell}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <Avatar variant='rounded' sx={{ width: 30, height: 30, mr: 2, border: '2px solid rgba(0, 116, 144, 1)' }} /> Shell Company 2.0
+                                    </Box>
+                                </TableCell>
                                 <TableCell sx={tableStyles.cell}>P20,000</TableCell>
                                 <TableCell sx={tableStyles.cell}>60%</TableCell>
                                 <TableCell sx={tableStyles.cell}>
@@ -101,14 +101,9 @@ function InvestorOverview() {
                         </TableBody>
                     </Table>
 
-                    <TablePagination
-                        rowsPerPageOptions={[5]}
-                        component="div"
-                        // count={businessProfiles.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}/>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
+                        <Pagination count={totalPages} page={page} onChange={handleChangePage} size="medium"/>
+                    </Box>
                 </TableContainer>
             </Grid>
         </>

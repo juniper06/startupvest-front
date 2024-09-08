@@ -36,7 +36,7 @@ const headCells = [
   { id: 'industry', numeric: false, disablePadding: false, label: 'Industry' },
   { id: 'location', numeric: false, disablePadding: false, label: 'Location' },
   { id: 'founded', numeric: false, disablePadding: false, label: 'Founded Date' },
-  { id: 'description', numeric: false, disablePadding: false, label: 'Description', width: '40%' },
+  { id: 'description', numeric: false, disablePadding: false, label: 'Description', width: '38%' },
 ];
 
 function EnhancedTableHead(props) {
@@ -207,8 +207,7 @@ export default function Companies() {
                         variant='rounded'
                         sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }}
                         src={profilePictures[row.id]} // Use the fetched profile picture URL
-                        alt={row.companyName}
-                      >
+                        alt={row.companyName}>
                         {row.companyName.charAt(0)} {/* Default to the first letter if no picture */}
                       </Avatar>
                       {row.companyName}
@@ -217,7 +216,7 @@ export default function Companies() {
                   <TableCell align="left">{row.industry}</TableCell>
                   <TableCell align="left">{row.streetAddress}</TableCell>
                   <TableCell align="left">{row.foundedDate}</TableCell>
-                  <TableCell align="left">{row.companyDescription.split(' ').slice(0, 25).join(' ')}...</TableCell>
+                  <TableCell align="left" sx={{ textAlign: 'justify' }}>{row.companyDescription.split(' ').slice(0, 20).join(' ')}...</TableCell>
                 </TableRow>
               ))}
               {emptyRows > 0 && (

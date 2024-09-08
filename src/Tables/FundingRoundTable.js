@@ -80,11 +80,6 @@ function FundingRoundTable({
     setLocalFundingPage(newPage - 1);
   };
 
-  const handleFundingRowsPerPageChange = (event) => {
-    setLocalFundingRowsPerPage(parseInt(event.target.value, 10));
-    setLocalFundingPage(0);
-  };
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>

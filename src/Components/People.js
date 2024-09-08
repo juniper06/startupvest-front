@@ -14,8 +14,8 @@ const drawerWidth = 240;
 const headCells = [
   { id: 'name', numeric: false, disablePadding: false, label: 'Full Name' },
   { id: 'location', numeric: false, disablePadding: false, label: 'Location' },
-  { id: 'biography', numeric: false, disablePadding: false, label: 'Biography' },
   { id: 'email', numeric: false, disablePadding: false, label: 'Email Address' },
+  { id: 'biography', numeric: false, disablePadding: false, label: 'Biography', width: '38%', },
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -215,19 +215,17 @@ export default function Companies() {
                   onClick={() => handleRowClick(row)}>
                   <TableCell component="th" scope="row" padding="none">
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar 
-                      variant='rounded' 
+                    <Avatar variant='rounded' 
                       sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }} 
-                      src={profilePictures[row.id] || ''} // Use the fetched picture if available
-                    >
-                      {!profilePictures[row.id] && row.firstName.charAt(0)} {/* Show the initial if there is no photo */}
+                      src={profilePictures[row.id] || ''} >
+                      {!profilePictures[row.id] && row.firstName.charAt(0)}
                     </Avatar>
                       {row.firstName} {row.lastName}
                     </Box>
                   </TableCell>
                   <TableCell align="left">{row.streetAddress}, {row.city}, {row.country}</TableCell>
-                  <TableCell align="left">{row.biography}</TableCell>
                   <TableCell align="left">{row.emailAddress}</TableCell>
+                  <TableCell align="left" sx={{ textAlign: 'justify' }}>{row.biography.split(' ').slice(0, 20).join(' ')}...</TableCell>
                 </TableRow>
               ))}
               {filteredRows.length === 0 && (
