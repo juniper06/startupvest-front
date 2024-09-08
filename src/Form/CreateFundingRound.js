@@ -379,6 +379,7 @@ function CreateFundingRound() {
                                 <TextField
                                     fullWidth
                                     variant="outlined"
+                                    type="number"
                                     value={investor.shares}
                                     onChange={(e) => handleSharesChange(index, e.target.value)}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
