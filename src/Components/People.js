@@ -14,7 +14,7 @@ const drawerWidth = 240;
 const headCells = [
   { id: 'name', numeric: false, disablePadding: false, label: 'Full Name' },
   { id: 'location', numeric: false, disablePadding: false, label: 'Location' },
-  { id: 'organization', numeric: false, disablePadding: false, label: 'Organization' },
+  { id: 'biography', numeric: false, disablePadding: false, label: 'Biography' },
   { id: 'email', numeric: false, disablePadding: false, label: 'Email Address' },
 ];
 
@@ -111,6 +111,7 @@ export default function Companies() {
   const [filteredRows, setFilteredRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [profilePictures, setProfilePictures] = useState({});
 
   useEffect(() => {
     const fetchInvestors = async () => {
@@ -130,6 +131,36 @@ export default function Companies() {
   useEffect(() => {
     setFilteredRows(investors);
   }, [investors]);
+
+  const fetchProfilePicture = async (investorId) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/profile-picture/investor/${investorId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        responseType: 'blob', // Important for getting the image as a blob
+      });
+  
+      // Create a URL for the blob
+      const imageUrl = URL.createObjectURL(response.data);
+  
+      // Store the image URL in the state
+      setProfilePictures(prevState => ({
+        ...prevState,
+        [investorId]: imageUrl
+      }));
+    } catch (error) {
+      console.error('Failed to fetch profile picture:', error);
+    }
+  };
+
+  useEffect(() => {
+    investors.forEach(investor => {
+      if (!profilePictures[investor.id]) {
+        fetchProfilePicture(investor.id); // Fetch only if not already fetched
+      }
+    });
+  }, [investors]);  
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -184,12 +215,18 @@ export default function Companies() {
                   onClick={() => handleRowClick(row)}>
                   <TableCell component="th" scope="row" padding="none">
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Avatar variant='rounded' sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }}>{row.firstName.charAt(0)}</Avatar>
+                    <Avatar 
+                      variant='rounded' 
+                      sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }} 
+                      src={profilePictures[row.id] || ''} // Use the fetched picture if available
+                    >
+                      {!profilePictures[row.id] && row.firstName.charAt(0)} {/* Show the initial if there is no photo */}
+                    </Avatar>
                       {row.firstName} {row.lastName}
                     </Box>
                   </TableCell>
                   <TableCell align="left">{row.streetAddress}, {row.city}, {row.country}</TableCell>
-                  <TableCell align="left">{row.organization}</TableCell>
+                  <TableCell align="left">{row.biography}</TableCell>
                   <TableCell align="left">{row.emailAddress}</TableCell>
                 </TableRow>
               ))}

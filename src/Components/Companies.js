@@ -109,12 +109,14 @@ export default function Companies() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [profilePictures, setProfilePictures] = useState({});
 
   useEffect(() => {
     axios.get('http://localhost:3000/startups/all')
       .then((response) => {
         setRows(response.data);
         setFilteredRows(response.data);
+        fetchAllProfilePictures(response.data); // Fetch profile pictures after data is loaded
         setLoading(false);
       })
       .catch((error) => {
@@ -122,6 +124,30 @@ export default function Companies() {
         setLoading(false);
       });
   }, []);
+
+  // Function to fetch all profile pictures for startups
+  const fetchAllProfilePictures = async (startups) => {
+    const pictures = {};
+    await Promise.all(
+      startups.map(async (startup) => {
+        try {
+          const response = await axios.get(`http://localhost:3000/profile-picture/startup/${startup.id}`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            responseType: 'blob', // Important for getting the image as a blob
+          });
+
+          const imageUrl = URL.createObjectURL(response.data); // Convert blob to URL
+          pictures[startup.id] = imageUrl; // Store image URL against startup ID
+        } catch (error) {
+          console.error(`Failed to fetch profile picture for startup ID ${startup.id}:`, error);
+        }
+      })
+    );
+
+    setProfilePictures(pictures); // Set state with all fetched profile pictures
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -177,9 +203,13 @@ export default function Companies() {
                   onClick={() => handleRowClick(row)}>
                   <TableCell component="th" scope="row" padding="none">
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Avatar variant='rounded' sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }}>
-                        {row.avatar}
-                        {/* wla pa ang avatar chichu */}
+                    <Avatar
+                        variant='rounded'
+                        sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }}
+                        src={profilePictures[row.id]} // Use the fetched profile picture URL
+                        alt={row.companyName}
+                      >
+                        {row.companyName.charAt(0)} {/* Default to the first letter if no picture */}
                       </Avatar>
                       {row.companyName}
                     </Box>
