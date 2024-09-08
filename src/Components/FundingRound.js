@@ -11,7 +11,7 @@ import Navbar from '../Navbar/Navbar';
 const drawerWidth = 240;
 
 function createData(id, transactionName, startupName, fundingType, moneyRaised, 
-  moneyRaisedCurrency, announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors ) {
+  moneyRaisedCurrency, announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, startupId ) {
   return {
     id,
     transactionName,
@@ -23,7 +23,8 @@ function createData(id, transactionName, startupName, fundingType, moneyRaised,
     closedDate,
     avatar,
     preMoneyValuation,
-    capTableInvestors
+    capTableInvestors,
+    startupId
   };
 }
 
@@ -132,6 +133,7 @@ export default function FundingRound() {
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
+  const [profilePictures, setProfilePictures] = useState({});
 
   const navigate = useNavigate();
 
@@ -150,18 +152,46 @@ export default function FundingRound() {
           new Date(fundingRound.closedDate).toLocaleDateString(),
           fundingRound.avatar || '',
           fundingRound.preMoneyValuation || 'N/A',
-          fundingRound.capTableInvestors // Pass capTableInvestors details
+          fundingRound.capTableInvestors,
+          fundingRound.startup?.id  // Ensure you add the startupId here
         ));
         setRows(fetchedRows);
         setFilteredRows(fetchedRows);
+        fetchAllProfilePictures(response.data); // Fetch profile pictures after setting rows
       } catch (error) {
         console.error('Error fetching funding rounds:', error);
       }
     };
-
+  
     fetchFundingRounds();
   }, []);
-
+  
+  const fetchAllProfilePictures = async (fundingRounds) => {
+    const pictures = {};
+    await Promise.all(
+      fundingRounds.map(async (fundingRound) => {
+        const startupId = fundingRound.startup?.id;
+        if (!startupId) return; // Skip if there's no startup ID
+  
+        try {
+          const response = await axios.get(`http://localhost:3000/profile-picture/startup/${startupId}`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            responseType: 'blob',
+          });
+  
+          const imageUrl = URL.createObjectURL(response.data); // Convert blob to URL
+          pictures[fundingRound.id] = imageUrl; // Store image URL against the funding round ID
+        } catch (error) {
+          console.error(`Failed to fetch profile picture for startup ID ${startupId}:`, error);
+        }
+      })
+    );
+  
+    setProfilePictures(pictures); // Set state with all fetched profile pictures
+  };
+  
   const handleRowClick = (fundinground) => {
     navigate(`/fundingroundview`, { state: { fundinground } });
   };  
@@ -211,23 +241,31 @@ export default function FundingRound() {
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort} />
-            <TableBody>
-              {visibleRows.map((row, index) => (
-                <TableRow hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', height: '75px' }}
-                  onClick={() => handleRowClick(row)}>
-                  <TableCell component="th" scope="row" padding="none">
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Avatar variant='rounded' sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }}>{row.avatar}</Avatar>
-                      {row.startupName}
-                    </Box>
-                  </TableCell>
-                  <TableCell align="left">{row.fundingType}</TableCell>
-                  <TableCell align="left">{row.moneyRaisedCurrency} {row.moneyRaised}</TableCell>
-                  <TableCell align="left">{row.announcedDate}</TableCell>
-                  <TableCell align="left">{row.closedDate}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+              <TableBody>
+                {visibleRows.map((row, index) => (
+                  <TableRow hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', height: '75px' }} onClick={() => handleRowClick(row)}>
+                    <TableCell component="th" scope="row" padding="none">
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Avatar
+                        variant="rounded"
+                        sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }}
+                        src={profilePictures[row.id] || ''} // Use the correct ID to fetch the profile picture
+                        alt={row.startupName}
+                      >
+                        {profilePictures[row.id] ? '' : row.startupName.charAt(0)} {/* Display the first letter if image is missing */}
+                      </Avatar>
+                        {row.startupName}
+                      </Box>
+                    </TableCell>
+                    <TableCell align="left">{row.fundingType}</TableCell>
+                    <TableCell align="left">
+                      {row.moneyRaisedCurrency} {row.moneyRaised}
+                    </TableCell>
+                    <TableCell align="left">{row.announcedDate}</TableCell>
+                    <TableCell align="left">{row.closedDate}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
           </Table>
         </TableContainer>
 

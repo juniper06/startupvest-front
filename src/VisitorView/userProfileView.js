@@ -15,6 +15,7 @@ const drawerWidth = 240;
 function UserProfileView() {
   const [isFollowed, setIsFollowed] = useState(false);
   const [businessProfiles, setBusinessProfiles] = useState([]);
+  const [avatarUrl, setAvatarUrl] = useState('');
   const location = useLocation();
   const profile = location.state?.profile;
 
@@ -37,9 +38,33 @@ function UserProfileView() {
     }
   };
 
+    // Function to fetch the profile picture
+    const fetchProfilePicture = async () => {
+      if (!profile?.id) return; // Ensure profile exists
+  
+      try {
+        const response = await axios.get(`http://localhost:3000/profile-picture/investor/${profile.id}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          responseType: 'blob', // Important for getting the image as a blob
+        });
+  
+        // Create a URL for the blob
+        const imageUrl = URL.createObjectURL(response.data);
+        setAvatarUrl(imageUrl);
+      } catch (error) {
+        console.error('Failed to fetch profile picture:', error);
+      }
+    };
+
   useEffect(() => {
     fetchBusinessProfiles();
   }, []);
+
+  useEffect(() => {
+    fetchProfilePicture(); // Fetch profile picture on component mount or when profile ID changes
+  }, [profile?.id]); 
 
   if (!profile) {
     return <div>Loading...</div>;
@@ -53,7 +78,13 @@ function UserProfileView() {
       <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px`, mt: 5 }}>
         <Box display="flex" alignItems="center">
           <Box mr={4}>
-            <Avatar variant="rounded" sx={{ width: 150, height: 150, border: '5px solid rgba(0, 116, 144, 1)', borderRadius: 3, ml: 8 }}></Avatar>
+          <Avatar
+              variant="rounded"
+              src={avatarUrl} // Use fetched avatar URL
+              sx={{ width: 150, height: 150, border: '5px solid rgba(0, 116, 144, 1)', borderRadius: 3, ml: 8 }}
+            >
+              {profile.firstName.charAt(0)} {/* Show initial if no avatar is available */}
+            </Avatar>
           </Box>
           <Typography variant="h4" gutterBottom>{`${profile.firstName} ${profile.lastName}`}</Typography>
           <StarsIcon sx={{ cursor: 'pointer', ml: 1, mt: -1, color: isFollowed ? 'rgba(0, 116, 144, 1)' : 'inherit' }} onClick={handleFollowToggle} />
