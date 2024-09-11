@@ -11,7 +11,7 @@ import Navbar from '../Navbar/Navbar';
 const drawerWidth = 240;
 
 function createData(id, transactionName, startupName, fundingType, moneyRaised, 
-  moneyRaisedCurrency, announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, startupId ) {
+  moneyRaisedCurrency, announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, startupId, minimumShare ) {
   return {
     id,
     transactionName,
@@ -24,7 +24,8 @@ function createData(id, transactionName, startupName, fundingType, moneyRaised,
     avatar,
     preMoneyValuation,
     capTableInvestors,
-    startupId
+    startupId,
+    minimumShare
   };
 }
 
@@ -153,6 +154,7 @@ export default function FundingRound() {
           fundingRound.avatar || '',
           fundingRound.preMoneyValuation || 'N/A',
           fundingRound.capTableInvestors,
+          fundingRound.minimumShare || 'N/A',
           fundingRound.startup?.id  // Ensure you add the startupId here
         ));
         setRows(fetchedRows);

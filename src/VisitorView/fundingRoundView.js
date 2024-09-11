@@ -97,11 +97,11 @@ function FundingRoundView() {
                   <Grid item xs={12}>
                     <Grid container spacing={3}>
                     <Grid item xs={12}>
-                        <Typography variant="body1">
-                          To invest in our company, a minimum purchase of 10,000 shares is required. This ensures a meaningful investment and supports our long-term growth.
-                          <br /><br />
-                          For more information, please contact us.
-                         </Typography>
+                    <Typography variant="body1">
+                      To invest in our company, a minimum purchase of {fundinground.moneyRaisedCurrency} {fundinground.minimumShare} shares is required. This ensures a meaningful investment and supports our long-term growth.
+                      <br /><br />
+                      For more information, please contact us.
+                    </Typography>
                       </Grid>
 
                       <Grid item xs={4}>
@@ -147,8 +147,8 @@ function FundingRoundView() {
                         <TableHead>
                             <TableRow>
                                 <TableCell sx={{ textAlign: 'center', fontWeight: 'bold' }}>Investor Name</TableCell>
-                                <TableCell sx={{ textAlign: 'justify', fontWeight: 'bold' }}>Title</TableCell>
-                                <TableCell sx={{ textAlign: 'justify', fontWeight: 'bold' }}>Share</TableCell>
+                                <TableCell sx={{ textAlign: 'center', fontWeight: 'bold' }}>Title</TableCell>
+                                <TableCell sx={{ textAlign: 'center', fontWeight: 'bold' }}>Share</TableCell>
                             </TableRow>
                         </TableHead>
                         
