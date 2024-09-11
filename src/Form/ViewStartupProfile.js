@@ -42,7 +42,9 @@ function ViewStartupProfile({ profile }) {
     });
     const years = [...Array(51).keys()].map(i => new Date().getFullYear() - i);
 
-    const handleAvatarClick = () => {
+    const handleAvatarClick = (event) => {
+        event.preventDefault(); // Prevent default action
+        event.stopPropagation(); // Stop the click from propagating to the input
         fileInputRef.current.click();
     };
 
@@ -54,6 +56,9 @@ function ViewStartupProfile({ profile }) {
                 setAvatar(reader.result);
             };
             reader.readAsDataURL(file);
+
+            // Directly call the upload function when a new file is selected
+            handleUploadProfilePicture(file);
         }
     };
 
@@ -155,7 +160,18 @@ function ViewStartupProfile({ profile }) {
 
             <Grid item xs={12} sm={3}>
                 <label htmlFor="avatar-upload" onClick={handleAvatarClick}>
-                    <Avatar sx={{ width: 200, height: 200, mb: 2, ml: 49.5,cursor: 'pointer', border: '5px rgba(0, 116, 144, 1) solid' }} src={avatar}></Avatar>
+                <Avatar
+                        sx={{
+                            width: 200,
+                            height: 200,
+                            mb: 2,
+                            ml: 49.5,
+                            cursor: 'pointer',
+                            border: '5px rgba(0, 116, 144, 1) solid'
+                        }}
+                        src={avatar}
+                        onClick={handleAvatarClick} // Attach the event handler here
+                    />
                 </label>
             
                 <input

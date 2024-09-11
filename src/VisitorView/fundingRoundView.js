@@ -132,7 +132,7 @@ function FundingRoundView() {
                       <Grid item xs={4}>
                         <Typography><strong>Pre-Money Valuation</strong></Typography>
                         <Typography variant="body1">
-                          {fundinground.preMoneyValuation ? fundinground.preMoneyValuation : 'N/A'}
+                        {fundinground.moneyRaisedCurrency} {fundinground.preMoneyValuation ? fundinground.preMoneyValuation : 'N/A'}
                         </Typography>
                       </Grid>
                     </Grid>
