@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Typography, Toolbar, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Avatar, Box, Pagination, Stack } from "@mui/material";
 import Navbar from "../Navbar/Navbar";
 import { tableStyles } from '../styles/tables';
-import { StatsBox } from '../styles/UserDashboard';
+import { StatsBox, TopInfoText, TopInfoTitle } from '../styles/UserDashboard';
 
 const drawerWidth = 310;
 
@@ -32,29 +32,29 @@ function InvestorOverview() {
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={3}>
                         <StatsBox>
-                            <Typography sx={{ fontWeight: 'bold'}}>Investment Count</Typography>
-                            <Typography>2</Typography>
+                            <TopInfoText>Investment Count</TopInfoText>
+                            <TopInfoTitle>2</TopInfoTitle>
                         </StatsBox>
                     </Grid>
 
                     <Grid item xs={12} sm={3}>
                         <StatsBox>
-                            <Typography sx={{ fontWeight: 'bold'}}>Top Company Invested</Typography>
-                            <Typography>Shell Company 2.0</Typography>
+                            <TopInfoText>Top Company Invested</TopInfoText>
+                            <TopInfoTitle>Shell Company 2.0</TopInfoTitle>
                         </StatsBox>
                     </Grid>
 
                     <Grid item xs={12} sm={3}>
                         <StatsBox>
-                            <Typography sx={{ fontWeight: 'bold'}}>Average Investment Size</Typography>
-                            <Typography>P5,000</Typography>
+                            <TopInfoText>Average Investment Size</TopInfoText>
+                            <TopInfoTitle>P5,000</TopInfoTitle>
                         </StatsBox>
                     </Grid>
 
                     <Grid item xs={12} sm={3}>
                         <StatsBox>
-                            <Typography sx={{ fontWeight: 'bold'}}>Total Investment Amount</Typography>
-                            <Typography>P50,000</Typography>
+                            <TopInfoText>Total Investment Amount</TopInfoText>
+                            <TopInfoTitle>P50,000</TopInfoTitle>
                         </StatsBox>
                     </Grid>
                 </Grid>

@@ -58,7 +58,7 @@ export const RecentActivityList = styled(List)`
 
 export const TopInfoBox = styled(Box)`
   background: linear-gradient(135deg, #0093d0, #005b6e);
-  height: 100px;
+  height: 70px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -72,10 +72,10 @@ export const TopInfoBox = styled(Box)`
 
 export const TopInfoIcon = styled(Box)`
   position: absolute;
-  top: 15px;
+  top: 12px;
   right: 15px;
-  width: 60px;
-  height: 60px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   background-color: #ffffff;
   display: flex;

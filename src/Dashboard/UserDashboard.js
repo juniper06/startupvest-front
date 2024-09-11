@@ -309,38 +309,58 @@ function UserDashboard() {
                     </Grid>
 
                     {/* Top Row - 5 Boxes */}
-                    <Grid item xs={12} sm={3}>
-                        <StatsBox>
-                            <Typography>Funded Companies</Typography>
-                            <Typography variant="h6">{fundedCompaniesCount} out of {companyCount}</Typography>
-                        </StatsBox>
+                    <Grid item xs={12} sm={6}>
+                        <TopInfoBox>
+                            <TopInfoIcon>
+                                <StarIcon sx={{ color: '#005b6e' }} />
+                            </TopInfoIcon>
+                            <TopInfoText>Highest-Funded Company</TopInfoText>
+                            <TopInfoTitle>Shell Company</TopInfoTitle>
+                        </TopInfoBox>
                     </Grid>
 
-                    <Grid item xs={12} sm={2}>
-                        <StatsBox>
-                            <Typography>Company Count</Typography>
-                            <Typography variant="h6">{companyCount}</Typography>
-                        </StatsBox>
-                    </Grid>
-
-                    <Grid item xs={12} sm={2}>
-                        <StatsBox>
-                            <Typography>Investor Count</Typography>
-                            <Typography variant="h6">{investorCount}</Typography>
-                        </StatsBox>
-                    </Grid>
-
-                    <Grid item xs={12} sm={2}>
-                        <StatsBox>
-                            <Typography>Funding Rounds</Typography>
-                            <Typography variant="h6">{fundedCompaniesCount}</Typography>
-                        </StatsBox>
+                    <Grid item xs={12} sm={6}>
+                        <TopInfoBox>
+                            <TopInfoIcon>
+                                <Person2Icon sx={{ color: '#005b6e' }} />
+                            </TopInfoIcon>
+                            <TopInfoText>Top Investment Contributor</TopInfoText>
+                            <TopInfoTitle>Hazelyn Balingcasag</TopInfoTitle>
+                        </TopInfoBox>
                     </Grid>
 
                     <Grid item xs={12} sm={3}>
                         <StatsBox>
-                            <Typography>Total Amount Funded</Typography>
-                            <Typography variant="h6">{totalAmountFunded.toLocaleString()}</Typography>
+                            <TopInfoText>Funded Companies</TopInfoText>
+                            <TopInfoTitle>{fundedCompaniesCount} out of {companyCount}</TopInfoTitle>
+                        </StatsBox>
+                    </Grid>
+
+                    <Grid item xs={12} sm={2}>
+                        <StatsBox>
+                            <TopInfoText>Company Count</TopInfoText>
+                            <TopInfoTitle>{companyCount}</TopInfoTitle>
+                        </StatsBox>
+                    </Grid>
+
+                    <Grid item xs={12} sm={2}>
+                        <StatsBox>
+                            <TopInfoText>Investor Count</TopInfoText>
+                            <TopInfoTitle>{investorCount}</TopInfoTitle>
+                        </StatsBox>
+                    </Grid>
+
+                    <Grid item xs={12} sm={2}>
+                        <StatsBox>
+                            <TopInfoText>Funding Rounds</TopInfoText>
+                            <TopInfoTitle>{fundedCompaniesCount}</TopInfoTitle>
+                        </StatsBox>
+                    </Grid>
+
+                    <Grid item xs={12} sm={3}>
+                        <StatsBox>
+                            <TopInfoText>Total Amount Funded</TopInfoText>
+                            <TopInfoTitle>{totalAmountFunded.toLocaleString()}</TopInfoTitle>
                         </StatsBox>
                     </Grid>
 
@@ -421,26 +441,7 @@ function UserDashboard() {
                             )}
                     </Box>
                     </Grid>
-                    
-                    <Grid item xs={12} sm={6}>
-                        <TopInfoBox>
-                            <TopInfoIcon>
-                                <StarIcon sx={{ color: '#005b6e', fontSize: 36 }} />
-                            </TopInfoIcon>
-                            <TopInfoText>Highest-Funded Company</TopInfoText>
-                            <TopInfoTitle>Shell Company</TopInfoTitle>
-                        </TopInfoBox>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TopInfoBox>
-                            <TopInfoIcon>
-                                <Person2Icon sx={{ color: '#005b6e', fontSize: 36 }} />
-                            </TopInfoIcon>
-                            <TopInfoText>Top Investment Contributor</TopInfoText>
-                            <TopInfoTitle>Hazelyn Balingcasag</TopInfoTitle>
-                        </TopInfoBox>
-                    </Grid>
+                
                 </Grid>
 
                 <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} />

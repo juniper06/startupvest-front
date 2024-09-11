@@ -8,7 +8,6 @@ import Companies from './Components/Companies';
 
 import FundingRound from './Components/FundingRound';
 import People from './Components/People';
-import CapTable from './Components/CapTable';
 import LandingPage from './Components/LandingPage';
 
 import ViewStartupProfile from './Form/ViewStartupProfile';
@@ -37,7 +36,6 @@ function App() {
         <Route path="/companies" element={<Companies />} />
         <Route path="/fundinground" element={<FundingRound />} />
         <Route path="/people" element={<People />} />
-        <Route path="/captable" element={<CapTable />} />
 
         {/* Business Profile */}
         <Route path="/startupprofile" element={<ViewStartupProfile />} />
