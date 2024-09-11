@@ -98,7 +98,7 @@ function CreateFundingRound() {
                 .map(investor => ({
                     id: investor.name.id,
                     title: investor.title,
-                    shares: parseInt(investor.shares, 10)
+                    shares: parseInt(investor.shares)
                 }));
 
             const moneyRaised = selectedInvestors.reduce((acc, investor) => acc + investor.shares, 0);

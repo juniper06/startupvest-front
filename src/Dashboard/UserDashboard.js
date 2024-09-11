@@ -36,7 +36,7 @@ function UserDashboard() {
     const [filteredFundingRounds, setFilteredFundingRounds] = useState([]);
 
     // CAP TABLE
-    const [selectedStartupCapTable, setSelectedStartupCapTable] = useState('All');
+    const [selectedStartupCapTable, setSelectedStartupCapTable] = useState('Select Company');
     const [capTables, setCapTables] = useState([]);
     const [filteredCapTables, setFilteredCapTables] = useState([]);
 
@@ -53,7 +53,7 @@ function UserDashboard() {
         fetchBusinessProfiles();
         fetchFundingRounds();
         fetchCapTable();
-        fetchCapTablesAllInvestors();
+        fetchAllInvestorsByEachUsersCompany();
     }, []);
 
     const handleTabChange = (event, newValue) => {
@@ -118,7 +118,8 @@ function UserDashboard() {
 
             // Update counts
             setCompanyCount(startups.length);
-            setInvestorCount(investors.length);
+            // setInvestorCount(investors.length);
+            // setInvestorCount(fundedInvestors.length); // Use fundedInvestors length here
             setFundedCompaniesCount(investors.length > 0 ? 1 : 0); // Example logic, adjust based on your criteria
         } catch (error) {
             console.error('Failed to fetch business profiles:', error);
@@ -228,8 +229,8 @@ function UserDashboard() {
 
     // CAP TABLE
     useEffect(() => {
-        if (selectedStartupCapTable === 'All') {
-            fetchCapTablesAllInvestors();
+        if (selectedStartupCapTable === 'Select Company') {
+            fetchAllInvestorsByEachUsersCompany();
         } else {
             fetchCapTable(selectedStartupCapTable);
         }
@@ -257,15 +258,16 @@ function UserDashboard() {
     };
     
 
-    const fetchCapTablesAllInvestors = async () => {
+    const fetchAllInvestorsByEachUsersCompany = async (companyId) => {
         try {
-            const response = await axios.get('http://localhost:3000/funding-rounds/investors/all', {
+            const response = await axios.get(`http://localhost:3000/funding-rounds/${companyId}/investors/all`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
             });
             setCapTables(response.data);
             setFilteredCapTables(response.data);
+            setInvestorCount(response.data.length);
         } catch (error) {
             console.error('Error fetching funding rounds:', error);
         }
@@ -275,7 +277,7 @@ function UserDashboard() {
         const selectedCompanyId = event.target.value;
         setSelectedStartupCapTable(selectedCompanyId);
         fetchCapTable(selectedCompanyId);
-        fetchCapTablesAllInvestors(selectedCompanyId);
+        fetchAllInvestorsByEachUsersCompany(selectedCompanyId);
     };
 
     return (
