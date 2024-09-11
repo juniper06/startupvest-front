@@ -28,7 +28,7 @@ function Login() {
       setLoggedIn(true);
       setOpenAlert(true);
       setTimeout(() => {
-        navigate('/userdashboard');
+        navigate('/asCompanyOwnerOverview');
       }, 1000);
     } catch (error) {
       console.error('Login failed:', error);

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Avatar, Box, Divider, List, ListItem, ListItemIcon, ListItemText,
   Toolbar, Typography, Grid, Button, Stack, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow
 } from '@mui/material';
-
+import axios from 'axios';
 import PaidIcon from '@mui/icons-material/Paid';
 import StoreIcon from '@mui/icons-material/Store';
 import StarsIcon from '@mui/icons-material/Stars';
@@ -21,13 +21,33 @@ const drawerWidth = 240;
 function StartUpView() {
   const [selectedPage, setSelectedPage] = useState('summary');
   const [isFollowed, setIsFollowed] = useState(false);
-
+  const [avatarUrl, setAvatarUrl] = useState('');
   const location = useLocation();
   const { startup } = location.state || {}; 
 
-  if (!startup) {
-    return <div>No startup data available</div>;
-  }
+  // Fetch the profile picture
+  useEffect(() => {
+    const fetchProfilePicture = async () => {
+      if (!startup?.id) return; // Ensure startup exists
+  
+      try {
+        const response = await axios.get(`http://localhost:3000/profile-picture/startup/${startup.id}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          responseType: 'blob', // Important for getting the image as a blob
+        });
+  
+        // Create a URL for the blob
+        const imageUrl = URL.createObjectURL(response.data);
+        setAvatarUrl(imageUrl);
+      } catch (error) {
+        console.error('Failed to fetch profile picture:', error);
+      }
+    };
+
+    fetchProfilePicture(); // Always call the fetch function
+  }, [startup]); // Re-run the effect if the startup data changes
 
   const handlePageChange = (page) => {
     setSelectedPage(page);
@@ -36,6 +56,10 @@ function StartUpView() {
   const handleFollowToggle = () => {
     setIsFollowed(!isFollowed);
   };
+
+  if (!startup) {
+    return <div>No startup data available</div>;
+  }
 
   return (
     <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px`, mt: 5 }}>
@@ -46,6 +70,7 @@ function StartUpView() {
         <Box mr={4}>
           <Avatar
             variant="rounded"
+            src={avatarUrl} // Use fetched avatar URL
             sx={{
               width: 150,
               height: 150,

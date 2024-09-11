@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
 
-function SuccessCreateBusinessProfileDialog({ open, onClose, companyName }) {
+function SuccessCreateBusinessProfileDialog({ open, onClose, companyName, firstName, lastName }) {
     const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(open);
 
     useEffect(() => {
@@ -24,7 +24,7 @@ function SuccessCreateBusinessProfileDialog({ open, onClose, companyName }) {
                 </DialogTitle>
                 <DialogContent>
                     <Typography variant="body1">
-                        The profile for <strong>{companyName}</strong> has been successfully created.
+                        The profile for <strong>{companyName ? companyName : `${firstName} ${lastName}`}</strong> has been successfully created.
                     </Typography>
                 </DialogContent>
                 <DialogActions>

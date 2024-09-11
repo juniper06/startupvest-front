@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Button, Typography, FormControl, Select, MenuItem } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, FormControl, Select, MenuItem, Stack, Pagination } from '@mui/material';
 import ViewFundingRoundDialog from '../Dialogs/ViewFundingRoundDialog';
 import ConfirmDeleteDialog from '../Dialogs/ConfirmDeleteFundingRoundDialog';
 import { tableStyles } from '../styles/tables';
@@ -55,6 +55,9 @@ function FundingRoundTable({
   // Slice the filtered data to display only the rows for the current page
   const paginatedFundingRounds = filteredFundingRounds.slice(startIndex, endIndex);
 
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(filteredFundingRounds.length / localFundingRowsPerPage);
+
   const handleOpenDeleteFundingRoundDialog = (round) => {
     setFundingRoundToDelete(round);
     setOpenDeleteFundingRoundDialog(true);
@@ -74,12 +77,7 @@ function FundingRoundTable({
 
   // Pagination
   const handleFundingPageChange = (event, newPage) => {
-    setLocalFundingPage(newPage);
-  };
-
-  const handleFundingRowsPerPageChange = (event) => {
-    setLocalFundingRowsPerPage(parseInt(event.target.value, 10));
-    setLocalFundingPage(0);
+    setLocalFundingPage(newPage - 1);
   };
 
   return (
@@ -155,14 +153,9 @@ function FundingRoundTable({
           </TableBody>
         </Table>
 
-        <TablePagination
-          rowsPerPageOptions={[5]}
-          component="div"
-          count={filteredFundingRounds.length}
-          rowsPerPage={localFundingRowsPerPage}
-          page={localFundingPage}
-          onPageChange={handleFundingPageChange}
-          onRowsPerPageChange={handleFundingRowsPerPageChange} />
+        <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
+          <Pagination count={totalPages} page={localFundingPage + 1} onChange={handleFundingPageChange} size="medium" />
+        </Stack>
       </TableContainer>
 
       <ViewFundingRoundDialog open={openViewFundingRound} fundingRoundDetails={selectedFundingRoundDetails} onClose={handleCloseFundingProfile} />

@@ -1,27 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Avatar, Box, Divider, Toolbar, Typography, Grid, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, DialogActions, FormControl, TablePagination } from '@mui/material';
 import StarsIcon from '@mui/icons-material/Stars';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
+import axios from 'axios';
 
 const drawerWidth = 240;
 
 function FundingRoundView() {
   const [isFollowed, setIsFollowed] = useState(false);
-
+  const [avatarUrl, setAvatarUrl] = useState('');
   const location = useLocation();
-  const { fundinground } = location.state || {};
+  const { fundinground } = location.state || {};  
 
   console.log('Funding Round Data:', fundinground); 
+
+  useEffect(() => {
+    const fetchProfilePicture = async () => {
+      if (!fundinground?.startupId) {
+        console.error('startupId is undefined');
+        setAvatarUrl('path/to/default/image.png'); // Set a fallback image
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/profile-picture/startup/${fundinground.startupId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+            responseType: 'blob',
+          }
+        );
+
+        const imageUrl = URL.createObjectURL(response.data);
+        setAvatarUrl(imageUrl);
+
+        // Cleanup function to revoke URL
+        return () => {
+          URL.revokeObjectURL(imageUrl);
+        };
+      } catch (error) {
+        console.error('Failed to fetch profile picture:', error.message);
+        setAvatarUrl('path/to/default/image.png');
+      }
+    };
+
+    fetchProfilePicture();
+  }, [fundinground]);
+
+  const handleFollowToggle = () => {
+    setIsFollowed(!isFollowed);
+  };
 
   if (!fundinground) {
     return <div>No funding round data available</div>;
   }
 
-  const handleFollowToggle = () => {
-    setIsFollowed(!isFollowed);
-  };
+  console.log('Startup ID:', fundinground.startupId);
 
   return (
     <>
@@ -31,7 +69,17 @@ function FundingRoundView() {
       <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px`, mt: 5 }}>
         <Box display="flex" alignItems="center">
           <Box mr={4}>
-          <Avatar variant="rounded" sx={{ width: 150, height: 150, border: '5px solid rgba(0, 116, 144, 1)', borderRadius: 3, ml: 8 }}></Avatar>
+          <Avatar
+              variant="rounded"
+              src={avatarUrl || 'path/to/default/image.png'} // Ensure fallback image path is correct
+              sx={{
+                width: 150,
+                height: 150,
+                border: '5px solid rgba(0, 116, 144, 1)',
+                borderRadius: 3,
+                ml: 8,
+              }}
+            />
           </Box>
           <Typography variant="h4" gutterBottom>{fundinground.fundingType} - {fundinground.startupName}</Typography>
           <StarsIcon sx={{ cursor: 'pointer', ml: 1, mt: -1, color: isFollowed ? 'rgba(0, 116, 144, 1)' : 'inherit' }} onClick={handleFollowToggle} />

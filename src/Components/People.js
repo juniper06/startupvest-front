@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-  Box, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, Toolbar, Typography, Paper, TextField, Avatar
+  Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Toolbar, Typography, Paper, TextField, Avatar, Stack, Pagination
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import SearchIcon from '@mui/icons-material/Search';
@@ -14,8 +14,8 @@ const drawerWidth = 240;
 const headCells = [
   { id: 'name', numeric: false, disablePadding: false, label: 'Full Name' },
   { id: 'location', numeric: false, disablePadding: false, label: 'Location' },
-  { id: 'organization', numeric: false, disablePadding: false, label: 'Organization' },
   { id: 'email', numeric: false, disablePadding: false, label: 'Email Address' },
+  { id: 'biography', numeric: false, disablePadding: false, label: 'Biography', width: '38%', },
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -91,35 +91,27 @@ function EnhancedTableToolbar({ onRequestSearch }) {
 
   return (
     <Toolbar sx={{ pt: 5, mb: 3 }}>
-      <Typography
-        sx={{ flex: '1 1 100%', color: 'rgba(0, 116, 144, 1)', fontWeight: 'bold' }}
-        variant="h5"
-        id="tableTitle"
+      <Typography sx={{ flex: '1 1 100%', color: 'rgba(0, 116, 144, 1)', fontWeight: 'bold' }} variant="h5" id="tableTitle"
         component="div">
         Search People
       </Typography>
 
-      <TextField variant="standard"
-        placeholder="Search…"
-        onChange={handleSearch}
-        value={searchText}
-        sx={{ width: 350 }}
-        InputProps={{
-          startAdornment: <SearchIcon />,
-        }} />
+      <TextField variant="standard" placeholder="Search…" onChange={handleSearch} value={searchText} sx={{ width: 350 }}
+        InputProps={{ startAdornment: <SearchIcon /> }} />
     </Toolbar>
   );
 }
 
 export default function Companies() {
   const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('name'); // Ensure this matches a valid column
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [orderBy, setOrderBy] = useState('name');
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
   const [investors, setInvestors] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [profilePictures, setProfilePictures] = useState({});
 
   useEffect(() => {
     const fetchInvestors = async () => {
@@ -140,19 +132,44 @@ export default function Companies() {
     setFilteredRows(investors);
   }, [investors]);
 
+  const fetchProfilePicture = async (investorId) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/profile-picture/investor/${investorId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        responseType: 'blob', // Important for getting the image as a blob
+      });
+  
+      // Create a URL for the blob
+      const imageUrl = URL.createObjectURL(response.data);
+  
+      // Store the image URL in the state
+      setProfilePictures(prevState => ({
+        ...prevState,
+        [investorId]: imageUrl
+      }));
+    } catch (error) {
+      console.error('Failed to fetch profile picture:', error);
+    }
+  };
+
+  useEffect(() => {
+    investors.forEach(investor => {
+      if (!profilePictures[investor.id]) {
+        fetchProfilePicture(investor.id); // Fetch only if not already fetched
+      }
+    });
+  }, [investors]);  
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
-  const handleChangePage = (event, newPage) => {
+  const handlePageChange = (event, newPage) => {
     setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   const handleSearch = (searchText) => {
@@ -169,14 +186,11 @@ export default function Companies() {
     navigate(`/userview`, { state: { profile: investor } });
   };
 
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredRows.length) : 0;
-
   const visibleRows = useMemo(
     () =>
       stableSort(filteredRows, getComparator(order, orderBy)).slice(
+        (page - 1) * rowsPerPage,
         page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage,
       ),
     [order, orderBy, page, rowsPerPage, filteredRows],
   );
@@ -190,54 +204,42 @@ export default function Companies() {
       <Navbar />
       <Toolbar />
 
-      <Paper sx={{ width: '100%', p: 3 }} elevation={0}>
+      <Paper sx={{ width: '100%', p: 3, display: 'flex', flexDirection: 'column', height: '100%' }} elevation={0}>
         <EnhancedTableToolbar onRequestSearch={handleSearch} />
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size="medium">
-            <EnhancedTableHead
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-            />
+        <TableContainer sx={{ flex: 1 }}>
+          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
+            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
             <TableBody>
               {visibleRows.map((row, index) => (
-                <TableRow
-                  hover
-                  tabIndex={-1}
-                  key={row.id}
-                  sx={{ cursor: 'pointer', height: '75px' }}
+                <TableRow hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', height: '75px' }} 
                   onClick={() => handleRowClick(row)}>
                   <TableCell component="th" scope="row" padding="none">
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Avatar variant='rounded' sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }}>{row.firstName.charAt(0)}</Avatar>
+                    <Avatar variant='rounded' 
+                      sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }} 
+                      src={profilePictures[row.id] || ''} >
+                      {!profilePictures[row.id] && row.firstName.charAt(0)}
+                    </Avatar>
                       {row.firstName} {row.lastName}
                     </Box>
                   </TableCell>
                   <TableCell align="left">{row.streetAddress}, {row.city}, {row.country}</TableCell>
-                  <TableCell align="left">{row.organization}</TableCell>
                   <TableCell align="left">{row.emailAddress}</TableCell>
+                  <TableCell align="left" sx={{ textAlign: 'justify' }}>{row.biography.split(' ').slice(0, 20).join(' ')}...</TableCell>
                 </TableRow>
               ))}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
+              {filteredRows.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={headCells.length} align="center">No results found</TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </TableContainer>
 
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={filteredRows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}/>
+        <Stack spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+          <Pagination count={Math.ceil(filteredRows.length / rowsPerPage)} page={page} onChange={handlePageChange} size="large" />
+        </Stack>
       </Paper>
     </Box>
   );

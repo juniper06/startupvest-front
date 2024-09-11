@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Grid, Typography, TextField, Button, Select, MenuItem, FormControl, InputAdornment, IconButton } from '@mui/material';
+import { Grid, Typography, TextField, Button, Select, MenuItem, FormControl, InputAdornment, IconButton, Snackbar, Alert } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { styles } from '../styles/Signup';
@@ -12,6 +12,7 @@ function Signup() {
   const [emailExists, setEmailExists] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [email, setEmail] = useState('');
+  const [openAlert, setOpenAlert] = useState(false); // Snackbar state
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -55,7 +56,8 @@ function Signup() {
         userData
       );
       console.log('Signup successful:', response.data);
-      navigate('/login');
+      setOpenAlert(true); 
+      setTimeout(() => navigate('/login'), 1000);
     } catch (error) {
       console.error('Signup failed:', error);
       setError('Signup failed. Please try again.');
@@ -77,6 +79,10 @@ function Signup() {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleCloseAlert = () => {
+    setOpenAlert(false);
   };
 
   return (
@@ -110,8 +116,17 @@ function Signup() {
 
               <Grid item xs={12}>
                 <Typography sx={{ color: '#F2F2F2' }}>Email</Typography>
-                <TextField fullWidth name="email" placeholder="johndoe@gmail.com" type="email" required value={email}   
-                error={emailExists || !!error} onChange={(e) => setEmail(e.target.value)} onBlur={checkEmailExists} sx={styles.textField} />
+                <TextField
+                  fullWidth
+                  name="email"
+                  placeholder="johndoe@gmail.com"
+                  type="email"
+                  required
+                  value={email}
+                  error={emailExists || !!error}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onBlur={checkEmailExists}
+                  sx={styles.textField} />
                 {error && (
                   <Typography sx={styles.errorText}>
                     {error}
@@ -127,7 +142,8 @@ function Signup() {
               <Grid item xs={6}>
                 <Typography sx={{ color: '#F2F2F2' }}>Gender</Typography>
                 <FormControl fullWidth>
-                  <Select name="gender" sx={styles.select}>
+                  <Select name="gender" sx={styles.select} defaultValue='Select Gender'>
+                    <MenuItem value="Select Gender" disabled>Select Gender</MenuItem>
                     <MenuItem value="Male">Male</MenuItem>
                     <MenuItem value="Female">Female</MenuItem>
                     <MenuItem value="Other">Other</MenuItem>
@@ -137,20 +153,26 @@ function Signup() {
 
               <Grid item xs={12}>
                 <Typography sx={{ color: '#F2F2F2' }}>Password</Typography>
-                <TextField fullWidth name="password" placeholder="Your Password" type={showPassword ? 'text' : 'password'} 
-                error={!!passwordError} required sx={styles.passwordField}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={togglePasswordVisibility}
-                        edge="end"
-                        sx={{ p: '10px' }}>
-                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }} />
+                <TextField
+                  fullWidth
+                  name="password"
+                  placeholder="Your Password"
+                  type={showPassword ? 'text' : 'password'}
+                  error={!!passwordError}
+                  required
+                  sx={styles.passwordField}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={togglePasswordVisibility}
+                          edge="end"
+                          sx={{ p: '10px' }}>
+                          {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}/>
                 {passwordError && (
                   <Typography sx={styles.errorText}>
                     {passwordError}
@@ -172,6 +194,16 @@ function Signup() {
           </form>
         </Grid>
       </Grid>
+
+      <Snackbar
+        open={openAlert}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert onClose={handleCloseAlert} severity="success" sx={styles.snackbar}>
+          Login successful! Redirecting to homepage...
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

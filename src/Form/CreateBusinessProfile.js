@@ -65,6 +65,7 @@ function CreateBusinessProfile() {
       if (!numberOfEmployees) newErrors.numberOfEmployees = requiredErrorMessage;
       if (!phoneNumber) newErrors.phoneNumber = requiredErrorMessage;
       if (!contactEmail) newErrors.contactEmail = requiredErrorMessage;
+      if (!industry) newErrors.industry = requiredErrorMessage;
     } else if (selectedProfileType === 'Investor') {
       if (!firstName) newErrors.firstName = requiredErrorMessage;
       if (!lastName) newErrors.lastName = requiredErrorMessage;
@@ -220,15 +221,16 @@ function CreateBusinessProfile() {
                                 <FormControl fullWidth variant="outlined">
                                     <Select
                                         labelId="day-label"
+                                        error={!!errors.foundedDay}
                                         value={foundedDay}
                                         onChange={(e) => setFoundedDay(e.target.value)}
-                                        sx={{ height: '45px' }}
-                                        error={!!errors.foundedDay}>
+                                        sx={{ height: '45px' }}>
                                         {days.map((day) => (
                                             <MenuItem key={day} value={day}>{day}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
+                                {errors.foundedDay && (<FormHelperText error>{errors.foundedDay}</FormHelperText>)}
                             </Grid>
 
                             <Grid item xs={4}>
@@ -236,15 +238,16 @@ function CreateBusinessProfile() {
                             <FormControl fullWidth variant="outlined">
                                 <Select
                                     labelId="year-label"
+                                    error={!!errors.foundedYear}
                                     value={foundedYear}
                                     onChange={(e) => setFoundedYear(e.target.value)}
-                                    sx={{ height: '45px' }}
-                                    error={!!errors.foundedYear}>
+                                    sx={{ height: '45px' }}>
                                     {years.map((year) => (
                                         <MenuItem key={year} value={year}>{year}</MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
+                            {errors.foundedYear && (<FormHelperText error>{errors.foundedYear}</FormHelperText>)}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -307,6 +310,32 @@ function CreateBusinessProfile() {
                 </Grid>
 
                 <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
+                    Industry
+                </Typography>
+
+                <Grid container spacing={3} sx={{ ml: 2 }}>
+                    <Grid item xs={12} sm={11.4}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>  
+                            <FormControl fullWidth variant="outlined">
+                                <Select
+                                    error={!!errors.industry}
+                                    labelId="industry-label"
+                                    value={industry}
+                                    onChange={(e) => setIndustry(e.target.value)}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} >
+                                    {industries.map(industry => (
+                                        <MenuItem key={industry} value={industry}>{industry}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            {errors.industry && (<FormHelperText error>{errors.industry}</FormHelperText>)}
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                
+                <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
                     Location
                 </Typography>
 
@@ -368,30 +397,6 @@ function CreateBusinessProfile() {
                                 <label>Postal/Zip Code *</label>
                                 <TextField fullWidth variant="outlined" value={postalCode} onChange={(e) => setPostalCode(e.target.value)}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
-
-                <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
-                    Industry
-                </Typography>
-
-                <Grid container spacing={3} sx={{ ml: 2 }}>
-                    <Grid item xs={12} sm={11.4}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>  
-                            <FormControl fullWidth variant="outlined">
-                                <Select
-                                    labelId="industry-label"
-                                    value={industry}
-                                    onChange={(e) => setIndustry(e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} >
-                                    {industries.map(industry => (
-                                        <MenuItem key={industry} value={industry}>{industry}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -612,7 +617,9 @@ function CreateBusinessProfile() {
         <SuccessCreateBusinessProfileDialog
             open={successDialogOpen}
             onClose={() => setSuccessDialogOpen(false)}
-            companyName={companyName}/>
+            companyName={companyName}
+            firstName={firstName}
+            lastName={lastName}/>
         </>
     );
 }

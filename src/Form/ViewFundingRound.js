@@ -28,7 +28,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const months = Array.from({ length: 12 }, (_, i) => {
         return new Intl.DateTimeFormat('en', { month: 'long' }).format(new Date(2000, i, 1));
     });
-    const years = [...Array(51).keys()].map(i => new Date().getFullYear() - i);
+    const years = [...Array(51).keys()].map(i => new Date().getFullYear() + i);
 
     const announcedDate = new Date(fundingRoundDetails?.announcedDate);
     const closedDate = new Date(fundingRoundDetails?.closedDate);
@@ -307,11 +307,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 onChange={(e) => setCurrency(e.target.value)}
                                 disabled
                                 sx={{ height: '45px' }}>
-                                <MenuItem value="PESO">PESO</MenuItem>                                    
-                                <MenuItem value="USD">USD</MenuItem>
-                                <MenuItem value="EUR">EUR</MenuItem>
-                                <MenuItem value="GBP">GBP</MenuItem>
-                                <MenuItem value="JPY">JPY</MenuItem>
+                                <MenuItem value="₱">PESO</MenuItem>
+                                <MenuItem value="$">USD</MenuItem>
+                                <MenuItem value="€">EUR</MenuItem>
+                                <MenuItem value="£">GBP</MenuItem>
+                                <MenuItem value="¥">JPY</MenuItem>
+                                <MenuItem value="₩">KRW</MenuItem>
                             </Select>
                         </Grid>
 
@@ -337,10 +338,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 onChange={(e) => setCurrency(e.target.value)}
                                 disabled={!isEditMode}
                                 sx={{ height: '45px' }}>
-                                <MenuItem value="PESO">PESO</MenuItem>
-                                <MenuItem value="EUR">EUR</MenuItem>
-                                <MenuItem value="GBP">GBP</MenuItem>
-                                <MenuItem value="JPY">JPY</MenuItem>
+                                <MenuItem value="₱">PESO</MenuItem>
+                                <MenuItem value="$">USD</MenuItem>
+                                <MenuItem value="€">EUR</MenuItem>
+                                <MenuItem value="£">GBP</MenuItem>
+                                <MenuItem value="¥">JPY</MenuItem>
+                                <MenuItem value="₩">KRW</MenuItem>
                             </Select>
                         </Grid>
 
@@ -356,6 +359,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                         </Grid>
 
+                        <Grid item xs={12}>
+                            <Typography sx={{ color: '#007490'}}>
+                                A minimum share is the smallest amount of money you need to invest in a company to become a shareholder. For example, if the minimum share is P10,000, this means you have to spend P10,000 to buy just one share of that company.
+                            </Typography>
+                        </Grid>
+                        
                         <Grid item xs={8}>
                             <label><b>Minimum Share</b></label>
                                 <TextField
@@ -364,9 +373,8 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                     type='number'
                                     value={minimumShare}
                                     onChange={(e) => setMinimumShare(e.target.value)}
-                                    disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                />
+                                    disabled
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
                         </Grid>
                         <Grid item xs={4}>
                             <label><b>Currency</b></label>
@@ -377,11 +385,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 onChange={(e) => setCurrency(e.target.value)}
                                 disabled
                                 sx={{ height: '45px' }}>
-                                <MenuItem value="PESO">PESO</MenuItem>
-                                <MenuItem value="USD">USD</MenuItem>
-                                <MenuItem value="EUR">EUR</MenuItem>
-                                <MenuItem value="GBP">GBP</MenuItem>
-                                <MenuItem value="JPY">JPY</MenuItem>
+                                <MenuItem value="₱">PESO</MenuItem>
+                                <MenuItem value="$">USD</MenuItem>
+                                <MenuItem value="€">EUR</MenuItem>
+                                <MenuItem value="£">GBP</MenuItem>
+                                <MenuItem value="¥">JPY</MenuItem>
+                                <MenuItem value="₩">KRW</MenuItem>
                             </Select>
                         </Grid>
                     </Grid>
@@ -400,23 +409,16 @@ function ViewFundingRound({ fundingRoundDetails }) {
                             <Grid item xs={4}>
                                 <label>Shareholder Name</label>
                                 <FormControl fullWidth variant="outlined">
-                                    <Select
-                                        sx={{ height: '45px'}}
-                                        displayEmpty
-                                        value={investor.name}
-                                        onChange={(event) => handleInvestorChange(index, 'name', event.target.value)}
+                                    <Autocomplete disablePortal options={allInvestors}
+                                        sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                        getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
+                                        value={allInvestors.find(inv => inv.id === investor.name) || null}
+                                        onChange={(event, newValue) => handleInvestorChange(index, 'name', newValue ? newValue.id : '')}
                                         disabled={!isEditMode}
-                                        renderValue={selected => {
-                                            if (selected === '') {
-                                                return <em>Shareholder's Name</em>;
-                                            }
-                                            const selectedInvestor = allInvestors.find(inv => inv.id === selected);
-                                            return selectedInvestor ? `${selectedInvestor.firstName} ${selectedInvestor.lastName}` : <em>Shareholder's Name</em>;
-                                        }}>
-                                        {allInvestors.map((inv) => (
-                                            <MenuItem key={inv.id} value={inv.id}>{inv.firstName} {inv.lastName}</MenuItem>
-                                        ))}
-                                    </Select>
+                                        renderInput={(params) => (
+                                        <TextField  {...params} variant="outlined" />
+                                        )}
+                                        isOptionEqualToValue={(option, value) => option.id === value.id}/>
                                 </FormControl>
                             </Grid>
                             
@@ -428,8 +430,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                     value={investor.title}
                                     onChange={(e) => handleInvestorChange(index, 'title', e.target.value)}
                                     disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} 
-                                />
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                             </Grid>
                             
                             <Grid item xs={4}>
@@ -437,11 +438,11 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 <TextField
                                     fullWidth
                                     variant="outlined"
+                                    type="number"
                                     value={investor.shares}
                                     onChange={(e) => handleSharesChange(index, e.target.value)}
                                     disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} 
-                                />
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -453,11 +454,9 @@ function ViewFundingRound({ fundingRoundDetails }) {
                 </Grid>
             </Grid>
 
-            <Button
-                variant="contained"
+            <Button variant="contained"
                 sx={{ width: 150, background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }} style={{marginLeft: '80%'}}
-                onClick={isEditMode ? handleUpdateFundingRound : toggleEditMode}
-            >
+                onClick={isEditMode ? handleUpdateFundingRound : toggleEditMode}>
                 {isEditMode ? 'Save Changes' : 'Edit Funding'}
             </Button>
         </Box>
