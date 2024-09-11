@@ -86,7 +86,9 @@ function CapTable({
                 <TableRow key={table.id}>
                   <TableCell sx={tableStyles.cell}>{table.name}</TableCell>
                   <TableCell sx={tableStyles.cell}>{table.title}</TableCell>
-                  <TableCell sx={tableStyles.cell}>{table.totalShares}</TableCell>
+                  <TableCell sx={tableStyles.cell}>
+                    {Number(table.totalShares).toLocaleString()}
+                  </TableCell>
                   <TableCell sx={tableStyles.cell}>
                     {table.percentage !== undefined ? table.percentage.toFixed(2) : 'N/A'}%
                   </TableCell>

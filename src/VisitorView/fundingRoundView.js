@@ -98,7 +98,8 @@ function FundingRoundView() {
                     <Grid container spacing={3}>
                     <Grid item xs={12}>
                     <Typography variant="body1">
-                      To invest in our company, a minimum purchase of {fundinground.moneyRaisedCurrency} {fundinground.minimumShare} shares is required. This ensures a meaningful investment and supports our long-term growth.
+                      To invest in our company, a minimum purchase of {fundinground.moneyRaisedCurrency} {parseInt(fundinground.minimumShare, 10).toLocaleString()} shares 
+                      is required. This ensures a meaningful investment and supports our long-term growth.
                       <br /><br />
                       For more information, please contact us.
                     </Typography>
@@ -126,13 +127,13 @@ function FundingRoundView() {
 
                       <Grid item xs={4}>
                         <Typography><strong>Money Raised</strong></Typography>
-                        <Typography variant="body1">{fundinground.moneyRaisedCurrency} {fundinground.moneyRaised}</Typography>
+                        {fundinground.moneyRaisedCurrency} {fundinground.moneyRaised ? Number(fundinground.moneyRaised).toLocaleString() : 'N/A'}
                       </Grid>
 
                       <Grid item xs={4}>
                         <Typography><strong>Pre-Money Valuation</strong></Typography>
                         <Typography variant="body1">
-                        {fundinground.moneyRaisedCurrency} {fundinground.preMoneyValuation ? fundinground.preMoneyValuation : 'N/A'}
+                        {fundinground.moneyRaisedCurrency} {fundinground.preMoneyValuation ? Number(fundinground.preMoneyValuation).toLocaleString() : 'N/A'}
                         </Typography>
                       </Grid>
                     </Grid>
@@ -160,7 +161,9 @@ function FundingRoundView() {
                             {investorDetail.investor.firstName} {investorDetail.investor.lastName}
                           </TableCell>
                           <TableCell sx={{ textAlign: 'center' }}>{investorDetail.title}</TableCell>
-                          <TableCell sx={{ textAlign: 'center' }}>{investorDetail.shares}</TableCell>
+                          <TableCell sx={{ textAlign: 'center' }}>
+                          {fundinground.moneyRaisedCurrency} {Number(investorDetail.shares).toLocaleString()}
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

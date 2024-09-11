@@ -11,7 +11,8 @@ import Navbar from '../Navbar/Navbar';
 const drawerWidth = 240;
 
 function createData(id, transactionName, startupName, fundingType, moneyRaised, 
-  moneyRaisedCurrency, announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, startupId, minimumShare ) {
+  moneyRaisedCurrency, announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, 
+  minimumShare, startupId ) {
   return {
     id,
     transactionName,
@@ -24,8 +25,8 @@ function createData(id, transactionName, startupName, fundingType, moneyRaised,
     avatar,
     preMoneyValuation,
     capTableInvestors,
-    startupId,
-    minimumShare
+    minimumShare,
+    startupId
   };
 }
 
@@ -261,7 +262,7 @@ export default function FundingRound() {
                     </TableCell>
                     <TableCell align="left">{row.fundingType}</TableCell>
                     <TableCell align="left">
-                      {row.moneyRaisedCurrency} {row.moneyRaised}
+                      {row.moneyRaisedCurrency} {Number(row.moneyRaised).toLocaleString()}
                     </TableCell>
                     <TableCell align="left">{row.announcedDate}</TableCell>
                     <TableCell align="left">{row.closedDate}</TableCell>
