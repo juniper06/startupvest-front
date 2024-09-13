@@ -131,7 +131,7 @@ export default function Navbar() {
             <List>
               <ListItem disablePadding>
                 <ListItemButton component={Link} to="/profile">
-                  <Avatar sx={{ mr: 1, mt: 1, mb: 1, width: 40, height: 40, border: '2px #F2F2F2 solid' }}>
+                  <Avatar sx={{ mr: 1,  width: 40, height: 40, border: '2px #F2F2F2 solid' }}>
                     {userPhoto ? (
                       <img
                         src={userPhoto}
@@ -177,7 +177,7 @@ export default function Navbar() {
               )}
 
               {menuItems.map((item) => (
-                <ListItem key={item.text} disablePadding sx={{ p: 1}}>
+                <ListItem key={item.text} disablePadding sx={{ pt: 1, pb: 1}}>
                   <ListItemButton component={Link} to={item.path}>
                     <ListItemIcon>
                         {item.icon}
@@ -187,7 +187,7 @@ export default function Navbar() {
                 </ListItem>
               ))}
               <Divider />
-              <ListItem disablePadding sx={{ p: 1}}>
+              <ListItem disablePadding>
                 <ListItemButton component={Link} to="/" onClick={handleLogout}>
                   <ListItemIcon>
                       <LogoutIcon sx={{ color: '#F2F2F2' }} />
