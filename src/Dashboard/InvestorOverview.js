@@ -24,7 +24,7 @@ function InvestorOverview() {
 
             <Grid container spacing={3} sx={{ paddingLeft: `${drawerWidth}px`, pt: '50px', pr: '50px' }}>
                 <Grid item xs={12}>
-                    <Typography variant="h5" sx={{ mb: 2 }}>
+                    <Typography variant="h5" sx={{ mb: 2, ml: -3 }}>
                         Dashboard as Investor
                     </Typography>
                 </Grid>
@@ -61,7 +61,7 @@ function InvestorOverview() {
                 
                 {/* My Investments Header */}
                 <Grid item xs={12}>
-                    <Typography variant="h5" sx={{ mt: 4, mb: 2 }}>
+                    <Typography variant="h5" sx={{ mt: 4, mb: 2, ml: -3 }}>
                         My Investments
                     </Typography>
                 </Grid>
