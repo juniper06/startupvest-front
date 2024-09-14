@@ -15,7 +15,9 @@ function FundingRoundTable({
   handleCloseFundingProfile,
   businessProfiles,
   onTotalAmountFundedChange,
-  onFundingRoundsCountChange
+  onFundingRoundsCountChange,
+  onMoneyRaisedCountChange,
+  onHighestMoneyRaisedCompanyChange, // New prop
 }) {
   const [localFundingPage, setLocalFundingPage] = useState(fundingPage);
   const [localFundingRowsPerPage, setLocalFundingRowsPerPage] = useState(fundingRowsPerPage);
@@ -26,6 +28,8 @@ function FundingRoundTable({
 
   const [filteredFundingRoundsCount, setFilteredFundingRoundsCount] = useState(0);
   const [totalAmountFunded, setTotalAmountFunded] = useState(0);
+  const [fundingRoundsWithMoneyRaised, setFundingRoundsWithMoneyRaised] = useState(0);
+  const [highestMoneyRaisedCompany, setHighestMoneyRaisedCompany] = useState({ companyName: '', totalMoneyRaised: 0 });
 
   // Handle the startup filter change
   const handleStartupChangeFunding = (event) => {
@@ -42,38 +46,63 @@ function FundingRoundTable({
     ? fundingRounds.filter(round => round.startup && userCreatedStartupIds.includes(round.startup.id))
     : fundingRounds.filter(round => round.startup && round.startup.id === selectedStartupFunding);
 
-  // Calculate the total amount funded from filtered funding rounds
+  // Calculate the total amount funded and rounds with moneyRaised > 0
   useEffect(() => {
     const totalFunded = filteredFundingRounds.reduce((sum, round) => sum + (round.moneyRaised || 0), 0);
     setTotalAmountFunded(totalFunded);
-    setFilteredFundingRoundsCount(filteredFundingRounds.length);  // Update the count
+    setFilteredFundingRoundsCount(filteredFundingRounds.length);
     onTotalAmountFundedChange(totalFunded);
 
-    // Pass the filtered rounds count to the UserDashboard
-    onFundingRoundsCountChange(filteredFundingRounds.length);
-  }, [filteredFundingRounds, onTotalAmountFundedChange, onFundingRoundsCountChange]);
+    const roundsWithMoneyRaised = filteredFundingRounds.filter(round => round.moneyRaised > 0).length;
+    setFundingRoundsWithMoneyRaised(roundsWithMoneyRaised);
+    
+    if (onMoneyRaisedCountChange) {
+      onMoneyRaisedCountChange(roundsWithMoneyRaised);
+    }
 
-  // Calculate totals for Money Raised and Target Funding columns
+    onFundingRoundsCountChange(filteredFundingRounds.length);
+
+    // Calculate and update the highest money raised company
+    const companyMoneyRaised = filteredFundingRounds.reduce((acc, round) => {
+      const companyId = round.startup?.id;
+      if (companyId) {
+        if (!acc[companyId]) {
+          acc[companyId] = {
+            companyName: round.startup.companyName,
+            totalMoneyRaised: 0,
+          };
+        }
+        acc[companyId].totalMoneyRaised += round.moneyRaised || 0;
+      }
+      return acc;
+    }, {});
+
+    const highestMoneyRaised = Object.values(companyMoneyRaised).reduce((max, company) => {
+      return company.totalMoneyRaised > max.totalMoneyRaised ? company : max;
+    }, { companyName: '', totalMoneyRaised: 0 });
+
+    setHighestMoneyRaisedCompany(highestMoneyRaised);
+
+    if (onHighestMoneyRaisedCompanyChange) {
+      onHighestMoneyRaisedCompanyChange(highestMoneyRaised);
+    }
+  }, [filteredFundingRounds, onTotalAmountFundedChange, onFundingRoundsCountChange, onMoneyRaisedCountChange, onHighestMoneyRaisedCompanyChange]);
+
   const totalMoneyRaised = filteredFundingRounds.reduce((sum, round) => sum + (round.moneyRaised || 0), 0);
   const totalTargetFunding = filteredFundingRounds.reduce((sum, round) => sum + (round.targetFunding || 0), 0);
 
-  // Get the currency symbol from the first funding round if available
   const currencySymbol = filteredFundingRounds.length > 0 ? filteredFundingRounds[0].moneyRaisedCurrency : '';
 
-  // Format the totals correctly
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) return '';
     return `${currencySymbol} ${Number(value).toLocaleString()}`;
   };
 
-  // Calculate the index of the first and last row to display
   const startIndex = localFundingPage * localFundingRowsPerPage;
   const endIndex = startIndex + localFundingRowsPerPage;
 
-  // Slice the filtered data to display only the rows for the current page
   const paginatedFundingRounds = filteredFundingRounds.slice(startIndex, endIndex);
 
-  // Calculate the total number of pages
   const totalPages = Math.ceil(filteredFundingRounds.length / localFundingRowsPerPage);
 
   const handleOpenDeleteFundingRoundDialog = (round) => {
@@ -93,7 +122,6 @@ function FundingRoundTable({
     }
   };
 
-  // Pagination
   const handleFundingPageChange = (event, newPage) => {
     setLocalFundingPage(newPage - 1);
   };
@@ -174,7 +202,6 @@ function FundingRoundTable({
             )}
           </TableBody>
 
-          {/* Conditionally add a TableRow for the totals */}
           {paginatedFundingRounds.length > 0 && (
             <TableBody>
               <TableRow>
