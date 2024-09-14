@@ -17,7 +17,7 @@ import CapTable from '../Tables/CapTableTable';
 import { Container, HeaderBox, StatsBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle, CreateButton, GraphTitle, RecentActivityTitle} from '../styles/UserDashboard';
 
 function UserDashboard() {
-    const [tabValue, setTabValue] = useState(0);
+    const [tabValue, setTabValue] = useState(1);
 
     // PROFILE
     const [openCreateBusinessProfile, setCreateBusinessProfile] = useState(false);
@@ -46,14 +46,22 @@ function UserDashboard() {
     const [investorCount, setInvestorCount] = useState(0);
     // const [fundingRoundCount, setFundingRoundCount] = useState(0);
     const [totalAmountFunded, setTotalAmountFunded] = useState(0);
+    const [fundingRoundsCount, setFundingRoundsCount] = useState(0);
+
+    const [filteredFundingRoundsCount, setFilteredFundingRoundsCount] = useState(0);
 
     const [recentActivities, setRecentActivities] = useState([]);
     
     useEffect(() => {
         fetchBusinessProfiles();
         fetchFundingRounds();
-        fetchCapTable();
-        fetchAllInvestorsByEachUsersCompany();
+        // fetchCapTable();
+        fetchInvestorsByEachUsersCompany();
+
+        const timer = setTimeout(() => {
+            setTabValue(0);
+        }, 1000);
+        return () => clearTimeout(timer);
     }, []);
 
     const handleTabChange = (event, newValue) => {
@@ -63,12 +71,12 @@ function UserDashboard() {
     // PROFILE
     const handleOpenBusinessProfile = () => {
         setCreateBusinessProfile(true);
-      };
+    };
     
-      const handleCloseBusinessProfile = () => {
+    const handleCloseBusinessProfile = () => {
         setCreateBusinessProfile(false);
         fetchBusinessProfiles();
-      };
+    };
 
     const handleOpenStartUp = (profile) => {
         setSelectedBusinessProfile(profile);
@@ -97,6 +105,16 @@ function UserDashboard() {
     setOpenDeleteDialog(false);
     };
 
+    // Handler to update the total amount funded
+    const handleTotalAmountFundedChange = (total) => {
+        setTotalAmountFunded(total);
+    };
+
+    // Handler to update the funded rounds count
+    const handleFundingRoundsCountChange = (count) => {
+        setFundingRoundsCount(count);
+    };
+
     const fetchBusinessProfiles = async () => {
         try {
             const responseStartups = await axios.get(`http://localhost:3000/startups`, {
@@ -119,8 +137,6 @@ function UserDashboard() {
             // Update counts
             setCompanyCount(startups.length);
             // setInvestorCount(investors.length);
-            // setInvestorCount(fundedInvestors.length); // Use fundedInvestors length here
-            setFundedCompaniesCount(investors.length > 0 ? 1 : 0); // Example logic, adjust based on your criteria
         } catch (error) {
             console.error('Failed to fetch business profiles:', error);
         }
@@ -171,6 +187,7 @@ function UserDashboard() {
 
     const handleCloseFundingProfile = () => {
         setOpenViewFundingRound(false);
+        fetchFundingRounds();
     }
 
     const handleViewFundingRound = async (fundingRoundId) => {
@@ -222,6 +239,7 @@ function UserDashboard() {
             // Calculate the total amount funded
             const totalFunded = fundingRounds.reduce((total, round) => total + round.amount, 0);
             setTotalAmountFunded(totalFunded);
+            setFilteredFundingRoundsCount(filteredFundingRounds.length);
         } catch (error) {
             console.error('Error fetching funding rounds:', error);
         }
@@ -230,35 +248,14 @@ function UserDashboard() {
     // CAP TABLE
     useEffect(() => {
         if (selectedStartupCapTable === 'Select Company') {
-            fetchAllInvestorsByEachUsersCompany();
+            fetchInvestorsByEachUsersCompany();
         } else {
-            fetchCapTable(selectedStartupCapTable);
+            // fetchCapTable(selectedStartupCapTable);
         }
     }, [selectedStartupCapTable]);
-
-    const fetchCapTable = async (companyId) => {
-        try {
-            const response = await axios.get(`http://localhost:3000/funding-rounds/investors/${companyId}`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-    
-            if (response.data.length === 0) {
-                // Handle the "No investors found" scenario
-                setCapTables([]);
-                setFilteredCapTables([]);
-            } else {
-                setCapTables(response.data);
-                setFilteredCapTables(response.data);
-            }
-        } catch (error) {
-            console.error('Error fetching investors:', error);
-        }
-    };
     
 
-    const fetchAllInvestorsByEachUsersCompany = async (companyId) => {
+    const fetchInvestorsByEachUsersCompany = async (companyId) => {
         try {
             const response = await axios.get(`http://localhost:3000/funding-rounds/${companyId}/investors/all`, {
                 headers: {
@@ -276,8 +273,8 @@ function UserDashboard() {
     const handleStartupChangeCapTable = (event) => {
         const selectedCompanyId = event.target.value;
         setSelectedStartupCapTable(selectedCompanyId);
-        fetchCapTable(selectedCompanyId);
-        fetchAllInvestorsByEachUsersCompany(selectedCompanyId);
+        // fetchCapTable(selectedCompanyId);
+        fetchInvestorsByEachUsersCompany(selectedCompanyId);
     };
 
     return (
@@ -334,7 +331,7 @@ function UserDashboard() {
                     <Grid item xs={12} sm={3}>
                         <StatsBox>
                             <TopInfoText>Funded Companies</TopInfoText>
-                            <TopInfoTitle>{fundedCompaniesCount} out of {companyCount}</TopInfoTitle>
+                            <TopInfoTitle>{fundingRoundsCount} out of {companyCount}</TopInfoTitle>
                         </StatsBox>
                     </Grid>
 
@@ -355,7 +352,7 @@ function UserDashboard() {
                     <Grid item xs={12} sm={2}>
                         <StatsBox>
                             <TopInfoText>Funding Rounds</TopInfoText>
-                            <TopInfoTitle>{fundedCompaniesCount}</TopInfoTitle>
+                            <TopInfoTitle>{fundingRoundsCount}</TopInfoTitle>
                         </StatsBox>
                     </Grid>
 
@@ -431,7 +428,8 @@ function UserDashboard() {
                                     handleCloseFundingRound={handleCloseFundingRound}
                                     handleCloseFundingProfile={handleCloseFundingProfile}
                                     businessProfiles={businessProfiles}
-                                    onTotalAmountFundedChange={setTotalAmountFunded} />
+                                    onTotalAmountFundedChange={handleTotalAmountFundedChange}
+                                    onFundingRoundsCountChange={handleFundingRoundsCountChange} />
                             )}
 
                             {tabValue === 2 && (

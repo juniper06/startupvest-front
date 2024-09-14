@@ -3,15 +3,16 @@ import { Box, Typography, Grid } from "@mui/material";
 
 const steps = [
     {   
-        label: "StartUp Vest Overview", 
-        content: "StartUp Vest is your ultimate platform for startup success, offering powerful tools to manage growth, connect with investors, and secure funding. With real-time analytics, seamless investment tracking, and unparalleled networking opportunities, StartUp Vest empowers entrepreneurs to streamline their journey from idea to industry leader." 
+        label: "Overview", 
+        content: "Startup Vest is a dynamic platform designed to bridge the gap between startup owners seeking funding and investors looking for high-potential ventures. It offers a streamlined, user-friendly environment where entrepreneurs can present their companies, attract funding, and scale their businesses, while investors can explore and invest in startups that align with their interests." 
     },
     {   
         label: "Create Business Profile", 
         content: (
             <Box>
                 <Typography variant="body1">
-                    With StartUp Vest, you can create a detailed business profile as either a startup owner or an investor. Startup owners have the ability to set up and manage funding rounds for their ventures, while investors can explore and engage with promising opportunities. This dual functionality ensures that both sides of the investment equation are well-supported and connected.
+                    With StartUp Vest, you can create a detailed business profile as either a startup owner or an investor. 
+                    <br /><br />Startup owners have the ability to set up and manage funding rounds for their ventures, while investors can explore and engage with promising opportunities. This dual functionality ensures that both sides of the investment equation are well-supported and connected.
                 </Typography>
 
                 <Grid container spacing={2} sx={{ mt: 2 }}>
