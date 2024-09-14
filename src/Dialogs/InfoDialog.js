@@ -14,7 +14,7 @@ const InfoDialog = ({ open, onClose, activeStep, setActiveStep }) => {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
-      <DialogTitle>Steps Information</DialogTitle>
+      <DialogTitle>User Guide: StartUp Vest</DialogTitle>
       <DialogContent>
         <Stepper activeStep={activeStep} alternativeLabel>
           {steps.map((step, index) => (
@@ -35,7 +35,7 @@ const InfoDialog = ({ open, onClose, activeStep, setActiveStep }) => {
           Next
         </Button>
         <Button onClick={onClose}>
-          Skip
+          Close
         </Button>
       </DialogActions>
     </Dialog>

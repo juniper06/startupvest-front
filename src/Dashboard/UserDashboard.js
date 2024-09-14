@@ -343,49 +343,105 @@ function UserDashboard() {
   };
 
    //RECENT ACTIVITIES
+  // useEffect(() => {
+  //   const fetchRecentActivities = async () => {
+  //     try {
+  //       const companyId = selectedBusinessProfile?.id || 1; // Replace with the actual logic to get companyId
+  //       const limit = 5; // Set a limit for the number of recent activities
+
+  //       // Fetch recent activities from the server
+  //       const response = await axios.get(
+  //         `http://localhost:3000/activities/${companyId}/recent`,
+  //         {
+  //           params: { limit },
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //           },
+  //         }
+  //       );
+
+  //       console.log("Recent Activities Data:", response.data);
+
+  //       // Filter the activities based on userCreatedStartupIds and selectedStartupFunding
+  //       const userCreatedStartupIds = businessProfiles
+  //         .filter(profile => profile.type === 'Startup')
+  //         .map(startup => startup.id);
+
+  //       console.log("User-Created Startup IDs:", userCreatedStartupIds);
+
+  //       const filteredData = selectedStartupFunding === 'All'
+  //         ? response.data.filter(activity => userCreatedStartupIds.includes(activity.companyId))
+  //         : response.data.filter(activity => activity.companyId === selectedStartupFunding);
+
+  //       console.log("Filtered Company Activity:", filteredData);
+
+  //       // Set the filtered activities to state
+  //       setRecentActivities(response.data); // Store raw activities
+  //       setFilteredCompanyActivity(filteredData); // Store filtered activities
+
+  //     } catch (error) {
+  //       console.error("Error fetching recent activities:", error);
+  //     }
+  //   };
+
+  //   fetchRecentActivities();
+  // }, [ selectedStartupFunding, businessProfiles]);
+
+
+
+
+
   useEffect(() => {
     const fetchRecentActivities = async () => {
       try {
-        const companyId = selectedBusinessProfile?.id || 1; // Replace with the actual logic to get companyId
-        const limit = 5; // Set a limit for the number of recent activities
-
-        // Fetch recent activities from the server
-        const response = await axios.get(
-          `http://localhost:3000/activities/${companyId}/recent`,
+        // Fetch the list of companies for the logged-in user
+        const userCompaniesResponse = await axios.get(
+          'http://localhost:3000/startups', // Update this endpoint if needed
           {
-            params: { limit },
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           }
         );
-
+  
+        const userCompanies = userCompaniesResponse.data; // Assuming this returns an array of company objects
+        const userCompanyIds = userCompanies.map(company => company.id);
+  
+        // Fetch recent activities using the list of company IDs
+        const limit = 5; // Set a limit for the number of recent activities
+  
+        const response = await axios.get(
+          `http://localhost:3000/activities/all-recent`, // Update this endpoint if needed
+          {
+            params: { limit, companyIds: userCompanyIds },
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+  
         console.log("Recent Activities Data:", response.data);
-
-        // Filter the activities based on userCreatedStartupIds and selectedStartupFunding
-        const userCreatedStartupIds = businessProfiles
-          .filter(profile => profile.type === 'Startup')
-          .map(startup => startup.id);
-
-        console.log("User-Created Startup IDs:", userCreatedStartupIds);
-
+  
+        // Filter the activities based on the selectedStartupFunding
         const filteredData = selectedStartupFunding === 'All'
-          ? response.data.filter(activity => userCreatedStartupIds.includes(activity.companyId))
+          ? response.data.filter(activity => userCompanyIds.includes(activity.companyId))
           : response.data.filter(activity => activity.companyId === selectedStartupFunding);
-
+  
         console.log("Filtered Company Activity:", filteredData);
-
+  
         // Set the filtered activities to state
         setRecentActivities(response.data); // Store raw activities
         setFilteredCompanyActivity(filteredData); // Store filtered activities
-
+  
       } catch (error) {
         console.error("Error fetching recent activities:", error);
       }
     };
-
+  
     fetchRecentActivities();
-  }, [ selectedStartupFunding, businessProfiles]);
+  }, [selectedStartupFunding, businessProfiles]);
+  
+  
 
   return (
     <>

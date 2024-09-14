@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Select, MenuItem, Grid, FormControl, FormHelperText, Autocomplete } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 
 import SuccessCreateFundingRoundDialog from '../Dialogs/SuccessCreateFundingRoundDialog';
@@ -89,6 +91,11 @@ function CreateFundingRound() {
         if (!preMoneyValuation) newErrors.preMoneyValuation = requiredErrorMessage;
         if (!minimumShare) newErrors.minimumShare = requiredErrorMessage;
     
+        // Check if closedYear is earlier than announcedYear
+        if (announcedYear && closedYear && parseInt(closedYear) < parseInt(announcedYear)) {
+            newErrors.closedYear = 'Closed year can\'t be before announced year.';
+        }
+    
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -133,6 +140,12 @@ function CreateFundingRound() {
     const handleSharesChange = (index, value) => {
         const updatedInvestors = [...investors];
         updatedInvestors[index].shares = value;
+        setInvestors(updatedInvestors);
+    };
+
+    const handleRemoveInvestor = (index) => {
+        const updatedInvestors = [...investors];
+        updatedInvestors.splice(index, 1);
         setInvestors(updatedInvestors);
     };
 
@@ -360,8 +373,9 @@ function CreateFundingRound() {
                                     getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
                                     value={investor.name ? allInvestors.find((option) => option.id === investor.name.id) : null}
                                     onChange={(event, newValue) => handleInvestorChange(index, 'name', newValue)}
-                                    renderInput={(params) => <TextField {...params} variant="outlined" />} 
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                                    renderInput={(params) => <TextField {...params} variant="outlined" />}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                />
                             </Grid>
 
                             <Grid item xs={4}>
@@ -371,10 +385,11 @@ function CreateFundingRound() {
                                     variant="outlined"
                                     value={investor.title}
                                     onChange={(e) => handleInvestorChange(index, 'title', e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                />
                             </Grid>
 
-                            <Grid item xs={4}>
+                            <Grid item xs={3.5}>
                                 <label><b>Shares</b></label>
                                 <TextField
                                     fullWidth
@@ -382,7 +397,20 @@ function CreateFundingRound() {
                                     type="number"
                                     value={investor.shares}
                                     onChange={(e) => handleSharesChange(index, e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={.5}>
+                                {investors.length > 0 && (
+                                    <IconButton 
+                                        sx = {{ mt: 3 }}
+                                        color="error" 
+                                        onClick={() => handleRemoveInvestor(index)}
+                                        aria-label="remove"> 
+                                        <CloseIcon />
+                                    </IconButton>
+                                )}
                             </Grid>
                         </Grid>
                     </Grid>
@@ -402,7 +430,8 @@ function CreateFundingRound() {
             <SuccessCreateFundingRoundDialog
                 open={successDialogOpen}
                 onClose={() => setSuccessDialogOpen(false)}
-                selectedStartupId={selectedStartupId}/>
+                selectedStartupId={selectedStartupId}
+            />
         </Box>
     );
 }

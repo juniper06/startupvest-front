@@ -60,6 +60,17 @@ function Faqs() {
                 
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6">Who are behind this site?</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                            To get started with investing in startups, you can research various funding platforms, network with entrepreneurs and investors, and seek advice from financial advisors. It's also helpful to understand the legal and financial aspects of startup investing.
+                        </Typography>
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography variant="h6">How can I get started with investing in startups?</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
