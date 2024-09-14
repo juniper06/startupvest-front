@@ -131,8 +131,11 @@ function FundingRoundTable({
               paginatedFundingRounds.map((round) => (
                 <TableRow key={round.id}>
                   <TableCell sx={tableStyles.cell}>{round.fundingType}</TableCell>
-                  <TableCell sx={tableStyles.cell}>{round.moneyRaised}</TableCell>
-                  <TableCell sx={tableStyles.cell}>{round.targetFunding}</TableCell>
+                  <TableCell sx={tableStyles.cell}>
+                    {round.moneyRaisedCurrency} {Number(round.moneyRaised).toLocaleString()}</TableCell>
+                  <TableCell sx={tableStyles.cell}>
+                    {round.moneyRaisedCurrency} {Number(round.targetFunding).toLocaleString()}
+                  </TableCell>
                   <TableCell sx={tableStyles.cell}>
                     <Button
                       variant="contained"

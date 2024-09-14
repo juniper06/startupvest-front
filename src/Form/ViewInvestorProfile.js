@@ -1,131 +1,133 @@
 import { useState, useRef, useEffect } from 'react';
 import countries from '../static/countries';
-import { Box, Typography, TextField, Avatar, Select, MenuItem, Grid, Button, Autocomplete} from '@mui/material';
+import { Box, Typography, TextField, Avatar, Select, MenuItem, Grid, Button, Autocomplete } from '@mui/material';
 import axios from 'axios';
 
 function ViewInvestorProfile({ profile }) {
-    const [avatar, setAvatar] = useState('');
-    const fileInputRef = useRef(null);
+  const [avatar, setAvatar] = useState('');
+  const fileInputRef = useRef(null);
 
-    const [isEditable, setIsEditable] = useState(false);
+  const [isEditable, setIsEditable] = useState(false);
 
-    const [firstName, setFirstName] = useState(profile ? profile.firstName : '');
-    const [lastName, setLastName] = useState(profile ? profile.lastName : '');
-    const [emailAddress, setEmailAddress] = useState(profile ? profile.emailAddress : '');
-    const [contactInformation, setContactInformation] = useState(profile ? profile.contactInformation : '');
-    const [gender, setGender] = useState(profile ? profile.gender : '');
-    const [biography, setBiography] = useState(profile ? profile.biography : '');
-    const [streetAddress, setStreetAddress] = useState(profile ? profile.streetAddress : '');
-    const [country, setCountry] = useState(profile ? profile.country : '');
-    const [city, setCity] = useState(profile ? profile.city : '');
-    const [state, setState] = useState(profile ? profile.state : '');
-    const [postalCode, setPostalCode] = useState(profile ? profile.postalCode : '');
-    const [website, setWebsite] = useState(profile ? profile.website : '');
-    const [facebook, setFacebook] = useState(profile ? profile.facebook : '');
-    const [twitter, setTwitter] = useState(profile ? profile.twitter : '');
-    const [instagram, setInstagram] = useState(profile ? profile.instagram : '');
-    const [linkedIn, setLinkedIn] = useState(profile ? profile.linkedIn : '');
+  const [firstName, setFirstName] = useState(profile ? profile.firstName : '');
+  const [lastName, setLastName] = useState(profile ? profile.lastName : '');
+  const [emailAddress, setEmailAddress] = useState(profile ? profile.emailAddress : '');
+  const [contactInformation, setContactInformation] = useState(profile ? profile.contactInformation : '');
+  const [gender, setGender] = useState(profile ? profile.gender : '');
+  const [biography, setBiography] = useState(profile ? profile.biography : '');
+  const [streetAddress, setStreetAddress] = useState(profile ? profile.streetAddress : '');
+  const [country, setCountry] = useState(profile ? profile.country : '');
+  const [city, setCity] = useState(profile ? profile.city : '');
+  const [state, setState] = useState(profile ? profile.state : '');
+  const [postalCode, setPostalCode] = useState(profile ? profile.postalCode : '');
+  const [website, setWebsite] = useState(profile ? profile.website : '');
+  const [facebook, setFacebook] = useState(profile ? profile.facebook : '');
+  const [twitter, setTwitter] = useState(profile ? profile.twitter : '');
+  const [instagram, setInstagram] = useState(profile ? profile.instagram : '');
+  const [linkedIn, setLinkedIn] = useState(profile ? profile.linkedIn : '');
 
-    const handleAvatarClick = () => {
-        fileInputRef.current.click();
-    };
+  const handleAvatarClick = (event) => {
+    event.preventDefault(); // Prevent default action
+    event.stopPropagation(); // Stop the click from propagating to the input
+    fileInputRef.current.click();
+};
 
-    const handleAvatarChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setAvatar(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+  const handleAvatarChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatar(reader.result);
+      };
+      reader.readAsDataURL(file);
 
-    const handleUpdateProfile = async () => {
-        if (isEditable) {
-        try {
-            const profileData = {
-                firstName: firstName,
-                lastName: lastName,
-                emailAddress: emailAddress,
-                contactInformation: contactInformation,
-                gender: gender,
-                biography: biography,
-                streetAddress: streetAddress,
-                country: country,
-                city: city,
-                state: state,
-                postalCode: postalCode,
-                website: website,
-                facebook: facebook,
-                twitter: twitter,
-                instagram: instagram,
-                linkedIn: linkedIn,
-            };
+      // Directly call the upload function when a new file is selected
+      handleUploadProfilePicture(file);
+    }
+  };
 
-            const endpoint = `http://localhost:3000/investors/${profile.id}`; // replace with the id of the profile
+  const handleUpdateProfile = async () => {
+    if (isEditable) {
+      try {
+        const profileData = {
+          firstName,
+          lastName,
+          emailAddress,
+          contactInformation,
+          gender,
+          biography,
+          streetAddress,
+          country,
+          city,
+          state,
+          postalCode,
+          website,
+          facebook,
+          twitter,
+          instagram,
+          linkedIn,
+        };
+
+        const endpoint = `http://localhost:3000/investors/${profile.id}`;
 
         await axios.put(endpoint, profileData, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         });
-        // After updating the profile, check if there's a new profile picture to upload
-        await handleUploadProfilePicture();
-        } catch (error) {
-            console.error('Failed to update profile:', error);
-        }
+
+        // The picture is uploaded in the handleAvatarChange, so we don't need to call it here again.
+      } catch (error) {
+        console.error('Failed to update profile:', error);
+      }
     }
     setIsEditable(!isEditable);
-    };
+  };
 
-    const handleUploadProfilePicture = async () => {
-        if (fileInputRef.current.files[0]) {
-          try {
-            const pictureFormData = new FormData();
-            pictureFormData.append('file', fileInputRef.current.files[0]);
-      
-            // Use the PUT method to update the startup's profile picture
-            const pictureEndpoint = `http://localhost:3000/profile-picture/investor/${profile.id}/update`;
-      
-            await axios.put(pictureEndpoint, pictureFormData, {
-              headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'multipart/form-data',
-              },
-            });
-      
-            // Fetch the updated profile picture and set it in the state
-            await fetchProfilePicture();
-          } catch (error) {
-            console.error('Failed to upload profile picture:', error);
-          }
-        }
-      };
-      
+  const handleUploadProfilePicture = async (file) => {
+    if (file) {
+      try {
+        const pictureFormData = new FormData();
+        pictureFormData.append('file', file);
 
-      const fetchProfilePicture = async () => {
-        try {
-          const response = await axios.get(`http://localhost:3000/profile-picture/investor/${profile.id}`, {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-            responseType: 'blob', // Important for getting the image as a blob
-          });
-      
-          // Create a URL for the blob
-          const imageUrl = URL.createObjectURL(response.data);
-          setAvatar(imageUrl);
-        } catch (error) {
-          console.error('Failed to fetch profile picture:', error);
-        }
-      };
+        const pictureEndpoint = `http://localhost:3000/profile-picture/investor/${profile.id}/update`;
 
-      useEffect(() => {
-        if (profile.id) {
-          fetchProfilePicture();
-        }
-      }, [profile.id]); // Add profile.id as a dependency
+        await axios.put(pictureEndpoint, pictureFormData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        // Fetch the updated profile picture
+        await fetchProfilePicture();
+      } catch (error) {
+        console.error('Failed to upload profile picture:', error);
+      }
+    }
+  };
+
+  const fetchProfilePicture = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/profile-picture/investor/${profile.id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        responseType: 'blob', // Important for getting the image as a blob
+      });
+
+      const imageUrl = URL.createObjectURL(response.data);
+      setAvatar(imageUrl);
+    } catch (error) {
+      console.error('Failed to fetch profile picture:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (profile.id) {
+      fetchProfilePicture();
+    }
+  }, [profile.id]);
 
     return (
         <>
@@ -136,7 +138,18 @@ function ViewInvestorProfile({ profile }) {
 
                 <Grid item xs={12} sm={3}>
                     <label htmlFor="avatar-upload" onClick={handleAvatarClick}>
-                        <Avatar sx={{ width: 200, height: 200, mb: 2, ml: 49.5,cursor: 'pointer', border: '5px rgba(0, 116, 144, 1) solid' }} src={avatar}></Avatar>
+                    <Avatar
+                        sx={{
+                            width: 200,
+                            height: 200,
+                            mb: 2,
+                            ml: 49.5,
+                            cursor: 'pointer',
+                            border: '5px rgba(0, 116, 144, 1) solid'
+                        }}
+                        src={avatar}
+                        onClick={handleAvatarClick} // Attach the event handler here
+                    />
                     </label>
                 
                     <input
