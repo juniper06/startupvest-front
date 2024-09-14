@@ -1,44 +1,71 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import StarsIcon from '@mui/icons-material/Stars';
-import { Box, Typography, Toolbar, Grid, Button, Menu, MenuItem,Tabs, Tab, ListItemText, ListItem } from '@mui/material';
-import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
-import StarIcon from '@mui/icons-material/Star';
-import Person2Icon from '@mui/icons-material/Person2';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOnRounded';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import StarsIcon from "@mui/icons-material/Stars";
+import {
+  Box,
+  Typography,
+  Toolbar,
+  Grid,
+  Button,
+  Menu,
+  MenuItem,
+  Tabs,
+  Tab,
+  ListItemText,
+  ListItem,
+} from "@mui/material";
+import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
+import StarIcon from "@mui/icons-material/Star";
+import Person2Icon from "@mui/icons-material/Person2";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOnRounded";
 
 import Navbar from "../Navbar/Navbar";
-import CreateFundingRoundDialog from '../Dialogs/CreateFundingRoundDialog';
-import CreateBusinessProfileDialog from '../Dialogs/CreateBusinessProfileDialog';
-import BusinessProfileTable from '../Tables/BusinessProfileTable';
-import FundingRoundTable from '../Tables/FundingRoundTable';
-import CapTable from '../Tables/CapTableTable';
+import CreateFundingRoundDialog from "../Dialogs/CreateFundingRoundDialog";
+import CreateBusinessProfileDialog from "../Dialogs/CreateBusinessProfileDialog";
+import BusinessProfileTable from "../Tables/BusinessProfileTable";
+import FundingRoundTable from "../Tables/FundingRoundTable";
+import CapTable from "../Tables/CapTableTable";
 
-import { Container, HeaderBox, StatsBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle, CreateButton, GraphTitle, RecentActivityTitle} from '../styles/UserDashboard';
+import {
+  Container,
+  HeaderBox,
+  StatsBox,
+  RecentActivityBox,
+  RecentActivityList,
+  TopInfoBox,
+  TopInfoIcon,
+  TopInfoText,
+  TopInfoTitle,
+  CreateButton,
+  GraphTitle,
+  RecentActivityTitle,
+} from "../styles/UserDashboard";
 
 function UserDashboard() {
     const [tabValue, setTabValue] = useState(1);
 
-    // PROFILE
-    const [openCreateBusinessProfile, setCreateBusinessProfile] = useState(false);
-    const [businessProfiles, setBusinessProfiles] = useState([]);
-    const [selectedBusinessProfile, setSelectedBusinessProfile] = useState(null);
-    const [openViewStartup, setOpenViewStartup] = useState(false);
-    const [openViewInvestor, setOpenViewInvestor] = useState(false);
-    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-    const [profileToDelete, setProfileToDelete] = useState(null);
+  // PROFILE
+  const [openCreateBusinessProfile, setCreateBusinessProfile] = useState(false);
+  const [businessProfiles, setBusinessProfiles] = useState([]);
+  const [selectedBusinessProfile, setSelectedBusinessProfile] = useState(null);
+  const [openViewStartup, setOpenViewStartup] = useState(false);
+  const [openViewInvestor, setOpenViewInvestor] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [profileToDelete, setProfileToDelete] = useState(null);
 
-    // FUNDING ROUND
-    const [openCreateFundingRound, setOpenCreateFundingRound] = useState(false);
-    const [fundingRounds, setFundingRounds] = useState([]);
-    const [selectedFundingRoundDetails, setSelectedFundingRoundDetails] = useState(null);
-    const [openViewFundingRound, setOpenViewFundingRound] = useState(false);
-    const [filteredFundingRounds, setFilteredFundingRounds] = useState([]);
+  // FUNDING ROUND
+  const [openCreateFundingRound, setOpenCreateFundingRound] = useState(false);
+  const [fundingRounds, setFundingRounds] = useState([]);
+  const [selectedFundingRoundDetails, setSelectedFundingRoundDetails] =
+    useState(null);
+  const [openViewFundingRound, setOpenViewFundingRound] = useState(false);
+  const [filteredFundingRounds, setFilteredFundingRounds] = useState([]);
 
-    // CAP TABLE
-    const [selectedStartupCapTable, setSelectedStartupCapTable] = useState('Select Company');
-    const [capTables, setCapTables] = useState([]);
-    const [filteredCapTables, setFilteredCapTables] = useState([]);
+  // CAP TABLE
+  const [selectedStartupCapTable, setSelectedStartupCapTable] =
+    useState("Select Company");
+  const [capTables, setCapTables] = useState([]);
+  const [filteredCapTables, setFilteredCapTables] = useState([]);
 
     // COUNTS
     const [fundedCompaniesCount, setFundedCompaniesCount] = useState(0);
@@ -51,23 +78,27 @@ function UserDashboard() {
     const [moneyRaisedCount, setMoneyRaisedCount] = useState(0);
     const [highestMoneyRaisedCompany, setHighestMoneyRaisedCompany] = useState({ companyName: '', totalMoneyRaised: 0 });
 
-    const [recentActivities, setRecentActivities] = useState([]);
-    
-    useEffect(() => {
-        fetchBusinessProfiles();
-        fetchFundingRounds();
-        // fetchCapTable();
-        fetchInvestorsByEachUsersCompany();
+  const [recentActivities, setRecentActivities] = useState([]);
+
+  //ACTIVITY
+  const [selectedStartupFunding, setSelectedStartupFunding] = useState('All');
+  const [filteredCompanyActivity, setFilteredCompanyActivity] = useState([]);
+
+  useEffect(() => {
+    fetchBusinessProfiles();
+    fetchFundingRounds();
+    // fetchCapTable();
+    fetchInvestorsByEachUsersCompany();
 
         const timer = setTimeout(() => {
             setTabValue(0);
         }, 1000);
         return () => clearTimeout(timer);
-    }, []);
+  }, []);
 
-    const handleTabChange = (event, newValue) => {
-        setTabValue(newValue);
-    };
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
 
     // PROFILE
     const handleOpenBusinessProfile = () => {
@@ -79,51 +110,61 @@ function UserDashboard() {
         fetchBusinessProfiles();
     };
 
-    const handleOpenStartUp = (profile) => {
-        setSelectedBusinessProfile(profile);
-        setOpenViewStartup(true);
-    };
-    
-    const handleCloseStartUp = () => {
-        setOpenViewStartup(false);
-    };
-    
-    const handleOpenInvestor = (profile) => {
-        setSelectedBusinessProfile(profile);
-        setOpenViewInvestor(true);
-    };    
+  const handleOpenStartUp = (profile) => {
+    setSelectedBusinessProfile(profile);
+    setOpenViewStartup(true);
+  };
 
-    const handleCloseInvestor = () => {
-        setOpenViewInvestor(false);
-    };  
-    
-    const handleOpenDeleteDialog = (profile) => {
-        setProfileToDelete(profile);
-        setOpenDeleteDialog(true);
-    };
-    
-    const handleCloseDeleteDialog = () => {
+  const handleCloseStartUp = () => {
+    setOpenViewStartup(false);
+  };
+
+  const handleOpenInvestor = (profile) => {
+    setSelectedBusinessProfile(profile);
+    setOpenViewInvestor(true);
+  };
+
+  const handleCloseInvestor = () => {
+    setOpenViewInvestor(false);
+  };
+
+  const handleOpenDeleteDialog = (profile) => {
+    setProfileToDelete(profile);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
     };
 
-    const fetchBusinessProfiles = async () => {
-        try {
-            const responseStartups = await axios.get(`http://localhost:3000/startups`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
+  const fetchBusinessProfiles = async () => {
+    try {
+      const responseStartups = await axios.get(
+        `http://localhost:3000/startups`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-            const responseInvestors = await axios.get(`http://localhost:3000/investors`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
+      const responseInvestors = await axios.get(
+        `http://localhost:3000/investors`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-            const startups = responseStartups.data.filter(profile => !profile.isDeleted).map(profile => ({ ...profile, type: 'Startup' }));
-            const investors = responseInvestors.data.filter(profile => !profile.isDeleted).map(profile => ({ ...profile, type: 'Investor' }));
-    
-            setBusinessProfiles([...investors, ...startups]);
+      const startups = responseStartups.data
+        .filter((profile) => !profile.isDeleted)
+        .map((profile) => ({ ...profile, type: "Startup" }));
+      const investors = responseInvestors.data
+        .filter((profile) => !profile.isDeleted)
+        .map((profile) => ({ ...profile, type: "Investor" }));
+
+      setBusinessProfiles([...investors, ...startups]);
 
             // Update counts
             setCompanyCount(startups.length);
@@ -133,48 +174,60 @@ function UserDashboard() {
         }
     };
 
-    const handleSoftDelete = async () => {
-        if (!profileToDelete) {
-            console.error('No profile selected');
-            return;
+  const handleSoftDelete = async () => {
+    if (!profileToDelete) {
+      console.error("No profile selected");
+      return;
+    }
+
+    try {
+      const endpoint = `http://localhost:3000/startups/${profileToDelete.id}/delete`;
+
+      await axios.put(
+        endpoint,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
+      );
 
-        try {
-            const endpoint = `http://localhost:3000/startups/${profileToDelete.id}/delete`;
+      fetchBusinessProfiles();
 
-            await axios.put(endpoint, {}, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
+      // Add recent activity
+      setRecentActivities((prevActivities) => [
+        {
+          action: "Deleted Business Profile",
+          description: `${profileToDelete.companyName} was deleted`,
+          date: new Date().toLocaleDateString(),
+        },
+        ...prevActivities.slice(0, 4), // Limit to 5 recent activities
+      ]);
+    } catch (error) {
+      console.error("Failed to delete profile:", error);
+    }
+  };
 
-            fetchBusinessProfiles();
+  // FUNDING ROUND
+  const handleOpenFundingRound = () => {
+    setOpenCreateFundingRound(true);
+  };
 
-            // Add recent activity
-            setRecentActivities(prevActivities => [
-                { action: 'Deleted Business Profile', description: `${profileToDelete.companyName} was deleted`, date: new Date().toLocaleDateString() },
-                ...prevActivities.slice(0, 4) // Limit to 5 recent activities
-            ]);
-        } catch (error) {
-            console.error('Failed to delete profile:', error);
-        }
-    };
-    
-    // FUNDING ROUND
-    const handleOpenFundingRound = () => {
-        setOpenCreateFundingRound(true);
-    };
+  const handleCloseFundingRound = () => {
+    setOpenCreateFundingRound(false);
+    fetchFundingRounds();
 
-    const handleCloseFundingRound = () => {
-        setOpenCreateFundingRound(false);
-        fetchFundingRounds();
-
-        // Add recent activity
-        setRecentActivities(prevActivities => [
-            { action: 'Created Funding Round', description: 'A new funding round was created', date: new Date().toLocaleDateString() },
-            ...prevActivities.slice(0, 4) // Limit to 5 recent activities
-        ]);
-    };
+    // Add recent activity
+    setRecentActivities((prevActivities) => [
+      {
+        action: "Created Funding Round",
+        description: "A new funding round was created",
+        date: new Date().toLocaleDateString(),
+      },
+      ...prevActivities.slice(0, 4), // Limit to 5 recent activities
+    ]);
+  };
 
     const handleCloseFundingProfile = () => {
         setOpenViewFundingRound(false);
@@ -199,42 +252,54 @@ function UserDashboard() {
         setMoneyRaisedCount(count);
       };
 
-    const handleViewFundingRound = async (fundingRoundId) => {
-        try {
-            const response = await axios.get(`http://localhost:3000/funding-rounds/${fundingRoundId}`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            console.log('Funding Round Details:', response.data);
-            setSelectedFundingRoundDetails(response.data);
-            setOpenViewFundingRound(true);
-        } catch (error) {
-            console.error('Error fetching funding round details:', error);
+  const handleViewFundingRound = async (fundingRoundId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/funding-rounds/${fundingRoundId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-    };
+      );
+      console.log("Funding Round Details:", response.data);
+      setSelectedFundingRoundDetails(response.data);
+      setOpenViewFundingRound(true);
+    } catch (error) {
+      console.error("Error fetching funding round details:", error);
+    }
+  };
 
-    const handleSoftDeleteFundingRound = async (fundingRoundId) => {
-        try {
-            await axios.delete(`http://localhost:3000/funding-rounds/${fundingRoundId}`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-            // Remove the deleted funding round from the state to update the UI
-            const updatedFundingRounds = fundingRounds.filter(round => round.id !== fundingRoundId);
-            setFundingRounds(updatedFundingRounds);
-            setFilteredFundingRounds(updatedFundingRounds);
-
-            // Add recent activity
-            setRecentActivities(prevActivities => [
-                { action: 'Delete Funding Round', description: 'A new funding round was deleted', date: new Date().toLocaleDateString() },
-                ...prevActivities.slice(0, 4) // Limit to 5 recent activities
-            ]);
-        } catch (error) {
-            console.error('Failed to soft delete funding round:', error);
+  const handleSoftDeleteFundingRound = async (fundingRoundId) => {
+    try {
+      await axios.delete(
+        `http://localhost:3000/funding-rounds/${fundingRoundId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-    };
+      );
+      // Remove the deleted funding round from the state to update the UI
+      const updatedFundingRounds = fundingRounds.filter(
+        (round) => round.id !== fundingRoundId
+      );
+      setFundingRounds(updatedFundingRounds);
+      setFilteredFundingRounds(updatedFundingRounds);
+
+      // Add recent activity
+      setRecentActivities((prevActivities) => [
+        {
+          action: "Delete Funding Round",
+          description: "A new funding round was deleted",
+          date: new Date().toLocaleDateString(),
+        },
+        ...prevActivities.slice(0, 4), // Limit to 5 recent activities
+      ]);
+    } catch (error) {
+      console.error("Failed to soft delete funding round:", error);
+    }
+  };
 
     const fetchFundingRounds = async () => {
         try {
@@ -279,42 +344,158 @@ function UserDashboard() {
         }
     };
 
-    const handleStartupChangeCapTable = (event) => {
-        const selectedCompanyId = event.target.value;
-        setSelectedStartupCapTable(selectedCompanyId);
-        // fetchCapTable(selectedCompanyId);
-        fetchInvestorsByEachUsersCompany(selectedCompanyId);
+  const handleStartupChangeCapTable = (event) => {
+    const selectedCompanyId = event.target.value;
+    setSelectedStartupCapTable(selectedCompanyId);
+    //fetchCapTable(selectedCompanyId);
+    fetchInvestorsByEachUsersCompany(selectedCompanyId);
+  };
+
+   //RECENT ACTIVITIES
+  // useEffect(() => {
+  //   const fetchRecentActivities = async () => {
+  //     try {
+  //       const companyId = selectedBusinessProfile?.id || 1; // Replace with the actual logic to get companyId
+  //       const limit = 5; // Set a limit for the number of recent activities
+
+  //       // Fetch recent activities from the server
+  //       const response = await axios.get(
+  //         `http://localhost:3000/activities/${companyId}/recent`,
+  //         {
+  //           params: { limit },
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //           },
+  //         }
+  //       );
+
+  //       console.log("Recent Activities Data:", response.data);
+
+  //       // Filter the activities based on userCreatedStartupIds and selectedStartupFunding
+  //       const userCreatedStartupIds = businessProfiles
+  //         .filter(profile => profile.type === 'Startup')
+  //         .map(startup => startup.id);
+
+  //       console.log("User-Created Startup IDs:", userCreatedStartupIds);
+
+  //       const filteredData = selectedStartupFunding === 'All'
+  //         ? response.data.filter(activity => userCreatedStartupIds.includes(activity.companyId))
+  //         : response.data.filter(activity => activity.companyId === selectedStartupFunding);
+
+  //       console.log("Filtered Company Activity:", filteredData);
+
+  //       // Set the filtered activities to state
+  //       setRecentActivities(response.data); // Store raw activities
+  //       setFilteredCompanyActivity(filteredData); // Store filtered activities
+
+  //     } catch (error) {
+  //       console.error("Error fetching recent activities:", error);
+  //     }
+  //   };
+
+  //   fetchRecentActivities();
+  // }, [ selectedStartupFunding, businessProfiles]);
+
+
+
+
+
+  useEffect(() => {
+    const fetchRecentActivities = async () => {
+      try {
+        // Fetch the list of companies for the logged-in user
+        const userCompaniesResponse = await axios.get(
+          'http://localhost:3000/startups', // Update this endpoint if needed
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+  
+        const userCompanies = userCompaniesResponse.data; // Assuming this returns an array of company objects
+        const userCompanyIds = userCompanies.map(company => company.id);
+  
+        // Fetch recent activities using the list of company IDs
+        const limit = 5; // Set a limit for the number of recent activities
+  
+        const response = await axios.get(
+          `http://localhost:3000/activities/all-recent`, // Update this endpoint if needed
+          {
+            params: { limit, companyIds: userCompanyIds },
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+  
+        console.log("Recent Activities Data:", response.data);
+  
+        // Filter the activities based on the selectedStartupFunding
+        const filteredData = selectedStartupFunding === 'All'
+          ? response.data.filter(activity => userCompanyIds.includes(activity.companyId))
+          : response.data.filter(activity => activity.companyId === selectedStartupFunding);
+  
+        console.log("Filtered Company Activity:", filteredData);
+  
+        // Set the filtered activities to state
+        setRecentActivities(response.data); // Store raw activities
+        setFilteredCompanyActivity(filteredData); // Store filtered activities
+  
+      } catch (error) {
+        console.error("Error fetching recent activities:", error);
+      }
     };
+  
+    fetchRecentActivities();
+  }, [selectedStartupFunding, businessProfiles]);
+  
+  
 
-    return (
-        <>
-            <Navbar />
-            <Toolbar />
+  return (
+    <>
+      <Navbar />
+      <Toolbar />
 
-            <Container>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <HeaderBox>
-                            <Typography variant="h5">User Dashboard</Typography>
-                            <PopupState variant="popover" popupId="demo-popup-menu">
-                                {(popupState) => (
-                                    <>
-                                        <CreateButton startIcon={<StarsIcon />} {...bindTrigger(popupState)}>Create</CreateButton>
-                                        <Menu {...bindMenu(popupState)}>
-                                            <MenuItem onClick={() => 
-                                                {handleOpenBusinessProfile(); popupState.close(); }}>
-                                                    <Person2Icon sx={{ mr: 1, color: '#007490'}}/>Business Profile
-                                                    </MenuItem>
-                                            <MenuItem onClick={() => 
-                                                {handleOpenFundingRound(); popupState.close();}}>
-                                                    <MonetizationOnIcon sx={{ mr: 1, color: '#007490'}}/>Funding Round
-                                            </MenuItem>
-                                        </Menu>
-                                    </>
-                                )}
-                            </PopupState>
-                        </HeaderBox>
-                    </Grid>
+      <Container>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <HeaderBox>
+              <Typography variant="h5">User Dashboard</Typography>
+              <PopupState variant="popover" popupId="demo-popup-menu">
+                {(popupState) => (
+                  <>
+                    <CreateButton
+                      startIcon={<StarsIcon />}
+                      {...bindTrigger(popupState)}
+                    >
+                      Create
+                    </CreateButton>
+                    <Menu {...bindMenu(popupState)}>
+                      <MenuItem
+                        onClick={() => {
+                          handleOpenBusinessProfile();
+                          popupState.close();
+                        }}
+                      >
+                        <Person2Icon sx={{ mr: 1, color: "#007490" }} />
+                        Business Profile
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          handleOpenFundingRound();
+                          popupState.close();
+                        }}
+                      >
+                        <MonetizationOnIcon sx={{ mr: 1, color: "#007490" }} />
+                        Funding Round
+                      </MenuItem>
+                    </Menu>
+                  </>
+                )}
+              </PopupState>
+            </HeaderBox>
+          </Grid>
 
                     {/* Top Row - 5 Boxes */}
                     <Grid item xs={12} sm={6}>
@@ -372,41 +553,94 @@ function UserDashboard() {
                         </StatsBox>
                     </Grid>
 
-                    {/* Middle Row - Two Boxes */}
-                    <Grid item xs={12} sm={9}>
-                        <Box sx={{ backgroundColor: 'white', height: 420, display: 'flex', flexDirection: 'column', borderRadius: 2, boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', overflow: 'hidden' }}>
-                            <GraphTitle variant="h6">Total Investment Graph</GraphTitle>
-                        </Box>
-                    </Grid>
+          {/* Middle Row - Two Boxes */}
+          <Grid item xs={12} sm={9}>
+            <Box
+              sx={{
+                backgroundColor: "white",
+                height: 420,
+                display: "flex",
+                flexDirection: "column",
+                borderRadius: 2,
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                overflow: "hidden",
+              }}
+            >
+              <GraphTitle variant="h6">Total Investment Graph</GraphTitle>
+            </Box>
+          </Grid>
 
-                    <Grid item xs={12} sm={3}>
-                        <RecentActivityBox>
-                            <RecentActivityTitle variant="h6">Recent Activity</RecentActivityTitle>
-                            <RecentActivityList>
-                                {recentActivities.length === 0 ? (
-                                    <ListItem>
-                                        <ListItemText primary="No recent activity" />
-                                    </ListItem>
-                                ) : (
-                                    recentActivities.map((activity, index) => (
-                                        <ListItem key={index}>
-                                            <ListItemText primary={activity.action} secondary={`${activity.description} - ${activity.date}`} />
-                                        </ListItem>
-                                    ))
-                                )}
-                            </RecentActivityList>
-                        </RecentActivityBox>
-                    </Grid>
+          <Grid item xs={12} sm={3}>
+            <RecentActivityBox>
+              <RecentActivityTitle variant="h6">
+                Recent Activity
+              </RecentActivityTitle>
+              <RecentActivityList>
+                {filteredCompanyActivity.length === 0 ? (
+                  <ListItem>
+                    <ListItemText primary="No recent activity" />
+                  </ListItem>
+                ) : (
+                  filteredCompanyActivity.map((activity, index) => (
+                    <ListItem key={index}>
+                      <ListItemText
+                        primary={activity.action}
+                        secondary={`${activity.description} - ${new Date(
+                          activity.timestamp
+                        ).toLocaleString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "numeric",
+                          hour12: true,
+                        })}`}
+                      />
+                    </ListItem>
+                  ))
+                )}
+              </RecentActivityList>
+            </RecentActivityBox>
+          </Grid>
 
-                    <Grid item xs={12}>
-                    <Tabs value={tabValue} onChange={handleTabChange} aria-label="tabs" sx={{ mt: 2, '& .MuiTabs-indicator': { backgroundColor: '#007490' } }}>
-                        <Tab label="My Profile" sx={{ color: tabValue === 0 ? '#007490' : 'text.secondary', '&.Mui-selected': {
-                            color: '#007490' } }}/>
-                        <Tab label="My Funding Round" sx={{ color: tabValue === 1 ? '#007490' : 'text.secondary', '&.Mui-selected': {
-                            color: '#007490' } }}/>
-                        <Tab label="My Captable" sx={{ color: tabValue === 2 ? '#007490' : 'text.secondary', '&.Mui-selected': {
-                            color: '#007490' } }}/>
-                    </Tabs>
+          <Grid item xs={12}>
+            <Tabs
+              value={tabValue}
+              onChange={handleTabChange}
+              aria-label="tabs"
+              sx={{
+                mt: 2,
+                "& .MuiTabs-indicator": { backgroundColor: "#007490" },
+              }}
+            >
+              <Tab
+                label="My Profile"
+                sx={{
+                  color: tabValue === 0 ? "#007490" : "text.secondary",
+                  "&.Mui-selected": {
+                    color: "#007490",
+                  },
+                }}
+              />
+              <Tab
+                label="My Funding Round"
+                sx={{
+                  color: tabValue === 1 ? "#007490" : "text.secondary",
+                  "&.Mui-selected": {
+                    color: "#007490",
+                  },
+                }}
+              />
+              <Tab
+                label="My Captable"
+                sx={{
+                  color: tabValue === 2 ? "#007490" : "text.secondary",
+                  "&.Mui-selected": {
+                    color: "#007490",
+                  },
+                }}
+              />
+            </Tabs>
 
                     <Box sx={{ pt: 3}}>
                         {tabValue === 0 && (
@@ -455,11 +689,17 @@ function UserDashboard() {
                 
                 </Grid>
 
-                <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} />
-                <CreateFundingRoundDialog open={openCreateFundingRound} onClose={handleCloseFundingRound} />
-            </Container>
-        </>
-    );
+        <CreateBusinessProfileDialog
+          open={openCreateBusinessProfile}
+          onClose={handleCloseBusinessProfile}
+        />
+        <CreateFundingRoundDialog
+          open={openCreateFundingRound}
+          onClose={handleCloseFundingRound}
+        />
+      </Container>
+    </>
+  );
 }
 
 export default UserDashboard;
