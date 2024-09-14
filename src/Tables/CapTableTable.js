@@ -9,6 +9,7 @@ function CapTable({
   businessProfiles = [],
   selectedStartupCapTable,
   handleStartupChangeCapTable,
+  // fundingRounds = []
 }) {
   // Local state for pagination
   const [localCapPage, setLocalCapPage] = useState(capPage);
@@ -42,6 +43,7 @@ function CapTable({
   // Calculate total pages for pagination
   const totalPageCount = Math.ceil(filteredCapTables.length / localCapRowsPerPage);
 
+  // const fundingCurrency = fundingRounds.length > 0 ? fundingRounds[0].moneyRaisedCurrency || 'USD' : 'USD';
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -72,7 +74,7 @@ function CapTable({
                 <Typography sx={tableStyles.typography}>Title</Typography>
               </TableCell>
               <TableCell sx={tableStyles.cell}>
-                <Typography sx={tableStyles.typography}>Total Share</Typography>
+              <Typography sx={tableStyles.typography}>Total Share</Typography>
               </TableCell>
               <TableCell sx={tableStyles.cell}>
                 <Typography sx={tableStyles.typography}>Percentage</Typography>
@@ -87,10 +89,11 @@ function CapTable({
                   <TableCell sx={tableStyles.cell}>{table.name}</TableCell>
                   <TableCell sx={tableStyles.cell}>{table.title}</TableCell>
                   <TableCell sx={tableStyles.cell}>
+                    {/* {fundingCurrency}  */}
                     {Number(table.totalShares).toLocaleString()}
                   </TableCell>
                   <TableCell sx={tableStyles.cell}>
-                    {table.percentage !== undefined ? table.percentage.toFixed(2) : 'N/A'}%
+                   {table.percentage !== undefined ? table.percentage.toFixed(2) : 'N/A'}%
                   </TableCell>
                 </TableRow>
               ))
