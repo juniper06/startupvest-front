@@ -76,6 +76,8 @@ function UserDashboard() {
     const handleCloseBusinessProfile = () => {
         setCreateBusinessProfile(false);
         fetchBusinessProfiles();
+        // Assuming you have a function to create an activity
+        performedActivity('Created Business Profile', 'New business profile created');
     };
 
     const handleOpenStartUp = (profile) => {
@@ -102,7 +104,8 @@ function UserDashboard() {
     };
     
     const handleCloseDeleteDialog = () => {
-    setOpenDeleteDialog(false);
+        performedActivity('Deleted Business Profile', 'New business profile deleted');
+        setOpenDeleteDialog(false);
     };
 
     // Handler to update the total amount funded
@@ -113,6 +116,44 @@ function UserDashboard() {
     // Handler to update the funded rounds count
     const handleFundingRoundsCountChange = (count) => {
         setFundingRoundsCount(count);
+    };
+
+    useEffect(() => {
+        // Existing code for fetching business profiles, funding rounds, etc.
+      
+        const fetchRecentActivities = async () => {
+          try {
+            const response = await axios.get('http://localhost:3000/activities', {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            });
+            setRecentActivities(response.data);
+          } catch (error) {
+            console.error('Error fetching recent activities:', error);
+          }
+        };
+      
+        fetchRecentActivities();
+        performedActivity();
+      }, []); // Empty dependency array to run only on mount
+
+    const performedActivity = async (action, details) => {
+        try {
+          const response = await axios.post('http://localhost:3000/activities', { action, details }, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          });
+      
+          if (response.status === 201) {
+            console.log('Activity created successfully:', response.data);
+          } else {
+            console.error('Error creating activity:', response.data);
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
     };
 
     const fetchBusinessProfiles = async () => {
@@ -158,12 +199,6 @@ function UserDashboard() {
             });
 
             fetchBusinessProfiles();
-
-            // Add recent activity
-            setRecentActivities(prevActivities => [
-                { action: 'Deleted Business Profile', description: `${profileToDelete.companyName} was deleted`, date: new Date().toLocaleDateString() },
-                ...prevActivities.slice(0, 4) // Limit to 5 recent activities
-            ]);
         } catch (error) {
             console.error('Failed to delete profile:', error);
         }
@@ -176,13 +211,9 @@ function UserDashboard() {
 
     const handleCloseFundingRound = () => {
         setOpenCreateFundingRound(false);
+        // Assuming you have a function to create an activity
+        performedActivity('Created Funding Round', 'New Funding Round created');
         fetchFundingRounds();
-
-        // Add recent activity
-        setRecentActivities(prevActivities => [
-            { action: 'Created Funding Round', description: 'A new funding round was created', date: new Date().toLocaleDateString() },
-            ...prevActivities.slice(0, 4) // Limit to 5 recent activities
-        ]);
     };
 
     const handleCloseFundingProfile = () => {
@@ -216,12 +247,8 @@ function UserDashboard() {
             const updatedFundingRounds = fundingRounds.filter(round => round.id !== fundingRoundId);
             setFundingRounds(updatedFundingRounds);
             setFilteredFundingRounds(updatedFundingRounds);
-
-            // Add recent activity
-            setRecentActivities(prevActivities => [
-                { action: 'Delete Funding Round', description: 'A new funding round was deleted', date: new Date().toLocaleDateString() },
-                ...prevActivities.slice(0, 4) // Limit to 5 recent activities
-            ]);
+            // Assuming you have a function to create an activity
+            performedActivity('Deleted Funding Round', 'New Funding Round Deleted');
         } catch (error) {
             console.error('Failed to soft delete funding round:', error);
         }
@@ -239,7 +266,7 @@ function UserDashboard() {
             // Calculate the total amount funded
             const totalFunded = fundingRounds.reduce((total, round) => total + round.amount, 0);
             setTotalAmountFunded(totalFunded);
-            setFilteredFundingRoundsCount(filteredFundingRounds.length);
+            // setFilteredFundingRoundsCount(filteredFundingRounds.length);
         } catch (error) {
             console.error('Error fetching funding rounds:', error);
         }
@@ -381,7 +408,7 @@ function UserDashboard() {
                                 ) : (
                                     recentActivities.map((activity, index) => (
                                         <ListItem key={index}>
-                                            <ListItemText primary={activity.action} secondary={`${activity.description} - ${activity.date}`} />
+                                            <ListItemText primary={activity.action} secondary={`${activity.details} - ${activity.timestamp}`} />
                                         </ListItem>
                                     ))
                                 )}
