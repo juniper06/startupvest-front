@@ -155,17 +155,24 @@ function FundingRoundView() {
                         
                         <TableBody>
                       {/* Loop through each capTableInvestor */}
-                      {fundinground.capTableInvestors && fundinground.capTableInvestors.map((investorDetail, index) => (
-                        <TableRow key={index}>
-                          <TableCell sx={{ textAlign: 'center' }}>
-                            {investorDetail.investor.firstName} {investorDetail.investor.lastName}
-                          </TableCell>
-                          <TableCell sx={{ textAlign: 'center' }}>{investorDetail.title}</TableCell>
-                          <TableCell sx={{ textAlign: 'center' }}>
-                          {Number(investorDetail.shares).toLocaleString()}
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {fundinground.capTableInvestors && fundinground.capTableInvestors.map((investorDetail, index) => {
+                        const investor = investorDetail.investor || {};
+                        return (
+                          <TableRow key={index}>
+                            <TableCell sx={{ textAlign: 'center' }}>
+                              {investor.firstName || 
+                                fundinground.capTableInvestors[0]?.investorDetails.firstName || 
+                                'N/A'} {investor.lastName || 
+                                fundinground.capTableInvestors[0]?.investorDetails.lastName || 
+                                'N/A'}
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center' }}>{investorDetail.title || 'N/A'}</TableCell>
+                            <TableCell sx={{ textAlign: 'center' }}>
+                              {Number(investorDetail.shares || 0).toLocaleString()}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                     </TableBody>
                     </Table>
                 </TableContainer>

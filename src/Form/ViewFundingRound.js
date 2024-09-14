@@ -19,19 +19,13 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const [minimumShare, setMinimumShare] = useState('');
 
     //CAP TABLE
-    const [totalShares, setTotalShares] = useState(0);
     const [allInvestors, setAllInvestors] = useState([]); // to store all fetched investors
     const [investors, setInvestors] = useState([{ name: null, title: '', shares: '' }]);
-    // to store selected investors
-
     const days = [...Array(31).keys()].map(i => i + 1);
     const months = Array.from({ length: 12 }, (_, i) => {
         return new Intl.DateTimeFormat('en', { month: 'long' }).format(new Date(2000, i, 1));
     });
     const years = [...Array(51).keys()].map(i => new Date().getFullYear() + i);
-
-    const announcedDate = new Date(fundingRoundDetails?.announcedDate);
-    const closedDate = new Date(fundingRoundDetails?.closedDate);
 
     const [isEditMode, setIsEditMode] = useState(false);
 
@@ -79,7 +73,6 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
 
     const handleAddInvestor = () => {
-        // Add a new investor object with empty fields to the investors array
         setInvestors([...investors, { name: '', title: '', shares: '' }]);
     };
     
@@ -105,7 +98,6 @@ function ViewFundingRound({ fundingRoundDetails }) {
             setClosedDay(closedDate.getDate());
             setClosedMonth(closedDate.getMonth() + 1); // getMonth() is zero-based
             setClosedYear(closedDate.getFullYear());
-            // ... Set other state variables similarly
         }
 
         if (fundingRoundDetails?.capTableInvestors) {
@@ -123,7 +115,6 @@ function ViewFundingRound({ fundingRoundDetails }) {
             const updatedInvestors = investors.map(investor => ({
                 id: investor.name, // Assuming this is the investor ID
                 title: investor.title,
-                // shares: parseInt(investor.shares)
                 shares: parseInt(investor.shares)
             }));
     
@@ -149,12 +140,9 @@ function ViewFundingRound({ fundingRoundDetails }) {
             });
     
             console.log('Funding round updated successfully:', response.data);
-            // Optionally, update the state or re-fetch the funding round details to reflect changes
         } catch (error) {
             console.error('Failed to update funding round:', error);
-            // Handle the error, possibly by setting an error state and displaying a message to the user
         }
-        // After updating, toggle edit mode off
         setIsEditMode(false);
     };
     
@@ -456,7 +444,11 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
             <Button variant="contained"
                 sx={{ width: 150, background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }} style={{marginLeft: '80%'}}
-                onClick={isEditMode ? handleUpdateFundingRound : toggleEditMode}>
+                onClick={() => { 
+                    const action = isEditMode ? handleUpdateFundingRound : toggleEditMode;
+                        action(); 
+                        action(); 
+                  }}>
                 {isEditMode ? 'Save Changes' : 'Edit Funding'}
             </Button>
         </Box>
