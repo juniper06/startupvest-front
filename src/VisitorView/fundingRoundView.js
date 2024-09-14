@@ -162,7 +162,7 @@ function FundingRoundView() {
                           </TableCell>
                           <TableCell sx={{ textAlign: 'center' }}>{investorDetail.title}</TableCell>
                           <TableCell sx={{ textAlign: 'center' }}>
-                          {fundinground.moneyRaisedCurrency} {Number(investorDetail.shares).toLocaleString()}
+                          {Number(investorDetail.shares).toLocaleString()}
                           </TableCell>
                         </TableRow>
                       ))}
