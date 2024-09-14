@@ -330,7 +330,7 @@ function UserDashboard() {
                     <Grid item xs={12} sm={3}>
                         <StatsBox>
                             <TopInfoText>Funded Companies</TopInfoText>
-                            <TopInfoTitle>{fundedCompaniesCount} out of {companyCount}</TopInfoTitle>
+                            <TopInfoTitle>{fundingRoundsCount} out of {companyCount}</TopInfoTitle>
                         </StatsBox>
                     </Grid>
 
