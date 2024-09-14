@@ -25,7 +25,6 @@ function FundingRoundTable({
   const [selectedStartupFunding, setSelectedStartupFunding] = useState('All');
 
   const [filteredFundingRoundsCount, setFilteredFundingRoundsCount] = useState(0);
-
   const [totalAmountFunded, setTotalAmountFunded] = useState(0);
 
   // Handle the startup filter change
@@ -53,6 +52,19 @@ function FundingRoundTable({
     // Pass the filtered rounds count to the UserDashboard
     onFundingRoundsCountChange(filteredFundingRounds.length);
   }, [filteredFundingRounds, onTotalAmountFundedChange, onFundingRoundsCountChange]);
+
+  // Calculate totals for Money Raised and Target Funding columns
+  const totalMoneyRaised = filteredFundingRounds.reduce((sum, round) => sum + (round.moneyRaised || 0), 0);
+  const totalTargetFunding = filteredFundingRounds.reduce((sum, round) => sum + (round.targetFunding || 0), 0);
+
+  // Get the currency symbol from the first funding round if available
+  const currencySymbol = filteredFundingRounds.length > 0 ? filteredFundingRounds[0].moneyRaisedCurrency : '';
+
+  // Format the totals correctly
+  const formatCurrency = (value) => {
+    if (value === undefined || value === null || isNaN(value)) return ``;
+    return `${currencySymbol} ${Number(value).toLocaleString()}`;
+  };
 
   // Calculate the index of the first and last row to display
   const startIndex = localFundingPage * localFundingRowsPerPage;
@@ -132,9 +144,10 @@ function FundingRoundTable({
                 <TableRow key={round.id}>
                   <TableCell sx={tableStyles.cell}>{round.fundingType}</TableCell>
                   <TableCell sx={tableStyles.cell}>
-                    {round.moneyRaisedCurrency} {Number(round.moneyRaised).toLocaleString()}</TableCell>
+                    {formatCurrency(round.moneyRaised)}
+                  </TableCell>
                   <TableCell sx={tableStyles.cell}>
-                    {round.moneyRaisedCurrency} {Number(round.targetFunding).toLocaleString()}
+                    {formatCurrency(round.targetFunding)}
                   </TableCell>
                   <TableCell sx={tableStyles.cell}>
                     <Button
@@ -159,6 +172,16 @@ function FundingRoundTable({
                   </TableCell>
                 </TableRow>
               )}
+          </TableBody>
+
+          {/* Add a TableRow for the totals */}
+          <TableBody>
+            <TableRow>
+              <TableCell sx={tableStyles.cell}><Typography sx={{ fontWeight:'bold' }}>Total</Typography></TableCell>
+              <TableCell sx={{...tableStyles.cell, fontWeight: 'bold'}}>{formatCurrency(totalMoneyRaised)}</TableCell>
+              <TableCell sx={{...tableStyles.cell, fontWeight: 'bold'}}>{formatCurrency(totalTargetFunding)}  </TableCell>
+              <TableCell sx={tableStyles.cell}></TableCell>
+            </TableRow>
           </TableBody>
         </Table>
 

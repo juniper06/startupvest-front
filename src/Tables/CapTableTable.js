@@ -42,6 +42,11 @@ function CapTable({
   // Calculate total pages for pagination
   const totalPageCount = Math.ceil(filteredCapTables.length / localCapRowsPerPage);
 
+  // Calculate totals
+  const totalShares = paginatedCapTables.reduce((sum, table) => sum + (table.totalShares || 0), 0);
+  const totalPercentage = paginatedCapTables.reduce((sum, table) => sum + (table.percentage || 0), 0);
+  const averagePercentage = paginatedCapTables.length > 0 ? (totalPercentage / paginatedCapTables.length).toFixed(2) : 'N/A';
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -102,6 +107,19 @@ function CapTable({
               </TableRow>
             )}
           </TableBody>
+
+          {/* Total Row */}
+          {paginatedCapTables.length > 0 && (
+            <TableBody>
+              <TableRow>
+                <TableCell sx={tableStyles.cell}></TableCell>
+                <TableCell sx={tableStyles.cell}><Typography sx={{ fontWeight: 'bold' }}>Total</Typography></TableCell>
+                <TableCell sx={{...tableStyles.cell, fontWeight: 'bold'}}>{Number(totalShares).toLocaleString()}</TableCell>
+                <TableCell sx={tableStyles.cell}></TableCell>
+
+              </TableRow>
+            </TableBody>
+          )}
         </Table>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
