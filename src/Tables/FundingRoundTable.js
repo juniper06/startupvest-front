@@ -14,7 +14,8 @@ function FundingRoundTable({
   openViewFundingRound,
   handleCloseFundingProfile,
   businessProfiles,
-  onTotalAmountFundedChange
+  onTotalAmountFundedChange,
+  onFundingRoundsCountChange
 }) {
   const [localFundingPage, setLocalFundingPage] = useState(fundingPage);
   const [localFundingRowsPerPage, setLocalFundingRowsPerPage] = useState(fundingRowsPerPage);
@@ -22,6 +23,8 @@ function FundingRoundTable({
   const [openDeleteFundingRoundDialog, setOpenDeleteFundingRoundDialog] = useState(false);
   const [fundingRoundToDelete, setFundingRoundToDelete] = useState(null);
   const [selectedStartupFunding, setSelectedStartupFunding] = useState('All');
+
+  const [filteredFundingRoundsCount, setFilteredFundingRoundsCount] = useState(0);
 
   const [totalAmountFunded, setTotalAmountFunded] = useState(0);
 
@@ -44,9 +47,12 @@ function FundingRoundTable({
   useEffect(() => {
     const totalFunded = filteredFundingRounds.reduce((sum, round) => sum + (round.moneyRaised || 0), 0);
     setTotalAmountFunded(totalFunded);
-    // Pass the computed value back to the parent (UserDashboard)
+    setFilteredFundingRoundsCount(filteredFundingRounds.length);  // Update the count
     onTotalAmountFundedChange(totalFunded);
-  }, [filteredFundingRounds, onTotalAmountFundedChange]);
+
+    // Pass the filtered rounds count to the UserDashboard
+    onFundingRoundsCountChange(filteredFundingRounds.length);
+  }, [filteredFundingRounds, onTotalAmountFundedChange, onFundingRoundsCountChange]);
 
   // Calculate the index of the first and last row to display
   const startIndex = localFundingPage * localFundingRowsPerPage;
