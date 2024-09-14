@@ -47,8 +47,9 @@ function UserDashboard() {
     // const [fundingRoundCount, setFundingRoundCount] = useState(0);
     const [totalAmountFunded, setTotalAmountFunded] = useState(0);
     const [fundingRoundsCount, setFundingRoundsCount] = useState(0);
-
     const [filteredFundingRoundsCount, setFilteredFundingRoundsCount] = useState(0);
+    const [moneyRaisedCount, setMoneyRaisedCount] = useState(0);
+    const [highestMoneyRaisedCompany, setHighestMoneyRaisedCompany] = useState({ companyName: '', totalMoneyRaised: 0 });
 
     const [recentActivities, setRecentActivities] = useState([]);
     
@@ -103,16 +104,6 @@ function UserDashboard() {
     
     const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
-    };
-
-    // Handler to update the total amount funded
-    const handleTotalAmountFundedChange = (total) => {
-        setTotalAmountFunded(total);
-    };
-
-    // Handler to update the funded rounds count
-    const handleFundingRoundsCountChange = (count) => {
-        setFundingRoundsCount(count);
     };
 
     const fetchBusinessProfiles = async () => {
@@ -189,6 +180,24 @@ function UserDashboard() {
         setOpenViewFundingRound(false);
         fetchFundingRounds();
     }
+
+    // Handler to update the total amount funded
+    const handleTotalAmountFundedChange = (total) => {
+        setTotalAmountFunded(total);
+    };
+
+    // Handler to update the funded rounds count
+    const handleFundingRoundsCountChange = (count) => {
+        setFundingRoundsCount(count);
+    };
+
+    const handleHighestMoneyRaisedCompanyChange = (company) => {
+        setHighestMoneyRaisedCompany(company);
+    };
+
+    const handleMoneyRaisedCountChange = (count) => {
+        setMoneyRaisedCount(count);
+      };
 
     const handleViewFundingRound = async (fundingRoundId) => {
         try {
@@ -314,7 +323,7 @@ function UserDashboard() {
                                 <StarIcon sx={{ color: '#005b6e' }} />
                             </TopInfoIcon>
                             <TopInfoText>Highest-Funded Company</TopInfoText>
-                            <TopInfoTitle>Shell Company</TopInfoTitle>
+                            <TopInfoTitle>{highestMoneyRaisedCompany.companyName || 'None'}</TopInfoTitle>
                         </TopInfoBox>
                     </Grid>
 
@@ -331,7 +340,7 @@ function UserDashboard() {
                     <Grid item xs={12} sm={3}>
                         <StatsBox>
                             <TopInfoText>Funded Companies</TopInfoText>
-                            <TopInfoTitle>{fundingRoundsCount} out of {companyCount}</TopInfoTitle>
+                            <TopInfoTitle>{moneyRaisedCount} out of {companyCount}</TopInfoTitle>
                         </StatsBox>
                     </Grid>
 
@@ -429,7 +438,9 @@ function UserDashboard() {
                                     handleCloseFundingProfile={handleCloseFundingProfile}
                                     businessProfiles={businessProfiles}
                                     onTotalAmountFundedChange={handleTotalAmountFundedChange}
-                                    onFundingRoundsCountChange={handleFundingRoundsCountChange} />
+                                    onFundingRoundsCountChange={handleFundingRoundsCountChange}
+                                    onMoneyRaisedCountChange={handleMoneyRaisedCountChange}
+                                    onHighestMoneyRaisedCompanyChange={handleHighestMoneyRaisedCompanyChange} />
                             )}
 
                             {tabValue === 2 && (
