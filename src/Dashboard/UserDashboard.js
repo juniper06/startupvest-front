@@ -71,12 +71,12 @@ function UserDashboard() {
     // PROFILE
     const handleOpenBusinessProfile = () => {
         setCreateBusinessProfile(true);
-      };
+    };
     
-      const handleCloseBusinessProfile = () => {
+    const handleCloseBusinessProfile = () => {
         setCreateBusinessProfile(false);
         fetchBusinessProfiles();
-      };
+    };
 
     const handleOpenStartUp = (profile) => {
         setSelectedBusinessProfile(profile);
@@ -187,6 +187,7 @@ function UserDashboard() {
 
     const handleCloseFundingProfile = () => {
         setOpenViewFundingRound(false);
+        fetchFundingRounds();
     }
 
     const handleViewFundingRound = async (fundingRoundId) => {
