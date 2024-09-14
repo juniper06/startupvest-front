@@ -62,7 +62,7 @@ function FundingRoundTable({
 
   // Format the totals correctly
   const formatCurrency = (value) => {
-    if (value === undefined || value === null || isNaN(value)) return ``;
+    if (value === undefined || value === null || isNaN(value)) return '';
     return `${currencySymbol} ${Number(value).toLocaleString()}`;
   };
 
@@ -139,7 +139,7 @@ function FundingRoundTable({
           </TableHead>
           
           <TableBody>
-          {paginatedFundingRounds.length > 0 ? (
+            {paginatedFundingRounds.length > 0 ? (
               paginatedFundingRounds.map((round) => (
                 <TableRow key={round.id}>
                   <TableCell sx={tableStyles.cell}>{round.fundingType}</TableCell>
@@ -165,24 +165,30 @@ function FundingRoundTable({
                   </TableCell>
                 </TableRow>
               ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={4} sx={tableStyles.cell}>
-                    No funding rounds available for your startups.
-                  </TableCell>
-                </TableRow>
-              )}
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4} sx={tableStyles.cell}>
+                  No funding rounds available for your startups.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
 
-          {/* Add a TableRow for the totals */}
-          <TableBody>
-            <TableRow>
-              <TableCell sx={tableStyles.cell}><Typography sx={{ fontWeight:'bold' }}>Total</Typography></TableCell>
-              <TableCell sx={{...tableStyles.cell, fontWeight: 'bold'}}>{formatCurrency(totalMoneyRaised)}</TableCell>
-              <TableCell sx={{...tableStyles.cell, fontWeight: 'bold'}}>{formatCurrency(totalTargetFunding)}  </TableCell>
-              <TableCell sx={tableStyles.cell}></TableCell>
-            </TableRow>
-          </TableBody>
+          {/* Conditionally add a TableRow for the totals */}
+          {paginatedFundingRounds.length > 0 && (
+            <TableBody>
+              <TableRow>
+                <TableCell sx={tableStyles.cell}><Typography sx={{ fontWeight: 'bold' }}>Total</Typography></TableCell>
+                <TableCell sx={{ ...tableStyles.cell, fontWeight: 'bold' }}>
+                  {formatCurrency(totalMoneyRaised)}
+                </TableCell>
+                <TableCell sx={{ ...tableStyles.cell, fontWeight: 'bold' }}>
+                  {formatCurrency(totalTargetFunding)}
+                </TableCell>
+                <TableCell sx={tableStyles.cell}></TableCell>
+              </TableRow>
+            </TableBody>
+          )}
         </Table>
 
         <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
