@@ -23,6 +23,9 @@ function CreateFundingRound() {
     const [minimumShare, setMinimumShare] = useState('');
     const [successDialogOpen, setSuccessDialogOpen] = useState(false);
 
+    const selectedStartup = startups.find(startup => startup.id === selectedStartupId);
+    const selectedCompanyName = selectedStartup ? selectedStartup.companyName : '';
+
     // CAP TABLE
     const [allInvestors, setAllInvestors] = useState([]);
     const [investors, setInvestors] = useState([{ name: null, title: '', shares: '' }]);
@@ -431,6 +434,8 @@ function CreateFundingRound() {
                 open={successDialogOpen}
                 onClose={() => setSuccessDialogOpen(false)}
                 selectedStartupId={selectedStartupId}
+                fundingType={fundingType}
+                companyName={selectedCompanyName}
             />
         </Box>
     );
