@@ -1,21 +1,5 @@
-import React, { useState,useEffect } from "react";
-import {
-  Typography,
-  Toolbar,
-  Grid,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Button,
-  Avatar,
-  Box,
-  Pagination,
-  Stack,
-} from "@mui/material";
+import React, { useState, useEffect } from 'react';
+import { Typography, Toolbar, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Avatar, Box, Pagination, Stack } from "@mui/material";
 import Navbar from "../Navbar/Navbar";
 import { tableStyles } from '../styles/tables';
 import axios from 'axios';
@@ -232,10 +216,10 @@ function InvestorOverview() {
         navigate(`/fundingroundview`, { state: { fundinground } });
       };      
 
-  return (
-    <>
-      <Navbar />
-      <Toolbar />
+    return (
+        <>
+            <Navbar />
+            <Toolbar />
 
             <Grid container spacing={3} sx={{ paddingLeft: `${drawerWidth}px`, pt: '50px', pr: '50px' }}>
                 <Grid item xs={12}>
@@ -281,28 +265,24 @@ function InvestorOverview() {
                     </Typography>
                 </Grid>
 
-        <TableContainer component={Paper} sx={tableStyles.container}>
-          <Table>
-            <TableHead sx={tableStyles.head}>
-              <TableRow>
-                <TableCell sx={tableStyles.cell}>
-                  <Typography sx={tableStyles.typography}>
-                    Company Name
-                  </Typography>
-                </TableCell>
-                <TableCell sx={tableStyles.cell}>
-                  <Typography sx={tableStyles.typography}>Shares</Typography>
-                </TableCell>
-                <TableCell sx={tableStyles.cell}>
-                  <Typography sx={tableStyles.typography}>
-                    Percentage
-                  </Typography>
-                </TableCell>
-                <TableCell sx={tableStyles.cell}>
-                  <Typography sx={tableStyles.typography}>Action</Typography>
-                </TableCell>
-              </TableRow>
-            </TableHead>
+                <TableContainer component={Paper} sx={tableStyles.container}>
+                    <Table>
+                        <TableHead sx={tableStyles.head}>
+                            <TableRow>
+                                <TableCell sx={tableStyles.cell}>
+                                    <Typography sx={tableStyles.typography}>Company Name</Typography>
+                                </TableCell>
+                                <TableCell sx={tableStyles.cell}>
+                                    <Typography sx={tableStyles.typography}>Shares</Typography>
+                                </TableCell>
+                                <TableCell sx={tableStyles.cell}>
+                                    <Typography sx={tableStyles.typography}>Percentage</Typography>
+                                </TableCell>
+                                <TableCell sx={tableStyles.cell}>
+                                    <Typography sx={tableStyles.typography}>Action</Typography>
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
 
                         <TableBody>
                             {filteredRows.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((row) => (
