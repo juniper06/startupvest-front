@@ -37,19 +37,15 @@ function UserDashboard() {
     const [filteredFundingRounds, setFilteredFundingRounds] = useState([]);
 
     // CAP TABLE
-    const [selectedStartupCapTable, setSelectedStartupCapTable] =
-        useState("Select Company");
+    const [selectedStartupCapTable, setSelectedStartupCapTable] = useState("Select Company");
     const [capTables, setCapTables] = useState([]);
     const [filteredCapTables, setFilteredCapTables] = useState([]);
 
     // COUNTS
-    const [fundedCompaniesCount, setFundedCompaniesCount] = useState(0);
     const [companyCount, setCompanyCount] = useState(0);
     const [investorCount, setInvestorCount] = useState(0);
-    // const [fundingRoundCount, setFundingRoundCount] = useState(0);
     const [totalAmountFunded, setTotalAmountFunded] = useState(0);
     const [fundingRoundsCount, setFundingRoundsCount] = useState(0);
-    const [filteredFundingRoundsCount, setFilteredFundingRoundsCount] = useState(0);
     const [moneyRaisedCount, setMoneyRaisedCount] = useState(0);
     const [highestMoneyRaisedCompany, setHighestMoneyRaisedCompany] = useState({ companyName: '', totalMoneyRaised: 0 });
 
@@ -67,7 +63,6 @@ function UserDashboard() {
     useEffect(() => {
         fetchBusinessProfiles();
         fetchFundingRounds();
-        // fetchCapTable();
         fetchInvestorsByEachUsersCompany();
 
             const timer = setTimeout(() => {
@@ -85,11 +80,22 @@ function UserDashboard() {
         setCreateBusinessProfile(true);
     };
     
-    const handleCloseBusinessProfile = () => {
-        setCreateBusinessProfile(false);
-        fetchBusinessProfiles();
-        // Assuming you have a function to create an activity
-        performedActivity('Created Business Profile', 'Business Profile Created');
+    const handleCloseBusinessProfile = async () => {
+        try {
+            setCreateBusinessProfile(false);
+    
+            // Fetch the updated list of business profiles and use it directly
+            const updatedProfiles = await fetchBusinessProfiles();
+            const newBusinessProfile = updatedProfiles[updatedProfiles.length - 1];
+    
+            if (newBusinessProfile && newBusinessProfile.companyName) {
+                performedActivity(`${newBusinessProfile.companyName} Profile`,'Business Profile Created.');
+            } else {
+                console.error("Failed to log activity: company name is undefined.");
+            }
+        } catch (error) {
+            console.error("Error closing business profile dialog:", error);
+        }
     };
 
     const handleOpenStartUp = (profile) => {
@@ -115,14 +121,19 @@ function UserDashboard() {
         setOpenDeleteDialog(true);
     };
 
-    const handleCloseDeleteDialog = () => {
-        performedActivity('Deleted Business Profile', 'Business Profile Deleted');
+    const handleCloseDeleteDialog = async () => {
+        if (profileToDelete) {
+            try {
+                await handleSoftDelete(); 
+                performedActivity(`${profileToDelete.companyName} Profile`,'Business Profile Deleted.');
+            } catch (error) {
+                console.error("Error deleting profile:", error);
+            }
+        }
         setOpenDeleteDialog(false);
     };
 
-    useEffect(() => {
-        // Existing code for fetching business profiles, funding rounds, etc.
-      
+    useEffect(() => {      
         const fetchRecentActivities = async () => {
           try {
             const response = await axios.get('http://localhost:3000/activities', {
@@ -138,7 +149,7 @@ function UserDashboard() {
       
         fetchRecentActivities();
         performedActivity();
-      }, []); // Empty dependency array to run only on mount
+      }, []);
 
     const performedActivity = async (action, details) => {
         try {
@@ -167,29 +178,33 @@ function UserDashboard() {
                 },
             });
 
-      const responseInvestors = await axios.get(`http://localhost:3000/investors`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+        const responseInvestors = await axios.get(`http://localhost:3000/investors`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            }
+        );
 
-      const startups = responseStartups.data
-        .filter((profile) => !profile.isDeleted)
-        .map((profile) => ({ ...profile, type: "Startup" }));
-      const investors = responseInvestors.data
-        .filter((profile) => !profile.isDeleted)
-        .map((profile) => ({ ...profile, type: "Investor" }));
+        const startups = responseStartups.data
+            .filter((profile) => !profile.isDeleted)
+            .map((profile) => ({ ...profile, type: "Startup" }));
+        const investors = responseInvestors.data
+            .filter((profile) => !profile.isDeleted)
+            .map((profile) => ({ ...profile, type: "Investor" }));
 
-      setBusinessProfiles([...investors, ...startups]);
+        setBusinessProfiles([...investors, ...startups]);
 
-            // Update counts
-            setCompanyCount(startups.length);
-            // setInvestorCount(investors.length);
-        } catch (error) {
-            console.error('Failed to fetch business profiles:', error);
-        }
-    };
+        const allProfiles = [...investors, ...startups];
+        setBusinessProfiles(allProfiles);
+
+        // Update counts
+        setCompanyCount(startups.length);
+        // setInvestorCount(investors.length);
+        return allProfiles; 
+    } catch (error) {
+         console.error('Failed to fetch business profiles:', error);
+    }
+};
 
   const handleSoftDelete = async () => {
     if (!profileToDelete) {
@@ -221,11 +236,19 @@ function UserDashboard() {
         setOpenCreateFundingRound(true);
     };
 
-    const handleCloseFundingRound = (fundingRoundName) => {
+    const handleCloseFundingRound = async () => {
         setOpenCreateFundingRound(false);
-        // Assuming you have a function to create an activity
-        performedActivity('Created Funding Round', 'Funding Round Created');
-        fetchFundingRounds();
+    
+        await fetchFundingRounds();
+        const latestFundingRound = fundingRounds[fundingRounds.length - 1];
+    
+        if (latestFundingRound) {
+            const { startup, fundingType } = latestFundingRound;
+            const companyName = startup?.companyName || 'Unknown Company';
+            performedActivity(`${companyName} Funding Round`, `Established a ${fundingType} funding round.`);
+        } else {
+            console.error('Failed to log activity: latest funding round is undefined.');
+        }
     };
 
     const handleCloseFundingProfile = () => {
@@ -233,12 +256,10 @@ function UserDashboard() {
         fetchFundingRounds();
     }
 
-    // Handler to update the total amount funded
     const handleTotalAmountFundedChange = (total) => {
         setTotalAmountFunded(total);
     };
 
-    // Handler to update the funded rounds count
     const handleFundingRoundsCountChange = (count) => {
         setFundingRoundsCount(count);
     };
@@ -271,19 +292,26 @@ function UserDashboard() {
 
     const handleSoftDeleteFundingRound = async (fundingRoundId) => {
         try {
+        const fundingRoundToDelete = fundingRounds.find(round => round.id === fundingRoundId);
+
+        if (fundingRoundToDelete) {
+            const companyName = fundingRoundToDelete?.startup?.companyName || 'Unknown Company';
+            const fundingType = fundingRoundToDelete?.fundingType || 'Unknown Funding Type';
+
             await axios.delete(`http://localhost:3000/funding-rounds/${fundingRoundId}`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
             });
-            // Remove the deleted funding round from the state to update the UI
+
+            // Remove the deleted funding round 
             const updatedFundingRounds = fundingRounds.filter(round => round.id !== fundingRoundId);
             setFundingRounds(updatedFundingRounds);
             setFilteredFundingRounds(updatedFundingRounds);
-            // Assuming you have a function to create an activity
-            performedActivity('Deleted Funding Round', 'Funding Round Deleted');
+            performedActivity(`${companyName} Funding Round`, `Removed the ${fundingType} funding round.`);
+        }
         } catch (error) {
-            console.error('Failed to soft delete funding round:', error);
+        console.error('Failed to soft delete funding round:', error);
         }
     };
 
@@ -296,10 +324,6 @@ function UserDashboard() {
             });
             setFundingRounds(response.data);
             setFilteredFundingRounds(response.data);
-            // Calculate the total amount funded
-            const totalFunded = fundingRounds.reduce((total, round) => total + round.amount, 0);
-            setTotalAmountFunded(totalFunded);
-            // setFilteredFundingRoundsCount(filteredFundingRounds.length);
         } catch (error) {
             console.error('Error fetching funding rounds:', error);
         }
@@ -333,7 +357,6 @@ function UserDashboard() {
   const handleStartupChangeCapTable = (event) => {
     const selectedCompanyId = event.target.value;
     setSelectedStartupCapTable(selectedCompanyId);
-    //fetchCapTable(selectedCompanyId);
     fetchInvestorsByEachUsersCompany(selectedCompanyId);
   };
 
