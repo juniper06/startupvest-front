@@ -88,11 +88,15 @@ function ViewFundingRound({ fundingRoundDetails }) {
         setInvestors(updatedInvestors);
     };
 
-
     const handleAddInvestor = () => {
         setInvestors([...investors, { name: '', title: '', shares: '' }]);
     };
-    
+
+    const handleSharesChange = (index, value) => {
+        const updatedInvestors = [...investors];
+        updatedInvestors[index].shares = value;
+        setInvestors(updatedInvestors);
+    };
 
     // Initialize the investors state with existing investors
     useEffect(() => {
