@@ -83,7 +83,7 @@ function UserDashboard() {
         setCreateBusinessProfile(false);
         fetchBusinessProfiles();
         // Assuming you have a function to create an activity
-        performedActivity('Created Business Profile', 'New business profile created');
+        performedActivity('Created Business Profile', 'Business Profile Created');
     };
 
     const handleOpenStartUp = (profile) => {
@@ -110,7 +110,7 @@ function UserDashboard() {
     };
 
     const handleCloseDeleteDialog = () => {
-        performedActivity('Deleted Business Profile', 'New business profile deleted');
+        performedActivity('Deleted Business Profile', 'Business Profile Deleted');
         setOpenDeleteDialog(false);
     };
 
@@ -144,6 +144,7 @@ function UserDashboard() {
       
           if (response.status === 201) {
             console.log('Activity created successfully:', response.data);
+            setRecentActivities((prevActivities) => [response.data, ...prevActivities]);
           } else {
             console.error('Error creating activity:', response.data);
           }
@@ -214,10 +215,10 @@ function UserDashboard() {
         setOpenCreateFundingRound(true);
     };
 
-    const handleCloseFundingRound = () => {
+    const handleCloseFundingRound = (fundingRoundName) => {
         setOpenCreateFundingRound(false);
         // Assuming you have a function to create an activity
-        performedActivity('Created Funding Round', 'New Funding Round created');
+        performedActivity('Created Funding Round', 'Funding Round Created');
         fetchFundingRounds();
     };
 
@@ -274,7 +275,7 @@ function UserDashboard() {
             setFundingRounds(updatedFundingRounds);
             setFilteredFundingRounds(updatedFundingRounds);
             // Assuming you have a function to create an activity
-            performedActivity('Deleted Funding Round', 'New Funding Round Deleted');
+            performedActivity('Deleted Funding Round', 'Funding Round Deleted');
         } catch (error) {
             console.error('Failed to soft delete funding round:', error);
         }
@@ -418,24 +419,40 @@ return (
             </Box>
           </Grid>
 
-                    <Grid item xs={12} sm={3}>
-                        <RecentActivityBox>
-                            <RecentActivityTitle variant="h6">Recent Activity</RecentActivityTitle>
-                            <RecentActivityList>
-                                {recentActivities.length === 0 ? (
-                                    <ListItem>
-                                        <ListItemText primary="No recent activity" />
-                                    </ListItem>
-                                ) : (
-                                    recentActivities.map((activity, index) => (
-                                        <ListItem key={index}>
-                                            <ListItemText primary={activity.action} secondary={`${activity.details} - ${activity.timestamp}`} />
-                                        </ListItem>
-                                    ))
-                                )}
-                            </RecentActivityList>
-                        </RecentActivityBox>
-                    </Grid>
+          <Grid item xs={12} sm={3}>
+            <RecentActivityBox>
+                <RecentActivityTitle variant="h6">Recent Activity</RecentActivityTitle>
+                <RecentActivityList>
+                    {recentActivities.length === 0 ? (
+                        <ListItem>
+                            <ListItemText primary="No recent activity" />
+                        </ListItem>
+                    ) : (
+                        recentActivities
+                          .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                          .slice(0, 10)
+                          .map((activity, index) => {
+                            const formattedTimestamp = new Date(activity.timestamp).toLocaleString('en-US', {
+                                year: 'numeric',  month: 'long',   day: 'numeric',  hour: 'numeric',  minute: 'numeric', hour12: true     
+                            });
+
+                            return (
+                                <ListItem key={index}>
+                                    <ListItemText
+                                        primary={activity.action}
+                                          secondary={
+                                            <div>
+                                                <div>{activity.details}</div>
+                                                <div>{formattedTimestamp}</div>
+                                            </div>
+                                        }/>
+                                </ListItem>
+                            );
+                        })
+                    )}
+                </RecentActivityList>
+            </RecentActivityBox>
+        </Grid>
 
           <Grid item xs={12}>
             <Tabs value={tabValue} onChange={handleTabChange} aria-label="tabs"
