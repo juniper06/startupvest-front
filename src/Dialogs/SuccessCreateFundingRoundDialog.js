@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
 
-function SuccessCreateFundingRoundDialog({ open, onClose }) {
+function SuccessCreateFundingRoundDialog({ open, onClose, companyName, fundingType }) {
     const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(open);
 
     useEffect(() => {
@@ -24,7 +24,7 @@ function SuccessCreateFundingRoundDialog({ open, onClose }) {
                 </DialogTitle>
                 <DialogContent>
                     <Typography variant="body1">
-                        The funding round has been successfully created.
+                        The {fundingType} funding round for <strong>{companyName}</strong> has been successfully created.
                     </Typography>
                 </DialogContent>
                 <DialogActions>
