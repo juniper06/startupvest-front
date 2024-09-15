@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Select, MenuItem, Grid, FormControl, Autocomplete } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 
 function ViewFundingRound({ fundingRoundDetails }) {
@@ -18,9 +20,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const [preMoneyValuation, setPreMoneyValuation] = useState('');
     const [minimumShare, setMinimumShare] = useState('');
 
+
     //CAP TABLE
     const [allInvestors, setAllInvestors] = useState([]); // to store all fetched investors
     const [investors, setInvestors] = useState([{ name: null, title: '', shares: '' }]);
+    const [errors, setErrors] = useState({});
+
     const days = [...Array(31).keys()].map(i => i + 1);
     const months = Array.from({ length: 12 }, (_, i) => {
         return new Intl.DateTimeFormat('en', { month: 'long' }).format(new Date(2000, i, 1));
@@ -62,8 +67,20 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
         fetchStartups();
         fetchInvestors();
-        console.log(allInvestors)
+        console.log(allInvestors);
     }, []);
+
+    const validateYears = () => {
+        const newErrors = {};
+
+        // Check if closedYear is earlier than announcedYear
+        if (announcedYear && closedYear && parseInt(closedYear) < parseInt(announcedYear)) {
+            newErrors.closedYear = 'Closed year can\'t be before announced year.';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleInvestorChange = (index, field, value) => {
         const updatedInvestors = [...investors];
@@ -111,9 +128,13 @@ function ViewFundingRound({ fundingRoundDetails }) {
     }, [fundingRoundDetails]);
 
     const handleUpdateFundingRound = async () => {
+        if (!validateYears()) {
+            return; // Exit if validation fails
+        }
+
         try {
             const updatedInvestors = investors.map(investor => ({
-                id: investor.name,  // Assuming this is the investor ID // Assuming this is the investor ID
+                id: investor.name,  // Assuming this is the investor ID 
                 title: investor.title,
                 shares: parseInt(investor.shares)
             }));
@@ -145,11 +166,10 @@ function ViewFundingRound({ fundingRoundDetails }) {
         }
         setIsEditMode(false);
     };
-    
 
-    const handleSharesChange = (index, value) => {
+    const handleRemoveInvestor = (index) => {
         const updatedInvestors = [...investors];
-        updatedInvestors[index].shares = value;
+        updatedInvestors.splice(index, 1);
         setInvestors(updatedInvestors);
     };
 
@@ -232,7 +252,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         <Grid item xs={4}>
                             <label><br />Year</label>
                             <FormControl fullWidth variant="outlined">
-                                <Select labelId="year-label" value={announcedYear} onChange={(e) => setAnnouncedYear(e.target.value)} disabled={!isEditMode} sx={{ height: '45px' }}>
+                                <Select labelId="year-label" value={announcedYear} onChange={(e) => setAnnouncedYear(e.target.value)} disabled={!isEditMode} sx={{ height: '45px' }} >
                                     {years.map((year) => (
                                         <MenuItem key={year} value={year}>{year}</MenuItem>
                                     ))}
@@ -270,6 +290,13 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                         <MenuItem key={year} value={year}>{year}</MenuItem>
                                     ))}
                                 </Select>
+                                <div style={{ textAlign: 'center' }}>
+                                    {errors.closedYear && (
+                                        <div style={{ color: 'red', fontSize: '0.80rem', marginTop: '4px' }}>
+                                            {errors.closedYear}
+                                        </div>
+                                    )}
+                                </div>
                             </FormControl>
                         </Grid>
 
@@ -421,7 +448,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                             </Grid>
                             
-                            <Grid item xs={4}>
+                            <Grid item xs={3.5}>
                                 <label>Shares</label>
                                 <TextField
                                     fullWidth
@@ -431,6 +458,18 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                     onChange={(e) => handleSharesChange(index, e.target.value)}
                                     disabled={!isEditMode}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                            </Grid>
+
+                            <Grid item xs={.5}>
+                                {investors.length > 0 && isEditMode && (
+                                    <IconButton 
+                                        sx = {{ mt: 3 }}
+                                        color="error" 
+                                        onClick={() => handleRemoveInvestor(index)}
+                                        aria-label="remove"> 
+                                        <CloseIcon />
+                                    </IconButton>
+                                )}
                             </Grid>
                         </Grid>
                     </Grid>
