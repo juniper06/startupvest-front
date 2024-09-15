@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import StarsIcon from "@mui/icons-material/Stars";
-import { Box, Typography, Toolbar, Grid, Menu, MenuItem, Tabs, Tab, ListItemText, ListItem, } from "@mui/material";
+import { Box, Typography, Toolbar, Grid, Menu, MenuItem, Tabs, Tab, ListItemText, ListItem, Button } from "@mui/material";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import StarIcon from "@mui/icons-material/Star";
 import Person2Icon from "@mui/icons-material/Person2";
@@ -13,6 +13,7 @@ import CreateBusinessProfileDialog from "../Dialogs/CreateBusinessProfileDialog"
 import BusinessProfileTable from "../Tables/BusinessProfileTable";
 import FundingRoundTable from "../Tables/FundingRoundTable";
 import CapTable from "../Tables/CapTableTable";
+import ActivitiesDialog from "../Dialogs/AcitivtiesDialog";
 
 import { Container, HeaderBox, StatsBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle,   CreateButton, GraphTitle, RecentActivityTitle, } from "../styles/UserDashboard";
 
@@ -52,11 +53,16 @@ function UserDashboard() {
     const [moneyRaisedCount, setMoneyRaisedCount] = useState(0);
     const [highestMoneyRaisedCompany, setHighestMoneyRaisedCompany] = useState({ companyName: '', totalMoneyRaised: 0 });
 
+    const [dialogOpen, setDialogOpen] = useState(false);
     const [recentActivities, setRecentActivities] = useState([]);
 
-    //ACTIVITY
-    const [selectedStartupFunding, setSelectedStartupFunding] = useState('All');
-    const [filteredCompanyActivity, setFilteredCompanyActivity] = useState([]);
+    const handleViewHistoryClick = () => {
+        setDialogOpen(true);
+    };
+
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
+    };
 
     useEffect(() => {
         fetchBusinessProfiles();
@@ -450,7 +456,12 @@ return (
                             );
                         })
                     )}
-                </RecentActivityList>
+                    {recentActivities.length > 10 && (
+                    <Box display="flex" justifyContent="center">
+                        <Button size='small' variant="text" color="primary" onClick={handleViewHistoryClick} >View History</Button> 
+                    </Box>
+                    )}
+                </RecentActivityList>  
             </RecentActivityBox>
         </Grid>
 
@@ -513,6 +524,7 @@ return (
 
         <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} />
         <CreateFundingRoundDialog open={openCreateFundingRound} onClose={handleCloseFundingRound} />
+        <ActivitiesDialog open={dialogOpen} onClose={handleCloseDialog} activities={recentActivities}/>
     </Container>
     </>
   );
