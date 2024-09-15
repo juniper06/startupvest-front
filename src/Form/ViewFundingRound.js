@@ -136,7 +136,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
         try {
             const updatedInvestors = investors.map(investor => ({
-                id: investor.name,
+                id: investor.name,  // Assuming this is the investor ID
                 title: investor.title,
                 shares: parseInt(investor.shares)
             }));
