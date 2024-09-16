@@ -144,7 +144,7 @@ function CreateFundingRound( { onSuccess } ) {
             setTimeout(() => {
                 setSuccessDialogOpen(false);
                 onSuccess(); // Callback for parent component
-            }, 3000);
+            }, 2500);
         } catch (error) {
             console.error('Failed to create funding round:', error);
         }

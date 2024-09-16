@@ -11,7 +11,7 @@ function SuccessCreateBusinessProfileDialog({ open, onClose, companyName, firstN
             timer = setTimeout(() => {
                 setIsSuccessDialogOpen(false);
                 onClose();
-            }, 3000);
+            }, 2500);
         }
         return () => clearTimeout(timer);
     }, [open, onClose]);

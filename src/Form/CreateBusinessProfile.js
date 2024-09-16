@@ -134,7 +134,7 @@ function CreateBusinessProfile({ onSuccess }) {
         setTimeout(() => {
             setSuccessDialogOpen(false);
             onSuccess();
-        }, 3000);
+        }, 2500);
     } catch (error) {
       console.error('Failed to create profile:', error);
     }

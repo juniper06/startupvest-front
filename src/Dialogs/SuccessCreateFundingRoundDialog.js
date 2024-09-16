@@ -11,7 +11,7 @@ function SuccessCreateFundingRoundDialog({ open, onClose, companyName, fundingTy
             timer = setTimeout(() => {
                 setIsSuccessDialogOpen(false);
                 onClose();
-            }, 3000);
+            }, 2500);
         }
         return () => clearTimeout(timer);
     }, [open, onClose]);
