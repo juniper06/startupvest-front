@@ -5,8 +5,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 
 import SuccessCreateFundingRoundDialog from '../Dialogs/SuccessCreateFundingRoundDialog';
+import { fetchRecentActivities, logActivity } from '../utils/activityUtils';
 
-function CreateFundingRound() {
+function CreateFundingRound( { onSuccess } ) {
     const [startups, setStartups] = useState([]);
     const [selectedStartupId, setSelectedStartupId] = useState('');
     const [fundingType, setFundingType] = useState('');
@@ -105,7 +106,7 @@ function CreateFundingRound() {
 
     const handleCreateFundingRound = async () => {
         if (!validateForm()) return;
-
+    
         try {
             const selectedInvestors = investors
                 .filter(investor => investor.name && investor.name.id !== null)
@@ -114,10 +115,10 @@ function CreateFundingRound() {
                     title: investor.title,
                     shares: parseInt(investor.shares)
                 }));
-
+    
             const moneyRaised = selectedInvestors.reduce((acc, investor) => acc + investor.shares, 0);
             setMoneyRaised(moneyRaised);
-
+    
             const formData = {
                 startup: { id: selectedStartupId },
                 fundingType,
@@ -127,14 +128,23 @@ function CreateFundingRound() {
                 moneyRaisedCurrency: currency,
                 targetFunding,
                 preMoneyValuation,
-                minimumShare,  // Added minimumShare to the formData
+                minimumShare,
                 investors: selectedInvestors,
                 shares: selectedInvestors.map(investor => investor.shares),
                 titles: selectedInvestors.map(investor => investor.title)
             };
-
-            const response = await axios.post('http://localhost:3000/funding-rounds/createfund', formData);
+    
+            await axios.post('http://localhost:3000/funding-rounds/createfund', formData);
+    
             setSuccessDialogOpen(true);
+    
+            // Log the activity and fetch recent activities within logActivity
+            await logActivity(`${selectedCompanyName} Funding Round`, 'Funding Round Created');
+    
+            setTimeout(() => {
+                setSuccessDialogOpen(false);
+                onSuccess(); // Callback for parent component
+            }, 3000);
         } catch (error) {
             console.error('Failed to create funding round:', error);
         }
@@ -431,7 +441,7 @@ function CreateFundingRound() {
 
             {/* Success Dialog */}
             <SuccessCreateFundingRoundDialog
-                open={successDialogOpen}
+                open={successDialogOpen}    
                 onClose={() => setSuccessDialogOpen(false)}
                 selectedStartupId={selectedStartupId}
                 fundingType={fundingType}

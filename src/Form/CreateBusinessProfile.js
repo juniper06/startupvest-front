@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import countries from '../static/countries';
 import industries from '../static/industries';
 import SuccessCreateBusinessProfileDialog from '../Dialogs/SuccessCreateBusinessProfileDialog';
 import { Box, Typography, TextField, Select, MenuItem, Grid, FormControl, Card, CardContent, Button, Autocomplete, FormHelperText } from '@mui/material';
 import axios from 'axios';
 
-function CreateBusinessProfile() {
+import { fetchRecentActivities, logActivity } from '../utils/activityUtils';
+
+function CreateBusinessProfile({ onSuccess }) {
   const [selectedProfileType, setSelectedProfileType] = useState(null);
 
   // Profile Form Data Usestates
@@ -37,7 +39,7 @@ function CreateBusinessProfile() {
   const [industry, setIndustry] = useState('');
 
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-
+  
   // Error State Variables
   const [errors, setErrors] = useState({});
 
@@ -124,12 +126,20 @@ function CreateBusinessProfile() {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      setSuccessDialogOpen(true);
+      
+        setSuccessDialogOpen(true);
+
+        await logActivity(`${companyName} profile was created.` ,`${selectedProfileType} Profile`);
+
+        setTimeout(() => {
+            setSuccessDialogOpen(false);
+            onSuccess();
+        }, 3000);
     } catch (error) {
       console.error('Failed to create profile:', error);
     }
-  };    
-      
+  }; 
+ 
     return (
         <>
         <Box component="main" sx={{ flexGrow: 1, width: '100%', overflowX: 'hidden', maxWidth: '1000px',  background: '#F2F2F2'}}>

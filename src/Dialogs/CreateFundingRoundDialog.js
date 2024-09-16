@@ -28,7 +28,7 @@ function CreateFundingRoundDialog({ open, onClose }) {
                     boxShadow: '0 0 20px rgba(0, 0, 0, 0.5)'
                 }}>
 
-                <CreateFundingRound />
+                <CreateFundingRound onSuccess={onClose} />
 
                 <DialogActions>
                     <Box sx={{ display: 'flex', mt: 1, mb: 1, mr: 5 }}>

@@ -64,11 +64,12 @@ function UserDashboard() {
         fetchBusinessProfiles();
         fetchFundingRounds();
         fetchInvestorsByEachUsersCompany();
+        fetchRecentActivities();
 
-            const timer = setTimeout(() => {
-                setTabValue(0);
-            }, 1000);
-            return () => clearTimeout(timer);
+        const timer = setTimeout(() => {
+            setTabValue(0);
+        }, 1000);
+        return () => clearTimeout(timer);
     }, []);
 
     const handleTabChange = (event, newValue) => {
@@ -81,21 +82,7 @@ function UserDashboard() {
     };
     
     const handleCloseBusinessProfile = async () => {
-        try {
-            setCreateBusinessProfile(false);
-    
-            // Fetch the updated list of business profiles and use it directly
-            const updatedProfiles = await fetchBusinessProfiles();
-            const newBusinessProfile = updatedProfiles[updatedProfiles.length - 1];
-    
-            if (newBusinessProfile && newBusinessProfile.companyName) {
-                performedActivity(`${newBusinessProfile.companyName} Profile`,'Business Profile Created.');
-            } else {
-                console.error("Failed to log activity: company name is undefined.");
-            }
-        } catch (error) {
-            console.error("Error closing business profile dialog:", error);
-        }
+        setCreateBusinessProfile(false);
     };
 
     const handleOpenStartUp = (profile) => {
@@ -133,23 +120,23 @@ function UserDashboard() {
         setOpenDeleteDialog(false);
     };
 
-    useEffect(() => {      
-        const fetchRecentActivities = async () => {
-          try {
+    const fetchRecentActivities = async () => {
+        try {
             const response = await axios.get('http://localhost:3000/activities', {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-              },
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
             });
-            setRecentActivities(response.data);
-          } catch (error) {
+
+            if (response.status === 200) {
+                setRecentActivities(response.data);
+            } else {
+                console.error('Error fetching recent activities:', response.data);
+            }
+        } catch (error) {
             console.error('Error fetching recent activities:', error);
-          }
-        };
-      
-        fetchRecentActivities();
-        performedActivity();
-      }, []);
+        }
+    };
 
     const performedActivity = async (action, details) => {
         try {
@@ -197,9 +184,7 @@ function UserDashboard() {
         const allProfiles = [...investors, ...startups];
         setBusinessProfiles(allProfiles);
 
-        // Update counts
         setCompanyCount(startups.length);
-        // setInvestorCount(investors.length);
         return allProfiles; 
     } catch (error) {
          console.error('Failed to fetch business profiles:', error);
@@ -225,9 +210,9 @@ function UserDashboard() {
         }
       );
 
-            fetchBusinessProfiles();
-        } catch (error) {
-            console.error('Failed to delete profile:', error);
+        fetchBusinessProfiles();
+    } catch (error) {
+        console.error('Failed to delete profile:', error);
         }
     };
     
@@ -237,32 +222,7 @@ function UserDashboard() {
     };
 
     const handleCloseFundingRound = async () => {
-        try {
-            setOpenCreateFundingRound(false);
-    
-            // Fetch the latest funding rounds again (this ensures the state is updated correctly)
-            await fetchFundingRounds();
-    
-            // Instead of using the existing state (fundingRounds), fetch the latest funding round directly
-            const response = await axios.get('http://localhost:3000/funding-rounds/all', {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-    
-            const allFundingRounds = response.data;
-            const latestFundingRound = allFundingRounds[allFundingRounds.length - 1];
-    
-            if (latestFundingRound) {
-                const { startup, fundingType } = latestFundingRound;
-                const companyName = startup?.companyName || 'Unknown Company';
-                performedActivity(`${companyName} Funding Round`, `Established a ${fundingType} funding round.`);
-            } else {
-                console.error('Failed to log activity: latest funding round is undefined.');
-            }
-        } catch (error) {
-            console.error('Error closing funding round dialog:', error);
-        }
+        setOpenCreateFundingRound(false);
     };    
 
     const handleCloseFundingProfile = () => {
@@ -286,23 +246,23 @@ function UserDashboard() {
         setMoneyRaisedCount(count);
       };
 
-  const handleViewFundingRound = async (fundingRoundId) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/funding-rounds/${fundingRoundId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+    const handleViewFundingRound = async (fundingRoundId) => {
+        try {
+        const response = await axios.get(
+            `http://localhost:3000/funding-rounds/${fundingRoundId}`,
+            {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            }
+        );
+        console.log("Funding Round Details:", response.data);
+        setSelectedFundingRoundDetails(response.data);
+        setOpenViewFundingRound(true);
+        } catch (error) {
+        console.error("Error fetching funding round details:", error);
         }
-      );
-      console.log("Funding Round Details:", response.data);
-      setSelectedFundingRoundDetails(response.data);
-      setOpenViewFundingRound(true);
-    } catch (error) {
-      console.error("Error fetching funding round details:", error);
-    }
-  };
+    };
 
     const handleSoftDeleteFundingRound = async (fundingRoundId) => {
         try {
