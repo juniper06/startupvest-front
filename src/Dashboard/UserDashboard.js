@@ -237,19 +237,33 @@ function UserDashboard() {
     };
 
     const handleCloseFundingRound = async () => {
-        setOpenCreateFundingRound(false);
+        try {
+            setOpenCreateFundingRound(false);
     
-        await fetchFundingRounds();
-        const latestFundingRound = fundingRounds[fundingRounds.length - 1];
+            // Fetch the latest funding rounds again (this ensures the state is updated correctly)
+            await fetchFundingRounds();
     
-        if (latestFundingRound) {
-            const { startup, fundingType } = latestFundingRound;
-            const companyName = startup?.companyName || 'Unknown Company';
-            performedActivity(`${companyName} Funding Round`, `Established a ${fundingType} funding round.`);
-        } else {
-            console.error('Failed to log activity: latest funding round is undefined.');
+            // Instead of using the existing state (fundingRounds), fetch the latest funding round directly
+            const response = await axios.get('http://localhost:3000/funding-rounds/all', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
+    
+            const allFundingRounds = response.data;
+            const latestFundingRound = allFundingRounds[allFundingRounds.length - 1];
+    
+            if (latestFundingRound) {
+                const { startup, fundingType } = latestFundingRound;
+                const companyName = startup?.companyName || 'Unknown Company';
+                performedActivity(`${companyName} Funding Round`, `Established a ${fundingType} funding round.`);
+            } else {
+                console.error('Failed to log activity: latest funding round is undefined.');
+            }
+        } catch (error) {
+            console.error('Error closing funding round dialog:', error);
         }
-    };
+    };    
 
     const handleCloseFundingProfile = () => {
         setOpenViewFundingRound(false);
