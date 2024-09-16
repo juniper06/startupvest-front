@@ -139,8 +139,7 @@ function CreateFundingRound( { onSuccess } ) {
             setSuccessDialogOpen(true);
     
             // Log the activity and fetch recent activities within logActivity
-            await logActivity(`${selectedCompanyName} Funding Round`, 'Funding Round Created');
-    
+            await logActivity(`${selectedCompanyName} funding round created successfully.`, `${fundingType} funding round created.`);
             setTimeout(() => {
                 setSuccessDialogOpen(false);
                 onSuccess(); // Callback for parent component

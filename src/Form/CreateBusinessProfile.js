@@ -82,63 +82,48 @@ function CreateBusinessProfile({ onSuccess }) {
   };
 
   const handleCreateProfile = async () => {
-    if (!validateFields()) return; 
-
+    if (!validateFields()) return;
+  
+    const profileData = {
+      firstName, lastName, emailAddress, contactInformation, gender, biography,
+      streetAddress, country, city, state, postalCode, website, facebook, twitter, 
+      instagram, linkedIn, companyName, companyDescription, 
+      foundedDate: `${foundedMonth} ${foundedDay}, ${foundedYear}`,
+      typeOfCompany, numberOfEmployees, phoneNumber, contactEmail, industry,
+    };
+  
+    let endpoint;
+    let logMessage;
+    if (selectedProfileType === 'Startup Company') {
+      endpoint = 'http://localhost:3000/startups/create';
+      logMessage = `${companyName} profile created successfully.`;
+    } else if (selectedProfileType === 'Investor') {
+      endpoint = 'http://localhost:3000/investors/create';
+      logMessage = `${firstName} ${lastName} profile created successfully.`;
+    } else {
+      console.error('Invalid profile type:', selectedProfileType);
+      return;
+    }
+  
     try {
-      const profileData = {
-        firstName: firstName,
-        lastName: lastName,
-        emailAddress: emailAddress,
-        contactInformation: contactInformation,
-        gender: gender,
-        biography: biography,
-        streetAddress: streetAddress,
-        country: country,
-        city: city,
-        state: state,
-        postalCode: postalCode,
-        website: website,
-        facebook: facebook,
-        twitter: twitter,
-        instagram: instagram,
-        linkedIn: linkedIn,
-        companyName: companyName,
-        companyDescription: companyDescription,
-        foundedDate: `${foundedMonth} ${foundedDay}, ${foundedYear}`,
-        typeOfCompany: typeOfCompany,
-        numberOfEmployees: numberOfEmployees,
-        phoneNumber: phoneNumber,
-        contactEmail: contactEmail,
-        industry: industry,
-      };
-
-      let endpoint;
-      if (selectedProfileType === 'Startup Company') {
-        endpoint = 'http://localhost:3000/startups/create';
-      } else if (selectedProfileType === 'Investor') {
-        endpoint = 'http://localhost:3000/investors/create';
-      } else {
-        throw new Error('Invalid profile type');
-      }
-
       await axios.post(endpoint, profileData, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      
-        setSuccessDialogOpen(true);
-
-        await logActivity(`${companyName} profile was created.` ,`${selectedProfileType} Profile`);
-
-        setTimeout(() => {
-            setSuccessDialogOpen(false);
-            onSuccess();
-        }, 2500);
+  
+      setSuccessDialogOpen(true);
+  
+      await logActivity(logMessage, `${selectedProfileType} profile`);
+  
+      setTimeout(() => {
+        setSuccessDialogOpen(false);
+        onSuccess();
+      }, 2500);
     } catch (error) {
       console.error('Failed to create profile:', error);
     }
-  }; 
+  };
  
     return (
         <>

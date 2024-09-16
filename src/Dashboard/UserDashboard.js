@@ -114,7 +114,7 @@ function UserDashboard() {
         if (profileToDelete) {
             try {
                 await handleSoftDelete(); 
-                performedActivity(`${profileToDelete.companyName} Profile`,'Business Profile Deleted.');
+                performedActivity(`${profileToDelete.companyName} profile has been deleted.`,'Startup profile removed successfully.');
             } catch (error) {
                 console.error("Error deleting profile:", error);
             }
@@ -286,8 +286,8 @@ function UserDashboard() {
             const updatedFundingRounds = fundingRounds.filter(round => round.id !== fundingRoundId);
             setFundingRounds(updatedFundingRounds);
             setFilteredFundingRounds(updatedFundingRounds);
-            performedActivity(`${companyName} Funding Round`, `Removed the ${fundingType} funding round.`);
-        }
+            performedActivity(`${companyName} - ${fundingType} funding round has been deleted.`, `Funding round removed successfully.`);
+         }
         } catch (error) {
         console.error('Failed to soft delete funding round:', error);
         }
