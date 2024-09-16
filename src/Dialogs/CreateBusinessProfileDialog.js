@@ -18,7 +18,6 @@ function CreateBusinessProfileDialog({ open, onClose }) {
                     justifyContent: 'center',
                     alignItems: 'center',
                 }}>
-
                 <Box
                     sx={{
                         background: '#F2F2F2',
@@ -27,7 +26,7 @@ function CreateBusinessProfileDialog({ open, onClose }) {
                         overflowY: 'auto',
                         boxShadow: '0 0 20px rgba(0, 0, 0, 0.5)',
                     }}>
-                    <CreateBusinessProfile  onSuccess={onClose} />
+                    <CreateBusinessProfile onSuccess={onClose} />
                     <DialogActions>
                         <Box sx={{ display: 'flex', mt: 1, mb: 1, mr: 5 }}>
                             <Button variant="text" sx={{ mr: 2, color: 'rgba(0, 116, 144, 1)' }} onClick={onClose}>

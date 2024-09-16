@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 
 import SuccessCreateFundingRoundDialog from '../Dialogs/SuccessCreateFundingRoundDialog';
-import { fetchRecentActivities, logActivity } from '../utils/activityUtils';
+import { logActivity } from '../utils/activityUtils';
 
 function CreateFundingRound( { onSuccess } ) {
     const [startups, setStartups] = useState([]);

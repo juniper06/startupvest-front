@@ -5,7 +5,7 @@ import SuccessCreateBusinessProfileDialog from '../Dialogs/SuccessCreateBusiness
 import { Box, Typography, TextField, Select, MenuItem, Grid, FormControl, Card, CardContent, Button, Autocomplete, FormHelperText } from '@mui/material';
 import axios from 'axios';
 
-import { fetchRecentActivities, logActivity } from '../utils/activityUtils';
+import { logActivity } from '../utils/activityUtils';
 
 function CreateBusinessProfile({ onSuccess }) {
   const [selectedProfileType, setSelectedProfileType] = useState(null);

@@ -83,6 +83,8 @@ function UserDashboard() {
     
     const handleCloseBusinessProfile = async () => {
         setCreateBusinessProfile(false);
+        await fetchBusinessProfiles();
+        await fetchRecentActivities();
     };
 
     const handleOpenStartUp = (profile) => {
@@ -223,6 +225,8 @@ function UserDashboard() {
 
     const handleCloseFundingRound = async () => {
         setOpenCreateFundingRound(false);
+        await fetchFundingRounds();
+        await fetchRecentActivities();
     };    
 
     const handleCloseFundingProfile = () => {
