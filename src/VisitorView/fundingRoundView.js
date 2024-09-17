@@ -155,7 +155,11 @@ function FundingRoundView() {
                         return (
                           <TableRow key={index}>
                             <TableCell sx={{ textAlign: 'center' }}>
-                              {investor.lastName || 'N/A'}, {investor.firstName || 'N/A'}
+                              {investor.firstName || 
+                                fundinground.capTableInvestors[0]?.investorDetails.firstName || 
+                                'N/A'} {investor.lastName || 
+                                fundinground.capTableInvestors[0]?.investorDetails.lastName || 
+                                'N/A'}
                             </TableCell>
                             <TableCell sx={{ textAlign: 'center' }}>{investorDetail.title || 'N/A'}</TableCell>
                             <TableCell sx={{ textAlign: 'center' }}>
