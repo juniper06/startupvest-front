@@ -18,7 +18,7 @@ function createData(id, transactionName, startupName, fundingType, moneyRaised,
     transactionName,
     startupName,
     fundingType,
-    moneyRaised,
+    moneyRaised: isNaN(moneyRaised) ? '---' : moneyRaised, // Ensure moneyRaised is valid or fallback to '---'
     moneyRaisedCurrency,
     announcedDate,
     closedDate,
@@ -249,20 +249,20 @@ export default function FundingRound() {
                   <TableRow hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', height: '75px' }} onClick={() => handleRowClick(row)}>
                     <TableCell component="th" scope="row" padding="none">
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Avatar
-                        variant="rounded"
-                        sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }}
-                        src={profilePictures[row.id] || ''} // Use the correct ID to fetch the profile picture
-                        alt={row.startupName}
-                      >
-                        {profilePictures[row.id] ? '' : row.startupName.charAt(0)} {/* Display the first letter if image is missing */}
-                      </Avatar>
+                        <Avatar
+                          variant="rounded"
+                          sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }}
+                          src={profilePictures[row.id] || ''} // Use the correct ID to fetch the profile picture
+                          alt={row.startupName}
+                        >
+                          {profilePictures[row.id] ? '' : row.startupName.charAt(0)} {/* Display the first letter if image is missing */}
+                        </Avatar>
                         {row.startupName}
                       </Box>
                     </TableCell>
                     <TableCell align="left">{row.fundingType}</TableCell>
                     <TableCell align="left">
-                      {row.moneyRaisedCurrency} {Number(row.moneyRaised).toLocaleString()}
+                      {row.moneyRaisedCurrency} {row.moneyRaised === '---' ? row.moneyRaised : Number(row.moneyRaised).toLocaleString()}
                     </TableCell>
                     <TableCell align="left">{row.announcedDate}</TableCell>
                     <TableCell align="left">{row.closedDate}</TableCell>
