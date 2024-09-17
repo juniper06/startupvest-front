@@ -113,7 +113,7 @@ function CreateFundingRound( { onSuccess } ) {
                 .map(investor => ({
                     id: investor.name.id,
                     title: investor.title,
-                    shares: parseInt(investor.shares)
+                    shares: parseInt(investor.shares, 10)
                 }));
     
             const moneyRaised = selectedInvestors.reduce((acc, investor) => acc + investor.shares, 0);
@@ -131,15 +131,25 @@ function CreateFundingRound( { onSuccess } ) {
                 minimumShare,
                 investors: selectedInvestors,
                 shares: selectedInvestors.map(investor => investor.shares),
-                titles: selectedInvestors.map(investor => investor.title)
+                titles: selectedInvestors.map(investor => investor.title),
+                userId: localStorage.getItem('userId') // Adding userId from localStorage
             };
     
-            await axios.post('http://localhost:3000/funding-rounds/createfund', formData);
+            // Adding Authorization header with token from localStorage
+            await axios.post('http://localhost:3000/funding-rounds/createfund', formData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}` // Ensure token is correctly set in localStorage
+                }
+            });
     
             setSuccessDialogOpen(true);
     
             // Log the activity and fetch recent activities within logActivity
-            await logActivity(`${selectedCompanyName} funding round created successfully.`, `${fundingType} funding round created.`);
+            await logActivity(
+                `${selectedCompanyName} funding round created successfully.`,
+                `${fundingType} funding round created.`
+            );
+    
             setTimeout(() => {
                 setSuccessDialogOpen(false);
                 onSuccess(); // Callback for parent component
@@ -147,7 +157,7 @@ function CreateFundingRound( { onSuccess } ) {
         } catch (error) {
             console.error('Failed to create funding round:', error);
         }
-    };
+    };    
 
     const handleSharesChange = (index, value) => {
         const updatedInvestors = [...investors];

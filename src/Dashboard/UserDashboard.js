@@ -65,6 +65,7 @@ function UserDashboard() {
         fetchFundingRounds();
         fetchInvestorsByEachUsersCompany();
         fetchRecentActivities();
+        fetchCountInvestor();
 
         const timer = setTimeout(() => {
             setTabValue(0);
@@ -250,6 +251,23 @@ function UserDashboard() {
         setMoneyRaisedCount(count);
       };
 
+    const fetchCountInvestor = async () => {
+        try {
+        const response = await axios.get(
+            `http://localhost:3000/cap-table-investor`,
+            {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            }
+        );
+        console.log("Number of Investors", response.data);
+        setInvestorCount(response.data.length);
+        } catch (error) {
+        console.error("Error fetching funding round details:", error);
+        }
+    };
+
     const handleViewFundingRound = async (fundingRoundId) => {
         try {
         const response = await axios.get(
@@ -326,7 +344,6 @@ function UserDashboard() {
             });
             setCapTables(response.data);
             setFilteredCapTables(response.data);
-            setInvestorCount(response.data.length);
         } catch (error) {
             console.error('Error fetching funding rounds:', error);
         }
