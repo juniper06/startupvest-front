@@ -16,6 +16,8 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 
+import { tableStyles } from '../styles/tables';
+
 const drawerWidth = 240;
 
 function StartUpView() {
@@ -23,13 +25,13 @@ function StartUpView() {
   const [isFollowed, setIsFollowed] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState('');
   const location = useLocation();
-  const { startup } = location.state || {}; 
+  const { startup } = location.state || {};
 
   // Fetch the profile picture
   useEffect(() => {
     const fetchProfilePicture = async () => {
       if (!startup?.id) return; // Ensure startup exists
-  
+
       try {
         const response = await axios.get(`http://localhost:3000/profile-picture/startup/${startup.id}`, {
           headers: {
@@ -37,7 +39,7 @@ function StartUpView() {
           },
           responseType: 'blob', // Important for getting the image as a blob
         });
-  
+
         // Create a URL for the blob
         const imageUrl = URL.createObjectURL(response.data);
         setAvatarUrl(imageUrl);
@@ -62,65 +64,37 @@ function StartUpView() {
   }
 
   return (
-    <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px`, mt: 5 }}>
+    <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px`, mt: 5, }}>
       <Navbar />
       <Toolbar />
 
       <Box display="flex" alignItems="center">
         <Box mr={4}>
-          <Avatar
-            variant="rounded"
-            src={avatarUrl} // Use fetched avatar URL
-            sx={{
-              width: 150,
-              height: 150,
-              border: '5px solid rgba(0, 116, 144, 1)',
-              borderRadius: 3,
-              ml: 8
-            }}
-          />
+          <Avatar variant="rounded" src={avatarUrl} 
+            sx={{ width: 150, height: 150, border: '5px solid rgba(0, 116, 144, 1)', borderRadius: 3, ml: 8 }} />
         </Box>
-        <Typography variant="h4" gutterBottom>
-          {startup.companyName}
-        </Typography>
-        <StarsIcon
-          sx={{
-            cursor: 'pointer',
-            ml: 1,
-            mt: -1,
-            color: isFollowed ? 'rgba(0, 116, 144, 1)' : 'inherit'
-          }}
-          onClick={handleFollowToggle}
-        />
+
+        <Typography variant="h4" gutterBottom>{startup.companyName}</Typography>
+        <StarsIcon sx={{ cursor: 'pointer', ml: 1, mt: -1, color: isFollowed ? 'rgba(0, 116, 144, 1)' : 'inherit'}}
+          onClick={handleFollowToggle}/>
       </Box>
 
       <Box display="flex" alignItems="center" justifyContent="flex-end" sx={{ mt: -3.5 }}>
         <List sx={{ display: 'flex', flexDirection: 'row', mr: 5 }}>
-          <ListItem
-            button
-            selected={selectedPage === 'summary'}
+          <ListItem button selected={selectedPage === 'summary'}
             onClick={() => handlePageChange('summary')}
-            sx={{
-              '&.Mui-selected': { backgroundColor: '#C3DDD6' },
-              '&:hover': { backgroundColor: '#C3DDD6 !important' },
-              mr: 1,
-              borderRadius: 1
-            }}>
+            sx={{ '&.Mui-selected': { backgroundColor: '#C3DDD6' }, '&:hover': { backgroundColor: '#C3DDD6 !important' },
+              mr: 1, borderRadius: 1, cursor: 'pointer'}}>
             <ListItemIcon>
               <StoreIcon />
             </ListItemIcon>
             <ListItemText primary="Summary" />
           </ListItem>
 
-          <ListItem
-            button
-            selected={selectedPage === 'financial'}
+          <ListItem button selected={selectedPage === 'financial'}
             onClick={() => handlePageChange('financial')}
-            sx={{
-              '&.Mui-selected': { backgroundColor: '#C3DDD6' },
-              '&:hover': { backgroundColor: '#C3DDD6 !important' },
-              borderRadius: 1
-            }}>
+            sx={{ '&.Mui-selected': { backgroundColor: '#C3DDD6' },'&:hover': { backgroundColor: '#C3DDD6 !important' },
+              borderRadius: 1, cursor: 'pointer'}}>
             <ListItemIcon>
               <PaidIcon />
             </ListItemIcon>
@@ -132,22 +106,11 @@ function StartUpView() {
       <Divider sx={{ mb: 4 }} />
       <Box ml={4} flexGrow={1}>
         {selectedPage === 'summary' && (
-          <Box
-            component="main"
-            sx={{ display: 'flex', flexGrow: 1, width: '100%', overflowX: 'hidden' }}>
+          <Box component="main" sx={{ display: 'flex', flexGrow: 1, width: '100%', overflowX: 'hidden' }}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={8}>
-                <Box
-                  sx={{
-                    background: 'white',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    borderRadius: 2,
-                    pl: 5,
-                  }}>
-                  <Typography
-                    variant="h5"
-                    sx={{ fontWeight: 'bold', color: 'rgba(0, 116, 144, 1)', mb: 1 }}>
+                <Box sx={{ background: 'white', display: 'flex', flexDirection: 'column', borderRadius: 2, pl: 5,}}>
+                  <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'rgba(0, 116, 144, 1)', mb: 1 }}>
                     Overview
                   </Typography>
                   <Grid container spacing={3}>
@@ -201,82 +164,37 @@ function StartUpView() {
                   <Box sx={{ p: 4, borderRadius: 2, mr: 5 }}>
                     <Stack spacing={2}>
                       {startup.website && (
-                        <Button
-                          variant="outlined"
-                          fullWidth
-                          href={startup.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <Button variant="outlined" fullWidth href={startup.website} target="_blank" rel="noopener noreferrer"
                           startIcon={<LanguageIcon />}
-                          sx={{
-                            backgroundColor: 'rgba(0, 116, 144, 1)',
-                            color: 'white',
-                            '&:hover': { backgroundColor: '#005f73' }
-                          }}>
+                          sx={{ backgroundColor: 'rgba(0, 116, 144, 1)', color: 'white','&:hover': { backgroundColor: '#005f73' }}}>
                           Website
                         </Button>
                       )}
                       {startup.linkedIn && (
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          href={startup.linkedIn}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <Button variant="contained" fullWidth href={startup.linkedIn} target="_blank" rel="noopener noreferrer"
                           startIcon={<LinkedInIcon />}
-                          sx={{
-                            backgroundColor: '#0A66C2',
-                            color: 'white',
-                            '&:hover': { backgroundColor: '#004182' }
-                          }}>
+                          sx={{ backgroundColor: '#0A66C2', color: 'white','&:hover': { backgroundColor: '#004182' }}}>
                           LinkedIn
                         </Button>
                       )}
                       {startup.facebook && (
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          href={startup.facebook}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          startIcon={<FacebookIcon />}
-                          sx={{
-                            backgroundColor: '#1877F2',
-                            color: 'white',
-                            '&:hover': { backgroundColor: '#0a52cc' }
-                          }}>
+                        <Button variant="contained" fullWidth href={startup.facebook} target="_blank" rel="noopener noreferrer"
+                         startIcon={<FacebookIcon />}
+                          sx={{ backgroundColor: '#1877F2', color: 'white', '&:hover': { backgroundColor: '#0a52cc' }}}>
                           Facebook
                         </Button>
                       )}
                       {startup.twitter && (
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          href={startup.twitter}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <Button variant="contained"fullWidth href={startup.twitter} target="_blank" rel="noopener noreferrer"
                           startIcon={<TwitterIcon />}
-                          sx={{
-                            backgroundColor: '#1DA1F2',
-                            color: 'white',
-                            '&:hover': { backgroundColor: '#0a8ddb' }
-                          }}>
+                          sx={{ backgroundColor: '#1DA1F2', color: 'white', '&:hover': { backgroundColor: '#0a8ddb' }}}>
                           Twitter
                         </Button>
                       )}
                       {startup.instagram && (
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          href={startup.instagram}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <Button variant="contained" fullWidth href={startup.instagram} target="_blank" rel="noopener noreferrer"
                           startIcon={<InstagramIcon />}
-                          sx={{
-                            backgroundColor: '#E1306C',
-                            color: 'white',
-                            '&:hover': { backgroundColor: '#b02e5a' }
-                          }}>
+                          sx={{ backgroundColor: '#E1306C', color: 'white', '&:hover': { backgroundColor: '#b02e5a' }}}>
                           Instagram
                         </Button>
                       )}
@@ -289,35 +207,48 @@ function StartUpView() {
         )}
 
         {selectedPage === 'financial' && (
-          <Box
-            component="main"
-            sx={{ display: 'flex', flexGrow: 1, width: '100%', overflowX: 'hidden' }}>
+          <Box component="main" sx={{ display: 'flex', flexGrow: 1, width: '100%', overflowX: 'hidden' }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={8}>
-                <TableContainer sx={{ borderRadius: 2, p: 2 }}>
-                  <Table sx={{ minWidth: 650 }} aria-label="financial table">
-                    <TableHead>
+              {/* Table Section */}
+              <Grid item xs={12} md={5}>
+                <TableContainer sx={{ ...tableStyles.container, mr: 5 }}>
+                  <Table>
+                    <TableHead sx={tableStyles.head}>
                       <TableRow>
-                        <TableCell align="center">Year</TableCell>
-                        <TableCell align="center">Revenue</TableCell>
-                        <TableCell align="center">Net Profit</TableCell>
-                        <TableCell align="center">Funding</TableCell>
+                        <TableCell sx={tableStyles.cell}>
+                          <Typography sx={tableStyles.typography}>Date</Typography>
+                        </TableCell>
+                        <TableCell sx={tableStyles.cell}>
+                          <Typography sx={tableStyles.typography}>Investments</Typography>
+                        </TableCell>
+                        <TableCell sx={tableStyles.cell}>
+                          <Typography sx={tableStyles.typography}>Rounds</Typography>
+                        </TableCell>
+                        <TableCell sx={tableStyles.cell}>
+                          <Typography sx={tableStyles.typography}>Investors</Typography>
+                        </TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {startup.financialData && startup.financialData.map((row) => (
-                        <TableRow key={row.year}>
-                          <TableCell component="th" scope="row">
-                            {row.year}
-                          </TableCell>
-                          <TableCell align="right">{row.revenue}</TableCell>
-                          <TableCell align="right">{row.netProfit}</TableCell>
-                          <TableCell align="right">{row.funding}</TableCell>
-                        </TableRow>
-                      ))}
+                      {/* Example row, replace with actual data */}
+                      <TableRow>
+                        <TableCell sx={tableStyles.cell}>September 2024</TableCell>
+                        <TableCell sx={tableStyles.cell}>P2500</TableCell>
+                        <TableCell sx={tableStyles.cell}>5</TableCell>
+                        <TableCell sx={tableStyles.cell}>4</TableCell>
+                      </TableRow>
                     </TableBody>
                   </Table>
                 </TableContainer>
+              </Grid>
+
+              {/* Graph Section */}
+              <Grid item xs={12} md={7}>
+                <Box sx={{ pr: 5, borderRadius: 2, backgroundColor: 'white', height: '100%', }}>
+                  <Box sx={{ width: '100%', height: '350px', backgroundColor: '#f0f0f0', borderRadius: 1,}}>
+                    {/* Placeholder content or graph component goes here */}
+                  </Box>
+                </Box>
               </Grid>
             </Grid>
           </Box>
