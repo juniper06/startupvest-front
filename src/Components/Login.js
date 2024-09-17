@@ -24,6 +24,7 @@ function Login() {
         password,
       });
       localStorage.setItem('token', response.data.jwt);
+      localStorage.setItem('userId', response.data.userId);
       console.log('Login successful:', response.data);
       setLoggedIn(true);
       setOpenAlert(true);
