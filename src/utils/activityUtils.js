@@ -20,4 +20,3 @@ export const logActivity = async (action, details, fetchRecentActivities) => {
     console.error('Error logging activity:', error);
   }
 };
-
