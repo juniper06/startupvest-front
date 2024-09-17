@@ -103,7 +103,7 @@ function UserProfileView() {
                     <Grid container spacing={3}>
                       <Grid item xs={12}>
                         <Typography><strong>Biography</strong></Typography>
-                        <Typography variant="body1">{profile.biography}</Typography>
+                        <Typography variant="body1" textAlign="justify">{profile.biography}</Typography>
                       </Grid>
 
                       <Grid item xs={6}>

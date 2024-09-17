@@ -15,6 +15,8 @@ import FundingRoundTable from "../Tables/FundingRoundTable";
 import CapTable from "../Tables/CapTableTable";
 import ActivitiesDialog from "../Dialogs/AcitivtiesDialog";
 
+import { logActivity } from '../utils/activityUtils';
+
 import { Container, HeaderBox, StatsBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle,   CreateButton, GraphTitle, RecentActivityTitle, } from "../styles/UserDashboard";
 
 function UserDashboard() {
@@ -112,14 +114,6 @@ function UserDashboard() {
     };
 
     const handleCloseDeleteDialog = async () => {
-        if (profileToDelete) {
-            try {
-                await handleSoftDelete(); 
-                performedActivity(`${profileToDelete.companyName} profile has been deleted.`,'Startup profile removed successfully.');
-            } catch (error) {
-                console.error("Error deleting profile:", error);
-            }
-        }
         setOpenDeleteDialog(false);
     };
 
@@ -138,25 +132,6 @@ function UserDashboard() {
             }
         } catch (error) {
             console.error('Error fetching recent activities:', error);
-        }
-    };
-
-    const performedActivity = async (action, details) => {
-        try {
-          const response = await axios.post('http://localhost:3000/activities', { action, details }, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-      
-          if (response.status === 201) {
-            console.log('Activity created successfully:', response.data);
-            setRecentActivities((prevActivities) => [response.data, ...prevActivities]);
-          } else {
-            console.error('Error creating activity:', response.data);
-          }
-        } catch (error) {
-          console.error('Error:', error);
         }
     };
 
@@ -194,28 +169,33 @@ function UserDashboard() {
     }
 };
 
-  const handleSoftDelete = async () => {
-    if (!profileToDelete) {
-      console.error("No profile selected");
-      return;
-    }
-
-    try {
-      const endpoint = `http://localhost:3000/startups/${profileToDelete.id}/delete`;
-
-      await axios.put(
-        endpoint,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+    const handleSoftDelete = async () => {
+        if (!profileToDelete) {
+            console.error("No profile selected");
+            return;
         }
-      );
 
-        fetchBusinessProfiles();
-    } catch (error) {
-        console.error('Failed to delete profile:', error);
+        try {
+            const endpoint = `http://localhost:3000/startups/${profileToDelete.id}/delete`;
+
+            await axios.put(endpoint, {}, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+
+            await fetchBusinessProfiles();
+
+            // Log recent activity
+            const companyName = profileToDelete.companyName || 'Unknown Company';
+            await logActivity(
+                `${companyName} profile has been deleted.`,
+                'Startup profile removed successfully.',
+                fetchRecentActivities
+            );
+
+        } catch (error) {
+            console.error('Failed to delete profile:', error);
         }
     };
     
@@ -297,17 +277,21 @@ function UserDashboard() {
             await axios.delete(`http://localhost:3000/funding-rounds/${fundingRoundId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+                }
             });
 
             // Remove the deleted funding round 
             const updatedFundingRounds = fundingRounds.filter(round => round.id !== fundingRoundId);
             setFundingRounds(updatedFundingRounds);
             setFilteredFundingRounds(updatedFundingRounds);
-            performedActivity(`${companyName} - ${fundingType} funding round has been deleted.`, `Funding round removed successfully.`);
-         }
+
+            await logActivity(
+                `${companyName} - ${fundingType} funding round has been deleted.`,
+                'Funding round removed successfully.',
+                fetchRecentActivities                );
+            }
         } catch (error) {
-        console.error('Failed to soft delete funding round:', error);
+            console.error('Failed to soft delete funding round:', error);
         }
     };
 
