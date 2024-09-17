@@ -18,6 +18,9 @@ import ActivitiesDialog from "../Dialogs/AcitivtiesDialog";
 import { logActivity } from '../utils/activityUtils';
 
 import { Container, HeaderBox, StatsBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle,   CreateButton, GraphTitle, RecentActivityTitle, } from "../styles/UserDashboard";
+import { Line } from 'react-chartjs-2';
+import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function UserDashboard() {
     const [tabValue, setTabValue] = useState(1);
@@ -53,6 +56,9 @@ function UserDashboard() {
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [recentActivities, setRecentActivities] = useState([]);
+
+    const [userId, setUserId] = useState(null); // State to store the userId
+
 
     const handleViewHistoryClick = () => {
         setDialogOpen(true);
@@ -322,6 +328,59 @@ function UserDashboard() {
     fetchInvestorsByEachUsersCompany(selectedCompanyId);
   };
 
+   // Monthly Funding Chart
+   const MonthlyFundingChart = ({ userId }) => {
+    const [chartData, setChartData] = useState({ labels: [], datasets: [] });
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchMonthlyFunding = async () => {
+
+          const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId'); // Get userId from localStorage
+
+  if (!userId) {
+    console.error('User ID is not available');
+    return;
+  }
+            try {
+                const response = await axios.get(`http://localhost:3000/funding-rounds/monthly-funding/${userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+                const data = response.data;
+
+                const labels = data.map(item => item.month);
+                const totals = data.map(item => item.total);
+
+                setChartData({
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Total Funding',
+                            data: totals,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderWidth: 1,
+                        },
+                    ],
+                });
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching monthly funding data:', error);
+                setLoading(false);
+            }
+        };
+
+        fetchMonthlyFunding();
+    }, [userId]);
+
+    if (loading) return <p>Loading...</p>;
+
+    return <Line data={chartData} />;
+};
+
 return (
     <>
       <Navbar />
@@ -407,6 +466,7 @@ return (
           <Grid item xs={12} sm={9}>
             <Box sx={{ backgroundColor: "white", height: 420, display: "flex", flexDirection: "column", borderRadius: 2, boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", overflow: "hidden", }}>
               <GraphTitle variant="h6">Total Investment Graph</GraphTitle>
+              <MonthlyFundingChart userId={userId} />
             </Box>
           </Grid>
 
