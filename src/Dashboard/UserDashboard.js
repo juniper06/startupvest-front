@@ -53,6 +53,7 @@ function UserDashboard() {
     const [fundingRoundsCount, setFundingRoundsCount] = useState(0);
     const [moneyRaisedCount, setMoneyRaisedCount] = useState(0);
     const [highestMoneyRaisedCompany, setHighestMoneyRaisedCompany] = useState({ companyName: '', totalMoneyRaised: 0 });
+    const [topInvestor, setTopInvestor] = useState({ topInvestorName: '' });
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [recentActivities, setRecentActivities] = useState([]);
@@ -71,9 +72,10 @@ function UserDashboard() {
     useEffect(() => {
         fetchBusinessProfiles();
         fetchFundingRounds();
-        fetchInvestorsByEachUsersCompany();
+        fetchAllInvestorsByEachUsersCompany();
         fetchRecentActivities();
         fetchCountInvestor();
+        fetchTopInvestorContributor();
 
         const timer = setTimeout(() => {
             setTabValue(0);
@@ -254,6 +256,23 @@ function UserDashboard() {
         }
     };
 
+    const fetchTopInvestorContributor = async (userId) => {
+        try {
+          const response = await axios.get(
+            `http://localhost:3000/cap-table-investor/${userId}/top`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log("Top Investor", response.data);
+          setTopInvestor(response.data); // Set the fetched data into state
+        } catch (error) {
+          console.error("Error fetching top investor details:", error);
+        }
+      };
+
     const handleViewFundingRound = async (fundingRoundId) => {
         try {
         const response = await axios.get(
@@ -318,14 +337,14 @@ function UserDashboard() {
     // CAP TABLE
     useEffect(() => {
         if (selectedStartupCapTable === 'Select Company') {
-            fetchInvestorsByEachUsersCompany();
+            fetchAllInvestorsByEachUsersCompany();
         } else {
             // fetchCapTable(selectedStartupCapTable);
         }
     }, [selectedStartupCapTable]);
     
 
-    const fetchInvestorsByEachUsersCompany = async (companyId) => {
+    const fetchAllInvestorsByEachUsersCompany = async (companyId) => {
         try {
             const response = await axios.get(`http://localhost:3000/funding-rounds/${companyId}/investors/all`, {
                 headers: {
@@ -342,7 +361,7 @@ function UserDashboard() {
   const handleStartupChangeCapTable = (event) => {
     const selectedCompanyId = event.target.value;
     setSelectedStartupCapTable(selectedCompanyId);
-    fetchInvestorsByEachUsersCompany(selectedCompanyId);
+    fetchAllInvestorsByEachUsersCompany(selectedCompanyId);
   };
 
    // Monthly Funding Chart
@@ -440,7 +459,7 @@ return (
                 <TopInfoBox>
                     <TopInfoIcon><Person2Icon sx={{ color: '#005b6e' }} /></TopInfoIcon>
                     <TopInfoText>Top Investment Contributor</TopInfoText>
-                    <TopInfoTitle>Hazelyn Balingcasag</TopInfoTitle>
+                    <TopInfoTitle>{topInvestor.topInvestorName}</TopInfoTitle>
                 </TopInfoBox>
             </Grid>
 
