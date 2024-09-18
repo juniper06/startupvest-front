@@ -10,7 +10,7 @@ const drawerWidth = 310;
 
 function createData(id, transactionName, startupName, fundingType, moneyRaised, 
     moneyRaisedCurrency, announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, 
-    minimumShare, startupId, totalShares ) {
+    minimumShare, startupId, totalShares, totalInvestment ) {
     return {
       id,
       transactionName,
@@ -25,7 +25,8 @@ function createData(id, transactionName, startupName, fundingType, moneyRaised,
       capTableInvestors,
       minimumShare,
       startupId,
-      totalShares
+      totalShares,
+      totalInvestment
     };
   }
 
@@ -321,7 +322,7 @@ function InvestorOverview() {
                                         {row.capTableInvestors.map((investor, index) => (
                                         <div key={index}>
                                             {/* {investor.investorDetails.firstName} {investor.investorDetails.lastName}: {Number(investor.shares).toLocaleString()} shares */}
-                                            {row.moneyRaisedCurrency} {Number(row.totalShares).toLocaleString()}
+                                            {row.moneyRaisedCurrency} {Number(investor.totalInvestment).toLocaleString()}
                                         </div>
                                         ))}
                                     </TableCell>
