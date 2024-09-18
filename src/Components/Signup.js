@@ -12,7 +12,9 @@ function Signup() {
   const [emailExists, setEmailExists] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [email, setEmail] = useState('');
-  const [openAlert, setOpenAlert] = useState(false); // Snackbar state
+  const [genderError, setGenderError] = useState('');
+  const [contactNumberError, setContactNumberError] = useState('');
+  const [openAlert, setOpenAlert] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -48,6 +50,21 @@ function Signup() {
     if (emailExists) {
       setError('Email already exists. Please enter a different email.');
       return;
+    }
+
+    if (userData.gender === 'Select Gender') {
+      setGenderError('Please select a valid gender.');
+      return;
+    } else {
+      setGenderError('');
+    }
+
+    const phoneRegex = /^[0-9]{10,15}$/;
+    if (!phoneRegex.test(userData.contactNumber)) {
+      setContactNumberError('Enter a valid number (10-15 digits).');
+      return;
+    } else {
+      setContactNumberError('');
     }
 
     try {
@@ -136,19 +153,22 @@ function Signup() {
 
               <Grid item xs={6}>
                 <Typography sx={{ color: '#F2F2F2' }}>Phone Number</Typography>
-                <TextField fullWidth name="contactNumber" placeholder="09362677352" type="tel" required sx={styles.textField} />
+                <TextField fullWidth name="contactNumber" placeholder="09362677352" type="tel" required sx={styles.textField} 
+                error={!!contactNumberError} />
+                {contactNumberError && ( <Typography sx={styles.errorText}>{contactNumberError  }</Typography>)}
               </Grid>
 
               <Grid item xs={6}>
                 <Typography sx={{ color: '#F2F2F2' }}>Gender</Typography>
                 <FormControl fullWidth>
-                  <Select name="gender" sx={styles.select} defaultValue='Select Gender'>
+                  <Select name="gender" sx={styles.select} defaultValue='Select Gender'error={!!genderError}>
                     <MenuItem value="Select Gender" disabled>Select Gender</MenuItem>
                     <MenuItem value="Male">Male</MenuItem>
                     <MenuItem value="Female">Female</MenuItem>
                     <MenuItem value="Other">Other</MenuItem>
                   </Select>
                 </FormControl>
+                {genderError && ( <Typography sx={styles.errorText}>{genderError}</Typography>)}
               </Grid>
 
               <Grid item xs={12}>
