@@ -302,7 +302,7 @@ function UserDashboard() {
             const companyName = fundingRoundToDelete?.startup?.companyName || 'Unknown Company';
             const fundingType = fundingRoundToDelete?.fundingType || 'Unknown Funding Type';
 
-            await axios.delete(`http://localhost:3000/funding-rounds/${fundingRoundId}`, {
+            await axios.put(`http://localhost:3000/funding-rounds/${fundingRoundId}/delete`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
