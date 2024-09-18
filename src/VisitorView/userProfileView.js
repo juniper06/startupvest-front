@@ -70,6 +70,14 @@ function UserProfileView() {
     return <div>Loading...</div>;
   }
 
+  // Set location parts to empty if "N/A"; otherwise, use the profile value.
+  const streetAddress = profile.streetAddress === "N/A" ? "" : profile.streetAddress || "";
+  const city = profile.city === "N/A" ? "" : profile.city || "";
+  const country = profile.country === "N/A" ? "" : profile.country || "";
+
+  // Construct the location string dynamically
+  const locationParts = [streetAddress, city, country].filter(part => part !== "").join(", ");
+
   return (
     <>
       <Navbar />
@@ -123,7 +131,7 @@ function UserProfileView() {
 
                       <Grid item xs={12}>
                         <Typography><strong>Location</strong></Typography>
-                        <Typography variant="body1">{profile.streetAddress}, {profile.city}, {profile.country}</Typography>
+                        <Typography variant="body1">{locationParts}</Typography>  
                       </Grid>
                     </Grid>
                   </Grid>

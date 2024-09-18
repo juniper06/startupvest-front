@@ -63,6 +63,11 @@ function StartUpView() {
     return <div>No startup data available</div>;
   }
 
+  // Handle 'N/A' values for display
+  const streetAddress = startup.streetAddress === "N/A" ? "" : startup.streetAddress || "";
+  const city = startup.city === "N/A" ? "" : startup.city || "";
+  const state = startup.state === "N/A" ? "" : startup.state || "";
+
   return (
     <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px`, mt: 5, }}>
       <Navbar />
@@ -145,11 +150,13 @@ function StartUpView() {
                         </Grid>
 
                         <Grid item xs={6}>
-                          <Typography>
+                        <Typography>
                             <strong>Location</strong>
                           </Typography>
                           <Typography variant="body1">
-                            {startup.streetAddress}, {startup.city}, {startup.state}
+                            {streetAddress && <>{streetAddress}{city || state ? ", " : ""}</>}
+                            {city && <>{city}{state ? ", " : ""}</>}
+                            {state}
                           </Typography>
                         </Grid>
                       </Grid>

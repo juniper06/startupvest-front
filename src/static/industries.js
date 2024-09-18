@@ -9,4 +9,6 @@ const industries = [
     "Space", "Renewable Energy", "Cybersecurity", "Blockchain", "Gaming"
   ];
 
+const sortedIndustries = industries.sort(); // Sort the industries alphabetically
+
 export default industries;
