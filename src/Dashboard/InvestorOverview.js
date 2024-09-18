@@ -10,7 +10,7 @@ const drawerWidth = 310;
 
 function createData(id, transactionName, startupName, fundingType, moneyRaised, 
     moneyRaisedCurrency, announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, 
-    minimumShare, startupId, totalShares ) {
+    minimumShare, startupId, totalShares, totalInvestment ) {
     return {
       id,
       transactionName,
@@ -25,7 +25,8 @@ function createData(id, transactionName, startupName, fundingType, moneyRaised,
       capTableInvestors,
       minimumShare,
       startupId,
-      totalShares
+      totalShares,
+      totalInvestment
     };
   }
 
@@ -102,6 +103,7 @@ function InvestorOverview() {
                     id: investor.id,
                     title: investor.title,
                     shares: investor.shares,
+                    totalInvestment: investor.totalInvestment || 'N/A',
                     investorDetails: {
                       firstName: investor.investor?.firstName || 'N/A',
                       lastName: investor.investor?.lastName || 'N/A',
@@ -111,7 +113,7 @@ function InvestorOverview() {
                   })),
                   fundingRound.minimumShare || 'N/A',
                   fundingRound.startup?.id || null,
-                  totalShares // Add totalShares here
+                  totalShares, // Add totalShares here
                 );
               });
       
@@ -276,6 +278,9 @@ function InvestorOverview() {
                                     <Typography sx={tableStyles.typography}>Shares</Typography>
                                 </TableCell>
                                 <TableCell sx={tableStyles.cell}>
+                                    <Typography sx={tableStyles.typography}>Total Shares</Typography>
+                                </TableCell>
+                                <TableCell sx={tableStyles.cell}>
                                     <Typography sx={tableStyles.typography}>Percentage</Typography>
                                 </TableCell>
                                 <TableCell sx={tableStyles.cell}>
@@ -307,7 +312,17 @@ function InvestorOverview() {
                                         {row.capTableInvestors.map((investor, index) => (
                                         <div key={index}>
                                             {/* {investor.investorDetails.firstName} {investor.investorDetails.lastName}: {Number(investor.shares).toLocaleString()} shares */}
-                                            {row.moneyRaisedCurrency} {Number(investor.shares).toLocaleString()}
+                                            {Number(investor.shares).toLocaleString()}
+                                        </div>
+                                        ))}
+                                    </TableCell>
+                            
+                                    {/* Total Shares */}
+                                    <TableCell sx={tableStyles.cell}>
+                                        {row.capTableInvestors.map((investor, index) => (
+                                        <div key={index}>
+                                            {/* {investor.investorDetails.firstName} {investor.investorDetails.lastName}: {Number(investor.shares).toLocaleString()} shares */}
+                                            {row.moneyRaisedCurrency} {Number(investor.totalInvestment).toLocaleString()}
                                         </div>
                                         ))}
                                     </TableCell>

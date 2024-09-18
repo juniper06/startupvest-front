@@ -17,7 +17,10 @@ import ActivitiesDialog from "../Dialogs/AcitivtiesDialog";
 
 import { logActivity } from '../utils/activityUtils';
 
-import { Container, HeaderBox, StatsBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle,   CreateButton, GraphTitle, RecentActivityTitle, } from "../styles/UserDashboard";
+import { Container, HeaderBox, StatsBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle,   CreateButton, GraphTitle, RecentActivityTitle } from "../styles/UserDashboard";
+import { chartOptions } from "../styles/chartOptions";
+import { createChartData } from "../utils/chartDataUtils";
+
 import { Line } from 'react-chartjs-2';
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -364,58 +367,49 @@ function UserDashboard() {
     fetchAllInvestorsByEachUsersCompany(selectedCompanyId);
   };
 
-   // Monthly Funding Chart
-   const MonthlyFundingChart = ({ userId }) => {
-    const [chartData, setChartData] = useState({ labels: [], datasets: [] });
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchMonthlyFunding = async () => {
-
-          const token = localStorage.getItem('token');
-  const userId = localStorage.getItem('userId'); // Get userId from localStorage
-
-  if (!userId) {
-    console.error('User ID is not available');
-    return;
-  }
-            try {
-                const response = await axios.get(`http://localhost:3000/funding-rounds/monthly-funding/${userId}`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                });
-                const data = response.data;
-
-                const labels = data.map(item => item.month);
-                const totals = data.map(item => item.total);
-
-                setChartData({
-                    labels,
-                    datasets: [
-                        {
-                            label: 'Total Funding',
-                            data: totals,
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderWidth: 1,
+    // Monthly Funding Chart
+    const MonthlyFundingChart = ({ userId }) => {
+        const [chartData, setChartData] = useState({ labels: [], datasets: [] });
+        const [loading, setLoading] = useState(true);
+    
+        useEffect(() => {
+            const fetchMonthlyFunding = async () => {
+                const userId = localStorage.getItem('userId');
+    
+                if (!userId) {
+                    console.error('User ID is not available');
+                    return;
+                }
+    
+                try {
+                    const response = await axios.get(`http://localhost:3000/funding-rounds/monthly-funding/${userId}`, {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('token')}`,
                         },
-                    ],
-                });
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching monthly funding data:', error);
-                setLoading(false);
-            }
-        };
-
-        fetchMonthlyFunding();
-    }, [userId]);
-
-    if (loading) return <p>Loading...</p>;
-
-    return <Line data={chartData} />;
-};
+                    });
+    
+                    const data = response.data;
+                    const chartData = createChartData(data); // Use the utility function
+    
+                    setChartData(chartData);
+                    setLoading(false);
+                } catch (error) {
+                    console.error('Error fetching monthly funding data:', error);
+                    setLoading(false);
+                }
+            };
+    
+            fetchMonthlyFunding();
+        }, [userId]);
+    
+        if (loading) return <p>Loading chart data...</p>;
+    
+        return (
+            <div style={{ height: '400px', width: '100%' }}>
+                <Line data={chartData} options={chartOptions} />
+            </div>
+        );
+    };
 
 return (
     <>
