@@ -17,13 +17,15 @@ import ActivitiesDialog from "../Dialogs/AcitivtiesDialog";
 
 import { logActivity } from '../utils/activityUtils';
 
+import MonthlyFundingChart from "../Components/Chart";
+
 import { Container, HeaderBox, StatsBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle,   CreateButton, GraphTitle, RecentActivityTitle } from "../styles/UserDashboard";
 import { chartOptions } from "../styles/chartOptions";
 import { createChartData } from "../utils/chartDataUtils";
 
 import { Line } from 'react-chartjs-2';
-import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+// import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+// Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function UserDashboard() {
     const [tabValue, setTabValue] = useState(1);
@@ -73,6 +75,7 @@ function UserDashboard() {
     };
 
     useEffect(() => {
+      
         fetchBusinessProfiles();
         fetchFundingRounds();
         fetchAllInvestorsByEachUsersCompany();
@@ -324,12 +327,14 @@ function UserDashboard() {
     };
 
     const fetchFundingRounds = async () => {
+      
         try {
             const response = await axios.get('http://localhost:3000/funding-rounds/all', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
             });
+            
             setFundingRounds(response.data);
             setFilteredFundingRounds(response.data);
         } catch (error) {
@@ -368,48 +373,49 @@ function UserDashboard() {
   };
 
     // Monthly Funding Chart
-    const MonthlyFundingChart = ({ userId }) => {
-        const [chartData, setChartData] = useState({ labels: [], datasets: [] });
-        const [loading, setLoading] = useState(true);
+    // const MonthlyFundingChart = ({ userId }) => {
+    //     const [chartData, setChartData] = useState({ labels: [], datasets: [] });
+    //     const [loading, setLoading] = useState(true);
     
-        useEffect(() => {
-            const fetchMonthlyFunding = async () => {
-                const userId = localStorage.getItem('userId');
+    //     useEffect(() => {
+    //         const fetchMonthlyFunding = async () => {
+    //             const userId = localStorage.getItem('userId');
     
-                if (!userId) {
-                    console.error('User ID is not available');
-                    return;
-                }
+    //             if (!userId) {
+    //                 console.error('User ID is not available');
+    //                 return;
+    //             }
     
-                try {
-                    const response = await axios.get(`http://localhost:3000/funding-rounds/monthly-funding/${userId}`, {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`,
-                        },
-                    });
+    //             try {
+    //                 const response = await axios.get(`http://localhost:3000/funding-rounds/monthly-funding/${userId}`, {
+    //                     headers: {
+    //                         Authorization: `Bearer ${localStorage.getItem('token')}`,
+    //                     },
+    //                 });
     
-                    const data = response.data;
-                    const chartData = createChartData(data); // Use the utility function
+    //                 const data = response.data;
+    //                 const chartData = createChartData(data); // Use the utility function
     
-                    setChartData(chartData);
-                    setLoading(false);
-                } catch (error) {
-                    console.error('Error fetching monthly funding data:', error);
-                    setLoading(false);
-                }
-            };
+    //                 setChartData(chartData);
+    //                 setLoading(false);
+    //             } catch (error) {
+    //                 console.error('Error fetching monthly funding data:', error);
+    //                 setLoading(false);
+    //             }
+    //         };
     
-            fetchMonthlyFunding();
-        }, [userId]);
+    //         fetchMonthlyFunding();
+    //     }, [userId]);
     
-        if (loading) return <p>Loading chart data...</p>;
+    //     if (loading) return <p>Loading chart data...</p>;
     
-        return (
-            <div style={{ height: '400px', width: '100%' }}>
-                <Line data={chartData} options={chartOptions} />
-            </div>
-        );
-    };
+    //     return (
+    //         <div style={{ height: '400px', width: '100%' }}>
+    //             <Line data={chartData} options={chartOptions} />
+    //         </div>
+    //     );
+    // };
+
 
 return (
     <>

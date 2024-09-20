@@ -15,6 +15,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
+import MonthlyFundingChart from "../Components/Chart";
 
 import { tableStyles } from '../styles/tables';
 
@@ -25,13 +26,17 @@ function StartUpView() {
   const [isFollowed, setIsFollowed] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState('');
   const location = useLocation();
+  const [companyId, setCompanyId] = useState(null);
   const { startup } = location.state || {};
+
+
+  console.log('Company ID:', companyId);
 
   // Fetch the profile picture
   useEffect(() => {
     const fetchProfilePicture = async () => {
       if (!startup?.id) return; // Ensure startup exists
-
+      setCompanyId(startup.id);
       try {
         const response = await axios.get(`http://localhost:3000/profile-picture/startup/${startup.id}`, {
           headers: {
@@ -253,7 +258,7 @@ function StartUpView() {
               <Grid item xs={12} md={7}>
                 <Box sx={{ pr: 5, borderRadius: 2, backgroundColor: 'white', height: '100%', }}>
                   <Box sx={{ width: '100%', height: '350px', backgroundColor: '#f0f0f0', borderRadius: 1,}}>
-                    {/* Placeholder content or graph component goes here */}
+                  {companyId && <MonthlyFundingChart companyId={companyId} />}
                   </Box>
                 </Box>
               </Grid>
