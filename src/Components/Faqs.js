@@ -60,78 +60,109 @@ function Faqs() {
                 
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6">Who are behind this site?</Typography>
+                        <Typography variant="h6">What is StartUpVest?</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            To get started with investing in startups, you can research various funding platforms, network with entrepreneurs and investors, and seek advice from financial advisors. It's also helpful to understand the legal and financial aspects of startup investing.
+                            StartUpVest is a platform designed to connect startups with potential investors. It simplifies the process of showcasing startups and finding investors interested in funding them.
                         </Typography>
                     </AccordionDetails>
                 </Accordion>
 
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6">How can I get started with investing in startups?</Typography>
+                        <Typography variant="h6">How does StartUpVest work?</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            To get started with investing in startups, you can research various funding platforms, network with entrepreneurs and investors, and seek advice from financial advisors. It's also helpful to understand the legal and financial aspects of startup investing.
+                            StartUpVest allows users to create a profile either as a startup company, an investor, or both. Startup owners can create and manage their business profiles, manually add shareholders or investors, and showcase their company to potential backers. Investors can explore different startups and connect with them through external links provided in user profiles. Users have the flexibility to act as both a startup owner and an investor at the same time.</Typography>
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6">Can I create more than one startup profile?</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                            Yes, you can create multiple startup profiles if you manage more than one business. Each startup will have its own profile and funding rounds.
                         </Typography>
                     </AccordionDetails>
                 </Accordion>
 
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6">How can I get started with investing in startups?</Typography>
+                        <Typography variant="h6">What types of funding can I offer on StartUpVest?</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            To get started with investing in startups, you can research various funding platforms, network with entrepreneurs and investors, and seek advice from financial advisors. It's also helpful to understand the legal and financial aspects of startup investing.
+                            <strong>Pre-seed:</strong> The earliest stage of funding, typically involving personal funds, friends, family, or angel investors. It's used to develop an idea into a business plan or build a minimum viable product (MVP).<br /><br />
+                            
+                            <strong>Seed:</strong> This stage involves raising capital to validate the product-market fit, build a team, and grow the business. Seed funding is often provided by angel investors or early-stage venture capital (VC) firms.<br /><br />
+                            
+                            <strong>Series A:</strong> At this stage, startups have a proven business model and are looking to scale. Series A funding is used to optimize the product, acquire more customers, and generate consistent revenue. It’s usually raised from venture capital firms.<br /><br />
+                            
+                            <strong>Series B:</strong> Startups at this stage are ready for major expansion, like growing the team, expanding to new markets, or significantly boosting revenue. Series B funding comes from VCs and sometimes late-stage investors.<br /><br />
+                            
+                            <strong>Series C:</strong> This stage is for companies that are already successful and are looking to expand further, either by launching new products, entering new markets, or acquiring other businesses. Series C funding often involves VCs, private equity firms, and hedge funds.<br /><br />
+                            
+                            <strong>Series D and beyond:</strong> Series D is less common and typically used for further expansion or to prepare the company for an IPO (Initial Public Offering) or a major acquisition. It may also occur if the company has not yet achieved the milestones needed for an IPO and needs additional funds to reach that goal.
+                        </Typography>
+                    </AccordionDetails>
+                </Accordion>
+                
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6">How do I find startups to invest in?</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                            You can browse startups in the Companies section based on criteria such as startup name, industry, and location. Use the search bar to find startups and view detailed profiles that match your investment goals.
                         </Typography>
                     </AccordionDetails>
                 </Accordion>
 
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6">How can I get started with investing in startups?</Typography>
+                        <Typography variant="h6">How do I contact a startup for more information?</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            To get started with investing in startups, you can research various funding platforms, network with entrepreneurs and investors, and seek advice from financial advisors. It's also helpful to understand the legal and financial aspects of startup investing.
+                            Each startup profile includes external links to the founder’s website or social media. You can use these links to contact the startup directly for more information or to negotiate investment terms.
                         </Typography>
                     </AccordionDetails>
                 </Accordion>
 
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6">How can I get started with investing in startups?</Typography>
+                        <Typography variant="h6">Who are the people behind StartUpVest?</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            To get started with investing in startups, you can research various funding platforms, network with entrepreneurs and investors, and seek advice from financial advisors. It's also helpful to understand the legal and financial aspects of startup investing.
+                            Our team is dedicated to creating a seamless experience for both startups and investors. Here’s a brief introduction to the key members behind StartUpVest:
                         </Typography>
-                    </AccordionDetails>
-                </Accordion>
-
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6">How can I get started with investing in startups?</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Typography>
-                            To get started with investing in startups, you can research various funding platforms, network with entrepreneurs and investors, and seek advice from financial advisors. It's also helpful to understand the legal and financial aspects of startup investing.
-                        </Typography>
-                    </AccordionDetails>
-                </Accordion>
-
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6">How can I get started with investing in startups?</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Typography>
-                            To get started with investing in startups, you can research various funding platforms, network with entrepreneurs and investors, and seek advice from financial advisors. It's also helpful to understand the legal and financial aspects of startup investing.
-                        </Typography>
+                        <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '20px' }}>
+                            <div style={{ textAlign: 'center' }}>
+                                <img src="/images/Abrea.png" alt="Abrea" style={{ borderRadius: '50%', width: '80px', height: '80px' }} />
+                                <p>Abrea<br />Team Lead<br /></p>
+                            </div>
+                            <div style={{ textAlign: 'center' }}>
+                                <img src="/images/Alcordo.png" alt="Alcordo" style={{ borderRadius: '50%', width: '80px', height: '80px' }} />
+                                <p>Alcordo<br />Front-end Developer<br /></p>
+                            </div>
+                            <div style={{ textAlign: 'center' }}>
+                                <img src="/images/Balingcasag.png" alt="Balingcasag" style={{ borderRadius: '50%', width: '80px', height: '80px' }} />
+                                <p>Balingcasag<br />Front-end Lead Developer<br /></p>
+                            </div>
+                            <div style={{ textAlign: 'center' }}>
+                                <img src="/images/Biong.png" alt="Biong" style={{ borderRadius: '50%', width: '80px', height: '80px' }} />
+                                <p>Biong<br />Back-end Lead Developer<br /></p>
+                            </div>
+                            <div style={{ textAlign: 'center' }}>
+                                <img src="/images/Borinaga.png" alt="Borinaga" style={{ borderRadius: '50%', width: '80px', height: '80px' }} />
+                                <p>Borinaga<br />Full-Stack Developer<br /></p>
+                            </div>
+                        </div>
                     </AccordionDetails>
                 </Accordion>
             </Box>
