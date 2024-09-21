@@ -61,23 +61,32 @@ export default function Navbar() {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       });
-
+  
       setFirstName(response.data.firstName);
       setLastName(response.data.lastName);
-
-      const profilePicResponse = await axios.get(`http://localhost:3000/profile-picture/${response.data.id}`, {
-        responseType: 'blob',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-
-      const profilePicUrl = URL.createObjectURL(profilePicResponse.data);
-      setUserPhoto(profilePicUrl);
+  
+      try {
+        const profilePicResponse = await axios.get(`http://localhost:3000/profile-picture/${response.data.id}`, {
+          responseType: 'blob',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+  
+        const profilePicUrl = URL.createObjectURL(profilePicResponse.data);
+        setUserPhoto(profilePicUrl);
+      } catch (picError) {
+        if (picError.response && picError.response.status === 404) {
+          console.log('Profile picture not found, using default initials.');
+          setUserPhoto(null); // Use initials or a default image instead
+        } else {
+          console.error('Error fetching profile picture:', picError);
+        }
+      }
     } catch (error) {
       console.error('Failed to fetch user data:', error);
     }
-  };
+  };  
 
   const handleLogout = () => {
     localStorage.removeItem('token');

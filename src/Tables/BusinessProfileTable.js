@@ -39,7 +39,7 @@ function BusinessProfileTable({
                 <Typography sx={tableStyles.typography}>Type</Typography>
               </TableCell>
               <TableCell sx={tableStyles.cell}>
-                <Typography sx={tableStyles.typography}>Company Name</Typography>
+                <Typography sx={tableStyles.typography}>Company/Investor Name</Typography>
               </TableCell>
               <TableCell sx={tableStyles.cell}>
                 <Typography sx={tableStyles.typography}>Industry</Typography>
@@ -58,8 +58,13 @@ function BusinessProfileTable({
                   key={`${profile.type}-${profile.id}`}
                   sx={tableStyles.row(profile.type)}>
                   <TableCell sx={tableStyles.cell}>{profile.type}</TableCell>
-                  <TableCell sx={tableStyles.cell}>{profile.companyName || '---'}</TableCell>
-                  <TableCell sx={tableStyles.cell}>{profile.industry || '---'}</TableCell>
+                  <TableCell sx={tableStyles.cell}>
+                  {profile.type === 'Investor' 
+                    ? `${profile.firstName} ${profile.lastName}` || '---' 
+                    : profile.companyName || '---'}
+                  </TableCell>
+                  <TableCell sx={tableStyles.cell}>
+                    {profile.industry || '---'}</TableCell>
                   <TableCell sx={tableStyles.cell}>
                     {profile.type === 'Investor' ? (
                       <Button
