@@ -197,7 +197,7 @@ function FundingRoundTable({
                       View
                     </Button>
                     <Button
-                      variant="outlined"
+                      variant="text"
                       sx={tableStyles.deleteButton}
                       onClick={() => handleOpenDeleteFundingRoundDialog(round)}>
                       Delete

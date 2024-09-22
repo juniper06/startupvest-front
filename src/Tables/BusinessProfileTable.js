@@ -82,7 +82,7 @@ function BusinessProfileTable({
                           View
                         </Button>
                         <Button
-                          variant="outlined"
+                          variant="text"
                           sx={tableStyles.deleteButton}
                           onClick={() => handleOpenDeleteDialog(profile)}>
                           Delete
