@@ -37,7 +37,7 @@ function InvestorOverview() {
     const [rows, setRows] = useState([]);
     const [filteredRows, setFilteredRows] = useState([]);
     const navigate = useNavigate();
-    const totalItems = 10; 
+    const totalItems = filteredRows.length; 
     const totalPages = Math.ceil(totalItems / rowsPerPage);
     const [userData, setUserData] = useState(null);
     const [profilePictures, setProfilePictures] = useState({});
@@ -231,17 +231,17 @@ function InvestorOverview() {
                 </Grid>
 
                 <Grid container spacing={3}>
+                  <Grid item xs={12} sm={3}>
+                          <StatsBox>
+                              <TopInfoText>Top Company Invested</TopInfoText>
+                              <TopInfoTitle>{topInvestedCompany}</TopInfoTitle>
+                          </StatsBox>
+                      </Grid>
+
                     <Grid item xs={12} sm={3}>
                         <StatsBox>
                             <TopInfoText>Investment Count</TopInfoText>
                             <TopInfoTitle>{totalInvestments}</TopInfoTitle>
-                        </StatsBox>
-                    </Grid>
-
-                    <Grid item xs={12} sm={3}>
-                        <StatsBox>
-                            <TopInfoText>Top Company Invested</TopInfoText>
-                            <TopInfoTitle>{topInvestedCompany}</TopInfoTitle>
                         </StatsBox>
                     </Grid>
 
@@ -294,7 +294,7 @@ function InvestorOverview() {
                                 <TableRow key={row.id} sx={tableStyles.row}>
                                     {/* Company Name with Avatar */}
                                     <TableCell sx={tableStyles.cell}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', ml: 3 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                             <Avatar 
                                                 variant='rounded' 
                                                 sx={{ width: 30, height: 30, mr: 2, border: '2px solid rgba(0, 116, 144, 1)' }} 
