@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, Select, MenuItem, Grid, FormControl, Autocomplete } from '@mui/material';
+import { Box, Typography, TextField, Button, Select, MenuItem, Grid, FormControl, FormHelperText, Autocomplete } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
@@ -76,6 +76,24 @@ function ViewFundingRound({ fundingRoundDetails }) {
         // Check if closedYear is earlier than announcedYear
         if (announcedYear && closedYear && parseInt(closedYear) < parseInt(announcedYear)) {
             newErrors.closedYear = 'Closed year can\'t be before announced year.';
+        }
+
+        // If the years are the same, check the months and days
+        if (announcedYear && closedYear && parseInt(closedYear) === parseInt(announcedYear)) {
+            if (closedMonth < announcedMonth) {
+                newErrors.closedMonth = 'Closed month can\'t be before announced month.';
+            } else if (closedMonth === announcedMonth && closedDay < announcedDay) {
+                newErrors.closedDay = 'Closed day can\'t be before announced day.';
+            }
+        }
+
+        // Check if targetFunding and preMoneyValuation are empty
+        if (!targetFunding) {
+            newErrors.targetFunding = 'Target funding cannot be empty.';
+        }
+
+        if (!preMoneyValuation) {
+            newErrors.preMoneyValuation = 'Pre-money valuation cannot be empty.';
         }
 
         setErrors(newErrors);
@@ -266,42 +284,38 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
                         <Grid item xs={4}>
                             <label><b>Closed on Date</b><br />Month</label>
-                            <FormControl fullWidth variant="outlined">
+                            <FormControl fullWidth variant="outlined" error={!!errors.closedMonth}>
                                 <Select labelId="month-label" value={closedMonth} onChange={(e) => setClosedMonth(e.target.value)} disabled={!isEditMode} sx={{ height: '45px' }}>
                                     {months.map((month, index) => (
                                         <MenuItem key={index} value={index + 1}>{month}</MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
+                            {errors.closedMonth && <FormHelperText>{errors.closedMonth}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
                             <label><br />Day</label>
-                            <FormControl fullWidth variant="outlined">
+                            <FormControl fullWidth variant="outlined" error={!!errors.closedDay}>
                                 <Select labelId="day-label" value={closedDay} onChange={(e) => setClosedDay(e.target.value)} disabled={!isEditMode} sx={{ height: '45px' }}>
                                     {days.map((day) => (
                                         <MenuItem key={day} value={day}>{day}</MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
+                            {errors.closedDay && <FormHelperText>{errors.closedDay}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
                             <label><br />Year</label>
-                            <FormControl fullWidth variant="outlined">
+                            <FormControl fullWidth variant="outlined" error={!!errors.closedYear}>
                                 <Select labelId="year-label" value={closedYear} onChange={(e) => setClosedYear(e.target.value)} disabled={!isEditMode} sx={{ height: '45px' }}>
                                     {years.map((year) => (
                                         <MenuItem key={year} value={year}>{year}</MenuItem>
                                     ))}
                                 </Select>
-                                <div style={{ textAlign: 'center' }}>
-                                    {errors.closedYear && (
-                                        <div style={{ color: 'red', fontSize: '0.80rem', marginTop: '4px' }}>
-                                            {errors.closedYear}
-                                        </div>
-                                    )}
-                                </div>
                             </FormControl>
+                            {errors.closedYear && <FormHelperText>{errors.closedYear}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={8}>
@@ -344,8 +358,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 value={targetFunding}
                                 onChange={(e) => setTargetFunding(e.target.value)}
                                 disabled={!isEditMode}
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} 
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                error={!!errors.targetFunding} // Set error state
                             />
+                                {errors.targetFunding && (
+                                <FormHelperText error>{errors.targetFunding}</FormHelperText> // Display error message
+                            )} 
                         </Grid>
 
                         <Grid item xs={4}>
@@ -375,7 +393,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 value={preMoneyValuation}
                                 onChange={(e) => setPreMoneyValuation(e.target.value)}
                                 disabled={!isEditMode}
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                error={!!errors.preMoneyValuation} // Set error state
+                            />
+                                {errors.preMoneyValuation && (
+                                <FormHelperText error>{errors.preMoneyValuation}</FormHelperText> // Display error message
+                            )}
                         </Grid>
 
                         <Grid item xs={12}>

@@ -7,7 +7,7 @@ import axios from 'axios';
 import SuccessCreateFundingRoundDialog from '../Dialogs/SuccessCreateFundingRoundDialog';
 import { logActivity } from '../utils/activityUtils';
 
-function CreateFundingRound( { onSuccess } ) {
+function CreateFundingRound({ onSuccess }) {
     const [startups, setStartups] = useState([]);
     const [selectedStartupId, setSelectedStartupId] = useState('');
     const [fundingType, setFundingType] = useState('');
@@ -82,7 +82,7 @@ function CreateFundingRound( { onSuccess } ) {
     const validateForm = () => {
         const requiredErrorMessage = 'This field cannot be empty.';
         const newErrors = {};
-    
+
         if (!selectedStartupId) newErrors.selectedStartupId = requiredErrorMessage;
         if (!fundingType) newErrors.fundingType = requiredErrorMessage;
         if (!announcedMonth) newErrors.announcedMonth = requiredErrorMessage;
@@ -94,19 +94,28 @@ function CreateFundingRound( { onSuccess } ) {
         if (!targetFunding) newErrors.targetFunding = requiredErrorMessage;
         if (!preMoneyValuation) newErrors.preMoneyValuation = requiredErrorMessage;
         if (!minimumShare) newErrors.minimumShare = requiredErrorMessage;
-    
+
         // Check if closedYear is earlier than announcedYear
         if (announcedYear && closedYear && parseInt(closedYear) < parseInt(announcedYear)) {
             newErrors.closedYear = 'Closed year can\'t be before announced year.';
         }
-    
+
+        // If the years are the same, check the months and days
+        if (announcedYear && closedYear && parseInt(closedYear) === parseInt(announcedYear)) {
+            if (closedMonth < announcedMonth) {
+                newErrors.closedMonth = 'Closed month can\'t be before announced month.';
+            } else if (closedMonth === announcedMonth && closedDay < announcedDay) {
+                newErrors.closedDay = 'Closed day can\'t be before announced day.';
+            }
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleCreateFundingRound = async () => {
         if (!validateForm()) return;
-    
+
         try {
             const selectedInvestors = investors
                 .filter(investor => investor.name && investor.name.id !== null)
@@ -115,10 +124,10 @@ function CreateFundingRound( { onSuccess } ) {
                     title: investor.title,
                     shares: parseInt(investor.shares, 10)
                 }));
-    
+
             const moneyRaised = selectedInvestors.reduce((acc, investor) => acc + investor.shares, 0);
             setMoneyRaised(moneyRaised);
-    
+
             const formData = {
                 startup: { id: selectedStartupId },
                 fundingType,
@@ -134,22 +143,22 @@ function CreateFundingRound( { onSuccess } ) {
                 titles: selectedInvestors.map(investor => investor.title),
                 userId: localStorage.getItem('userId') // Adding userId from localStorage
             };
-    
+
             // Adding Authorization header with token from localStorage
             await axios.post('http://localhost:3000/funding-rounds/createfund', formData, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}` // Ensure token is correctly set in localStorage
                 }
             });
-    
+
             setSuccessDialogOpen(true);
-    
+
             // Log the activity and fetch recent activities within logActivity
             await logActivity(
                 `${selectedCompanyName} funding round created successfully.`,
                 `${fundingType} funding round created.`
             );
-    
+
             setTimeout(() => {
                 setSuccessDialogOpen(false);
                 onSuccess(); // Callback for parent component
@@ -157,7 +166,7 @@ function CreateFundingRound( { onSuccess } ) {
         } catch (error) {
             console.error('Failed to create funding round:', error);
         }
-    };    
+    };
 
     const handleSharesChange = (index, value) => {
         const updatedInvestors = [...investors];
@@ -218,7 +227,6 @@ function CreateFundingRound( { onSuccess } ) {
                         </Grid>
 
                         <Grid item xs={4}>
-                            
                             <label><b>Announced Date</b><br />Month</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.announcedMonth}>
                                 <Select labelId="month-label" value={announcedMonth} onChange={(e) => setAnnouncedMonth(e.target.value)} sx={{ height: '45px' }}>
