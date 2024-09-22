@@ -75,7 +75,6 @@ function UserDashboard() {
     };
 
     useEffect(() => {
-      
         fetchBusinessProfiles();
         fetchFundingRounds();
         fetchAllInvestorsByEachUsersCompany();
@@ -459,7 +458,7 @@ return (
                 <TopInfoBox>
                     <TopInfoIcon><Person2Icon sx={{ color: '#005b6e' }} /></TopInfoIcon>
                     <TopInfoText>Top Investment Contributor</TopInfoText>
-                    <TopInfoTitle>{topInvestor.topInvestorName}</TopInfoTitle>
+                    <TopInfoTitle>{topInvestor.topInvestorName || 'None'}</TopInfoTitle>
                 </TopInfoBox>
             </Grid>
 
