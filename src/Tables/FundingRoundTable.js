@@ -173,7 +173,7 @@ function FundingRoundTable({
             {paginatedFundingRounds.length > 0 ? (
               paginatedFundingRounds.map((round) => (
                 <TableRow key={round.id}>
-                  <TableCell sx={tableStyles.cell}>March 09, 1989</TableCell>
+                  <TableCell sx={tableStyles.cell}>{round.closedDate}</TableCell>
                   <TableCell sx={tableStyles.cell}>{round.fundingType}</TableCell>
                   <TableCell sx={tableStyles.cell}>
                     {formatCurrency(round.moneyRaised)}
