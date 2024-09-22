@@ -197,8 +197,8 @@ function CreateFundingRound({ onSuccess }) {
                                         <MenuItem key={startup.id} value={startup.id}>{startup.companyName}</MenuItem>
                                     ))}
                                 </Select>
-                                {errors.selectedStartupId && <FormHelperText>{errors.selectedStartupId}</FormHelperText>}
                             </FormControl>
+                            {errors.selectedStartupId && <FormHelperText sx={{color:'red'}}>{errors.selectedStartupId}</FormHelperText>}
                         </Grid>
                     </Grid>
                 </Grid>
@@ -223,7 +223,7 @@ function CreateFundingRound({ onSuccess }) {
                                     <MenuItem value={'Series D'}>Series D</MenuItem>
                                 </Select>
                             </FormControl>
-                            {errors.fundingType && <FormHelperText>{errors.fundingType}</FormHelperText>}
+                            {errors.fundingType && <FormHelperText sx={{color:'red'}}>{errors.fundingType}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -235,7 +235,7 @@ function CreateFundingRound({ onSuccess }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.announcedMonth && <FormHelperText>{errors.announcedMonth}</FormHelperText>}
+                            {errors.announcedMonth && <FormHelperText sx={{color:'red'}}>{errors.announcedMonth}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -247,7 +247,7 @@ function CreateFundingRound({ onSuccess }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.announcedDay && <FormHelperText>{errors.announcedDay}</FormHelperText>}
+                            {errors.announcedDay && <FormHelperText sx={{color:'red'}}>{errors.announcedDay}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -259,7 +259,7 @@ function CreateFundingRound({ onSuccess }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.announcedYear && <FormHelperText>{errors.announcedYear}</FormHelperText>}
+                            {errors.announcedYear && <FormHelperText sx={{color:'red'}}>{errors.announcedYear}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -271,7 +271,7 @@ function CreateFundingRound({ onSuccess }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.closedMonth && <FormHelperText>{errors.closedMonth}</FormHelperText>}
+                            {errors.closedMonth && <FormHelperText sx={{color:'red'}}>{errors.closedMonth}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -283,7 +283,7 @@ function CreateFundingRound({ onSuccess }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.closedDay && <FormHelperText>{errors.closedDay}</FormHelperText>}
+                            {errors.closedDay && <FormHelperText sx={{color:'red'}}>{errors.closedDay}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -295,7 +295,7 @@ function CreateFundingRound({ onSuccess }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.closedYear && <FormHelperText>{errors.closedYear}</FormHelperText>}
+                            {errors.closedYear && <FormHelperText sx={{color:'red'}}>{errors.closedYear}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={8}>
@@ -310,7 +310,7 @@ function CreateFundingRound({ onSuccess }) {
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                     error={!!errors.targetFunding}/>
                             </FormControl>
-                            {errors.targetFunding && <FormHelperText>{errors.targetFunding}</FormHelperText>}
+                            {errors.targetFunding && <FormHelperText sx={{color:'red'}}>{errors.targetFunding}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -342,24 +342,24 @@ function CreateFundingRound({ onSuccess }) {
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                     error={!!errors.preMoneyValuation}/>
                             </FormControl>
-                            {errors.preMoneyValuation && <FormHelperText>{errors.preMoneyValuation}</FormHelperText>}
+                            {errors.preMoneyValuation && <FormHelperText sx={{color:'red'}}>{errors.preMoneyValuation}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={12}>
                             <Typography sx={{ color: '#007490'}}>
-                                A minimum share is the smallest amount of money you need to invest in a company to become a shareholder. For example, if the minimum share is P10,000, this means you have to spend P10,000 to buy just one share of that company.
+                            The price per share refers to the amount of money you need to pay to purchase one share of a company's stock. For example, if the price per share is P10,000, you would need to invest P10,000 to acquire a single share in that company.                            
                             </Typography>
                         </Grid>
 
                         <Grid item xs={8}>
-                            <label><b>Minimum Share</b></label>
+                            <label><b>Price per Share</b></label>
                             <FormControl fullWidth variant="outlined" error={!!errors.minimumShare}>
                                 <TextField fullWidth variant="outlined" type='number' value={minimumShare}
                                     onChange={(e) => setMinimumShare(e.target.value)}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                     error={!!errors.minimumShare}/>
                             </FormControl>
-                            {errors.minimumShare && <FormHelperText>{errors.minimumShare}</FormHelperText>}
+                            {errors.minimumShare && <FormHelperText sx={{color:'red'}}>{errors.minimumShare}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>

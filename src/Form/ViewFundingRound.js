@@ -403,12 +403,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
                         <Grid item xs={12}>
                             <Typography sx={{ color: '#007490'}}>
-                                A minimum share is the smallest amount of money you need to invest in a company to become a shareholder. For example, if the minimum share is P10,000, this means you have to spend P10,000 to buy just one share of that company.
+                            The price per share refers to the amount of money you need to pay to purchase one share of a company's stock. For example, if the price per share is P10,000, you would need to invest P10,000 to acquire a single share in that company.
                             </Typography>
                         </Grid>
                         
                         <Grid item xs={8}>
-                            <label><b>Minimum Share</b></label>
+                            <label><b>Price per Share</b></label>
                                 <TextField
                                     fullWidth
                                     variant="outlined"
