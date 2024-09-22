@@ -151,6 +151,9 @@ function FundingRoundTable({
         <Table>
           <TableHead sx={tableStyles.head}>
             <TableRow>
+            <TableCell sx={tableStyles.cell}>
+                <Typography sx={tableStyles.typography}>Closed on Date</Typography>
+              </TableCell>
               <TableCell sx={tableStyles.cell}>
                 <Typography sx={tableStyles.typography}>Funding Type</Typography>
               </TableCell>
@@ -170,6 +173,7 @@ function FundingRoundTable({
             {paginatedFundingRounds.length > 0 ? (
               paginatedFundingRounds.map((round) => (
                 <TableRow key={round.id}>
+                  <TableCell sx={tableStyles.cell}>March 09, 1989</TableCell>
                   <TableCell sx={tableStyles.cell}>{round.fundingType}</TableCell>
                   <TableCell sx={tableStyles.cell}>
                     {formatCurrency(round.moneyRaised)}
@@ -205,6 +209,7 @@ function FundingRoundTable({
           {paginatedFundingRounds.length > 0 && (
             <TableBody>
               <TableRow>
+                <TableCell sx={tableStyles.cell}></TableCell>
                 <TableCell sx={tableStyles.cell}><Typography sx={{ fontWeight: 'bold' }}>Total</Typography></TableCell>
                 <TableCell sx={{ ...tableStyles.cell, fontWeight: 'bold' }}>
                   {formatCurrency(totalMoneyRaised)}
