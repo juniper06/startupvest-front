@@ -288,7 +288,9 @@ function InvestorOverview() {
                             </div>
                           ))}
                         </TableCell>
-                        <TableCell sx={tableStyles.cell}>{row.moneyRaisedCurrency} {row.moneyRaised}</TableCell>
+                        <TableCell sx={tableStyles.cell}>
+                          {row.moneyRaisedCurrency} {Number(row.moneyRaised).toLocaleString()}
+                        </TableCell>
                         <TableCell sx={tableStyles.cell}>
                             {row.capTableInvestors.map((investor) => {
                                 const userShares = investor.shares || 0;
