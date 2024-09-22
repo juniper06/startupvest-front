@@ -294,7 +294,7 @@ function InvestorOverview() {
                                 <TableRow key={row.id} sx={tableStyles.row}>
                                     {/* Company Name with Avatar */}
                                     <TableCell sx={tableStyles.cell}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', ml: 3 }}>
                                             <Avatar 
                                                 variant='rounded' 
                                                 sx={{ width: 30, height: 30, mr: 2, border: '2px solid rgba(0, 116, 144, 1)' }} 
