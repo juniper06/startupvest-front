@@ -125,24 +125,21 @@ function InvestorOverview() {
         if (userData && userData.id) {
             fetchFundingRounds();
         }
-      }, [userData]); // Dependency on userData
+      }, [userData]);
       
       useEffect(() => {
-        // Calculate the top invested company
         if (rows.length > 0) {
           const investmentTotals = {};
           
-          // Loop through each row and accumulate total investments for each company (startup)
           rows.forEach(row => {
             row.capTableInvestors.forEach(investor => {
               if (!investmentTotals[row.startupName]) {
                 investmentTotals[row.startupName] = 0;
               }
-              investmentTotals[row.startupName] += investor.totalInvestment || 0; // Add total investment instead of shares
+              investmentTotals[row.startupName] += investor.totalInvestment || 0;
             });
           });
       
-          // Find the company with the highest total investment
           const topCompany = Object.entries(investmentTotals).reduce((a, b) => a[1] > b[1] ? a : b)[0];
           setTopInvestedCompany(topCompany);
         }
