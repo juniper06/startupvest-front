@@ -264,6 +264,9 @@ function InvestorOverview() {
                     <TableCell sx={tableStyles.cell}>
                       <Typography sx={tableStyles.typography}>Money Raised</Typography>
                     </TableCell>
+                    <TableCell sx={tableStyles.cell}>
+                      <Typography sx={tableStyles.typography}>Percentage</Typography>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
 
@@ -286,11 +289,22 @@ function InvestorOverview() {
                           ))}
                         </TableCell>
                         <TableCell sx={tableStyles.cell}>{row.moneyRaisedCurrency} {row.moneyRaised}</TableCell>
+                        <TableCell sx={tableStyles.cell}>
+                            {row.capTableInvestors.map((investor) => {
+                                const userShares = investor.shares || 0;
+                                const percentage = row.totalShares ? ((userShares / row.totalShares) * 100).toFixed(2) : '0.00';
+                                return (
+                                    <div key={investor.id}>
+                                        {percentage}%
+                                    </div>
+                                );
+                            })}
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} sx={{ textAlign: 'center' }}>
+                      <TableCell colSpan={5} sx={{ textAlign: 'center' }}>
                         <Typography variant="body2" color="textSecondary">
                           You currently have no active investments.
                         </Typography>
