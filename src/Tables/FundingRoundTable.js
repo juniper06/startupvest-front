@@ -199,8 +199,8 @@ function FundingRoundTable({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} sx={tableStyles.cell}>
-                  No funding rounds available for your startups.
+                <TableCell colSpan={5} sx={tableStyles.cell}>
+                  <Typography variant="body2" color="textSecondary">No funding rounds available for your startups.</Typography>
                 </TableCell>
               </TableRow>
             )}
