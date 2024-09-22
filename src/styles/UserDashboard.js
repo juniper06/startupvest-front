@@ -12,6 +12,7 @@ export const Container = styled(Box)`
   padding-bottom: 8px;
   padding-left: ${`${drawerWidth}px`};
   overflow-x: hidden;
+  margin-bottom: 50px;
 `;
 
 export const HeaderBox = styled(Box)`
