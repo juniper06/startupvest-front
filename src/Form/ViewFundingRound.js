@@ -252,7 +252,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         <Grid item xs={4}>
                             <label><b>Announced Date</b><br />Month</label>
                             <FormControl fullWidth variant="outlined">
-                                <Select labelId="month-label" value={announcedMonth} onChange={(e) => setAnnouncedMonth(e.target.value)} disabled={!isEditMode} sx={{ height: '45px' }}>
+                                <Select labelId="month-label" value={announcedMonth} onChange={(e) => setAnnouncedMonth(e.target.value)} sx={{ height: '45px' }} disabled>
                                     {months.map((month, index) => (
                                         <MenuItem key={index} value={index + 1}>{month}</MenuItem>
                                     ))}
@@ -263,7 +263,8 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         <Grid item xs={4}>
                             <label><br />Day</label>
                             <FormControl fullWidth variant="outlined">
-                                <Select labelId="day-label" value={announcedDay} onChange={(e) => setAnnouncedDay(e.target.value)} disabled={!isEditMode} sx={{ height: '45px' }}>
+                                <Select labelId="day-label" value={announcedDay} onChange={(e) => setAnnouncedDay(e.target.value)} 
+                                sx={{ height: '45px' }} disabled>
                                     {days.map((day) => (
                                         <MenuItem key={day} value={day}>{day}</MenuItem>
                                     ))}
@@ -274,7 +275,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         <Grid item xs={4}>
                             <label><br />Year</label>
                             <FormControl fullWidth variant="outlined">
-                                <Select labelId="year-label" value={announcedYear} onChange={(e) => setAnnouncedYear(e.target.value)} disabled={!isEditMode} sx={{ height: '45px' }} >
+                                <Select labelId="year-label" value={announcedYear} onChange={(e) => setAnnouncedYear(e.target.value)} sx={{ height: '45px' }} disabled>
                                     {years.map((year) => (
                                         <MenuItem key={year} value={year}>{year}</MenuItem>
                                     ))}
@@ -319,7 +320,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         </Grid>
 
                         <Grid item xs={8}>
-                            <label><b>Money Raised</b><br />Amount</label>
+                            <label>Money Raised Amount</label>
                             <TextField
                                 fullWidth
                                 variant="outlined"
@@ -327,12 +328,11 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 value={moneyRaised}
                                 onChange={(e) => setMoneyRaised(e.target.value)}
                                 disabled
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} 
-                            />
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><br />Currency</label>
+                            <label>Currency</label>
                             <Select
                                 fullWidth
                                 variant="outlined"
@@ -350,7 +350,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         </Grid>
 
                         <Grid item xs={8}>
-                            <label><b>Target Funding</b><br />Amount</label>
+                            <label>Target Funding Amount</label>
                             <TextField
                                 fullWidth
                                 variant="outlined"
@@ -359,15 +359,13 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 onChange={(e) => setTargetFunding(e.target.value)}
                                 disabled={!isEditMode}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                error={!!errors.targetFunding} // Set error state
-                            />
-                                {errors.targetFunding && (
-                                <FormHelperText error>{errors.targetFunding}</FormHelperText> // Display error message
+                                error={!!errors.targetFunding} />
+                                {errors.targetFunding && (<FormHelperText error>{errors.targetFunding}</FormHelperText> 
                             )} 
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><br />Currency</label>
+                            <label>Currency</label>
                             <Select
                                 fullWidth
                                 variant="outlined"
@@ -394,11 +392,9 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 onChange={(e) => setPreMoneyValuation(e.target.value)}
                                 disabled={!isEditMode}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                error={!!errors.preMoneyValuation} // Set error state
-                            />
+                                error={!!errors.preMoneyValuation}/>
                                 {errors.preMoneyValuation && (
-                                <FormHelperText error>{errors.preMoneyValuation}</FormHelperText> // Display error message
-                            )}
+                                <FormHelperText error>{errors.preMoneyValuation}</FormHelperText>)}
                         </Grid>
 
                         <Grid item xs={12}>
@@ -408,7 +404,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         </Grid>
                         
                         <Grid item xs={8}>
-                            <label><b>Price per Share</b></label>
+                            <label>Price per Share</label>
                                 <TextField
                                     fullWidth
                                     variant="outlined"
@@ -419,7 +415,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
                         </Grid>
                         <Grid item xs={4}>
-                            <label><b>Currency</b></label>
+                            <label>Currency</label>
                             <Select
                                 fullWidth
                                 variant="outlined"

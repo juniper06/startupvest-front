@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import countries from '../static/countries';
 import industries from '../static/industries';
 import SuccessCreateBusinessProfileDialog from '../Dialogs/SuccessCreateBusinessProfileDialog';
-import { Box, Typography, TextField, Select, MenuItem, Grid, FormControl, Card, CardContent, Button, Autocomplete, FormHelperText } from '@mui/material';
+import { Box, Typography, TextField, Select, MenuItem, Grid, FormControl, CardContent, Button, Autocomplete, FormHelperText } from '@mui/material';
+import { Business, MonetizationOn } from '@mui/icons-material'; 
+import { StyledCard } from '../styles/CardStyles';
 import axios from 'axios';
 
 import { logActivity } from '../utils/activityUtils';
@@ -37,12 +39,14 @@ function CreateBusinessProfile({ onSuccess }) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [industry, setIndustry] = useState('');
-
+  const cardTypes = [
+    { label: 'Startup Company', icon: <Business />, color: '#007490' },
+    { label: 'Investor', icon: <MonetizationOn />, color: '#4CAF50' },
+  ];
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   
   // Error State Variables
   const [errors, setErrors] = useState({});
-
   const days = [...Array(31).keys()].map(i => i + 1);
   const months = Array.from({ length: 12 }, (_, i) => {
     return new Intl.DateTimeFormat('en', { month: 'long' }).format(new Date(2000, i, 1));
@@ -134,33 +138,25 @@ function CreateBusinessProfile({ onSuccess }) {
                     Profile Type 
                 </Typography>
 
-            <Box sx={{ display: 'flex', gap: 2, pl: 5, pb: 2, textAlign: 'center' }}>
-            <Card onClick={() => handleCardClick('Startup Company')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', width: '500px', height: '100px', cursor: 'pointer', border: selectedProfileType === 'Startup Company' ? '3px solid rgba(0, 116, 144, 1)' : '2px solid grey' }}>
+                <Box sx={{ display: 'flex', gap: 2, pl: 5, pb: 2, textAlign: 'center', flexDirection: { xs: 'column', sm: 'row' }, backgroundColor: '#f5f5f5', borderRadius: 2, }}>
+                {cardTypes.map(({ label, icon, color }) => (
+                <StyledCard key={label} onClick={() => handleCardClick(label)} selected={selectedProfileType === label} color={color}>
                     <CardContent>
-                        <Typography variant="h5" component="div">
-                            Startup Company
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
+                        {icon}<Typography variant="h5" component="div" sx={{ fontWeight: 'bold', ml: 1 }}>{label}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                        Click to choose
-                    </Typography>
-                </CardContent>
-            </Card>
-
-            <Card onClick={() => handleCardClick('Investor')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', width: '500px', cursor: 'pointer', border: selectedProfileType === 'Investor' ? '3px solid #007490' : '2px solid grey' }}>
-                <CardContent>
-                    <Typography variant="h5" component="div">
-                        Investor
-                    </Typography>
+                    </Box>
                     <Typography variant="body2" color="text.secondary">
                         Click to choose
                     </Typography>
-                </CardContent>
-            </Card>
-        </Box>
+                    </CardContent>
+                </StyledCard>
+                ))}
+            </Box>
 
             {selectedProfileType === 'Startup Company' && (
                 <>
-                    <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pb: 3     }}>
+                    <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pb: 3}}>
                         Overview
                     </Typography>
 
@@ -194,7 +190,7 @@ function CreateBusinessProfile({ onSuccess }) {
                                 </Grid>
 
                             <Grid item xs={4}>
-                                <label><b>Founded Date *</b><br/>Month</label>
+                                <label><b>Founded Date</b><br/>Month *</label>
                                 <FormControl fullWidth variant="outlined">
                                     <Select                              
                                         labelId="month-label"
@@ -212,7 +208,7 @@ function CreateBusinessProfile({ onSuccess }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label><br/>Day</label>
+                                <label><br/>Day *</label>
                                 <FormControl fullWidth variant="outlined">
                                     <Select
                                         labelId="day-label"
@@ -229,7 +225,7 @@ function CreateBusinessProfile({ onSuccess }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                            <label><br/>Year</label>
+                            <label><br/>Year *</label>
                             <FormControl fullWidth variant="outlined">
                                 <Select
                                     labelId="year-label"
@@ -305,7 +301,7 @@ function CreateBusinessProfile({ onSuccess }) {
                 </Grid>
 
                 <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
-                    Industry
+                    Industry *
                 </Typography>
 
                 <Grid container spacing={3} sx={{ ml: 2 }}>
@@ -338,13 +334,13 @@ function CreateBusinessProfile({ onSuccess }) {
                     <Grid item xs={12} sm={11.4}>
                         <Grid container spacing={2}>
                             <Grid item xs={8}>
-                                <label>Street Address *</label>
+                                <label>Street Address</label>
                                 <TextField fullWidth variant="outlined" value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} s/>
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>Country *</label>
+                                <label>Country</label>
                                 <Autocomplete
                                     options={countries}
                                     getOptionLabel={(option) => option.label}
@@ -377,19 +373,19 @@ function CreateBusinessProfile({ onSuccess }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>City *</label>
+                                <label>City</label>
                                 <TextField fullWidth variant="outlined" value={city} onChange={(e) => setCity(e.target.value)}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>State *</label>
+                                <label>Province/State</label>
                                 <TextField fullWidth variant="outlined" value={state} onChange={(e) => setState(e.target.value)}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>Postal/Zip Code *</label>
+                                <label>Postal/Zip Code</label>
                                 <TextField fullWidth variant="outlined" value={postalCode} onChange={(e) => setPostalCode(e.target.value)}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
                             </Grid>
@@ -433,8 +429,8 @@ function CreateBusinessProfile({ onSuccess }) {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Button variant="contained" sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' }}} style={{marginLeft: '74.5%'}} onClick={handleCreateProfile}>
-                    Create Business Profile
+                <Button variant="contained" sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' }}} style={{marginLeft: '82.7%'}} onClick={handleCreateProfile}>
+                    Create Profile
                 </Button>
             </>
         )}
@@ -449,14 +445,14 @@ function CreateBusinessProfile({ onSuccess }) {
                     <Grid item xs={12} sm={11.4}>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
-                                <label>First Name</label>
+                                <label>First Name *</label>
                                 <TextField fullWidth variant="outlined" value={firstName} onChange={(e) => setFirstName(e.target.value)} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                 error={!!errors.firstName}/>
                                 {errors.firstName && (<FormHelperText error>{errors.firstName}</FormHelperText>)}
                             </Grid>
 
                             <Grid item xs={6}>
-                                <label>Last Name</label>
+                                <label>Last Name *</label>
                                 <TextField fullWidth variant="outlined" value={lastName} onChange={(e) => setLastName(e.target.value)} 
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                 error={!!errors.lastName}/>
@@ -464,7 +460,7 @@ function CreateBusinessProfile({ onSuccess }) {
                             </Grid>
 
                             <Grid item xs={12}>
-                                <label>Email Address</label>
+                                <label>Email Address *</label>
                                 <TextField fullWidth variant="outlined" value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)} 
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                 error={!!errors.emailAddress}/>
@@ -472,7 +468,7 @@ function CreateBusinessProfile({ onSuccess }) {
                             </Grid>
 
                             <Grid item xs={6}>
-                                <label>Contact Information</label>
+                                <label>Contact Information *</label>
                                 <TextField fullWidth variant="outlined" value={contactInformation} onChange={(e) => setContactInformation(e.target.value)} 
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                 error={!!errors.contactInformation}/>
@@ -480,7 +476,7 @@ function CreateBusinessProfile({ onSuccess }) {
                             </Grid>
 
                             <Grid item xs={6}>
-                                <label>Gender</label>
+                                <label>Gender *</label>
                                     <Select fullWidth variant="outlined" value={gender} onChange={(e) => setGender(e.target.value)}
                                         sx={{ height: '45px',}}
                                         error={!!errors.gender}>
@@ -493,7 +489,7 @@ function CreateBusinessProfile({ onSuccess }) {
                             </Grid>
 
                             <Grid item xs={12}>
-                                <label>Biography</label>
+                                <label>Biography *</label>
                                 <TextField fullWidth variant="outlined" multiline rows={4} value={biography} onChange={(e) => setBiography(e.target.value)}
                                 error={!!errors.biography} />
                                 {errors.biography && (<FormHelperText error>{errors.biography}</FormHelperText>)}
@@ -554,7 +550,7 @@ function CreateBusinessProfile({ onSuccess }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>State</label>
+                                <label>Province/State</label>
                                 <TextField fullWidth variant="outlined" value={state} onChange={(e) => setState(e.target.value)} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }, }}/>
                             </Grid>
 
@@ -600,8 +596,8 @@ function CreateBusinessProfile({ onSuccess }) {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Button variant="contained" sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' }}} style={{marginLeft: '74.5%'}} onClick={handleCreateProfile} onClose={handleCreateProfile}>
-                    Create Business Profile
+                <Button variant="contained" sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' }}} style={{marginLeft: '82.7%'}} onClick={handleCreateProfile} onClose={handleCreateProfile}>
+                    Create Profile
                 </Button>
             </>
         )}
