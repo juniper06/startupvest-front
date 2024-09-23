@@ -275,7 +275,7 @@ function InvestorOverview() {
                     filteredRows.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((row) => (
                       <TableRow key={row.id} hover onClick={() => handleRowClick(row)}>
                         <TableCell sx={tableStyles.cell}>
-                          <Box display="flex" alignItems="center" justifyContent="center">
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', ml: 3 }}>
                             <Avatar src={profilePictures[row.startupId]} sx={{ mr: 2, border: '2px rgba(0, 116, 144, 1) solid', borderRadius: 1 }} variant='square' />
                             {row.startupName}
                           </Box>
