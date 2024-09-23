@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Grid, Typography, TextField, Button, Select, MenuItem, FormControl, InputAdornment, IconButton, Snackbar, Alert } from '@mui/material';
+import { Grid, Typography, TextField, Button, Select, MenuItem, FormControl, InputAdornment, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Box } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { styles } from '../styles/Signup';
 
 function Signup() {
@@ -14,7 +15,7 @@ function Signup() {
   const [email, setEmail] = useState('');
   const [genderError, setGenderError] = useState('');
   const [contactNumberError, setContactNumberError] = useState('');
-  const [openAlert, setOpenAlert] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -73,8 +74,8 @@ function Signup() {
         userData
       );
       console.log('Signup successful:', response.data);
-      setOpenAlert(true); 
-      setTimeout(() => navigate('/login'), 1000);
+      setOpenDialog(true);
+      setTimeout(() => navigate('/login'), 3000); // Auto-redirect to login after 3 seconds
     } catch (error) {
       console.error('Signup failed:', error);
       setError('Signup failed. Please try again.');
@@ -98,8 +99,9 @@ function Signup() {
     setShowPassword(!showPassword);
   };
 
-  const handleCloseAlert = () => {
-    setOpenAlert(false);
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    navigate('/login');
   };
 
   return (
@@ -161,7 +163,7 @@ function Signup() {
               <Grid item xs={6}>
                 <Typography sx={{ color: '#F2F2F2' }}>Gender</Typography>
                 <FormControl fullWidth>
-                  <Select name="gender" sx={styles.select} defaultValue='Select Gender'error={!!genderError}>
+                  <Select name="gender" sx={styles.select} defaultValue='Select Gender' error={!!genderError}>
                     <MenuItem value="Select Gender" disabled>Select Gender</MenuItem>
                     <MenuItem value="Male">Male</MenuItem>
                     <MenuItem value="Female">Female</MenuItem>
@@ -215,15 +217,22 @@ function Signup() {
         </Grid>
       </Grid>
 
-      <Snackbar
-        open={openAlert}
-        autoHideDuration={3000}
-        onClose={handleCloseAlert}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-        <Alert onClose={handleCloseAlert} severity="success" sx={styles.snackbar}>
-          Login successful! Redirecting to homepage...
-        </Alert>
-      </Snackbar>
+      <Dialog open={openDialog} onClose={handleCloseDialog}
+        PaperProps={{ 
+          style: { borderRadius: 20, padding: '20px', maxWidth: '400px', textAlign: 'center', },
+        }}>
+      
+      <DialogTitle>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
+          <CheckCircleIcon sx={{ fontSize: 50, color: '#4caf50', marginBottom: '10px', }} />
+          <Typography variant="h6" sx={{ color: '#4caf50', fontWeight: 'bold' }}> Signup Successful</Typography>
+        </Box>
+      </DialogTitle>
+
+      <DialogContent>
+        <Typography>You have successfully signed up! You will be redirected to the login page shortly.</Typography>
+      </DialogContent>
+    </Dialog>
     </div>
   );
 }

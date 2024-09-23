@@ -122,7 +122,7 @@ function CreateFundingRound({ onSuccess }) {
                 .map(investor => ({
                     id: investor.name.id,
                     title: investor.title,
-                    shares: parseInt(investor.shares, 10)
+                    shares: parseInt(parseFormattedNumber(investor.shares), 10)
                 }));
 
             const moneyRaised = selectedInvestors.reduce((acc, investor) => acc + investor.shares, 0);
@@ -135,25 +135,23 @@ function CreateFundingRound({ onSuccess }) {
                 closedDate: `${closedYear}-${closedMonth}-${closedDay}`,
                 moneyRaised,
                 moneyRaisedCurrency: currency,
-                targetFunding,
-                preMoneyValuation,
-                minimumShare,
+                targetFunding: parseFloat(parseFormattedNumber(targetFunding)),
+                preMoneyValuation: parseFloat(parseFormattedNumber(preMoneyValuation)),
+                minimumShare: parseFloat(parseFormattedNumber(minimumShare)),
                 investors: selectedInvestors,
                 shares: selectedInvestors.map(investor => investor.shares),
                 titles: selectedInvestors.map(investor => investor.title),
-                userId: localStorage.getItem('userId') // Adding userId from localStorage
+                userId: localStorage.getItem('userId')
             };
 
-            // Adding Authorization header with token from localStorage
             await axios.post('http://localhost:3000/funding-rounds/createfund', formData, {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}` // Ensure token is correctly set in localStorage
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
 
             setSuccessDialogOpen(true);
 
-            // Log the activity and fetch recent activities within logActivity
             await logActivity(
                 `${selectedCompanyName} funding round created successfully.`,
                 `${fundingType} funding round created.`
@@ -161,18 +159,25 @@ function CreateFundingRound({ onSuccess }) {
 
             setTimeout(() => {
                 setSuccessDialogOpen(false);
-                onSuccess(); // Callback for parent component
+                onSuccess();
             }, 2500);
         } catch (error) {
             console.error('Failed to create funding round:', error);
         }
     };
 
+    // const handleSharesChange = (index, value) => {
+    //     const updatedInvestors = [...investors];
+    //     updatedInvestors[index].shares = value;
+    //     setInvestors(updatedInvestors);
+    // };
+
     const handleSharesChange = (index, value) => {
         const updatedInvestors = [...investors];
-        updatedInvestors[index].shares = value;
+        const rawValue = parseFormattedNumber(value);
+        updatedInvestors[index].shares = formatNumber(rawValue);
         setInvestors(updatedInvestors);
-    };
+      };
 
     const handleRemoveInvestor = (index) => {
         const updatedInvestors = [...investors];
@@ -180,6 +185,21 @@ function CreateFundingRound({ onSuccess }) {
         setInvestors(updatedInvestors);
     };
 
+    const formatNumber = (value) => {
+        if (!value) return '';
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      };
+      
+      // Helper function to parse formatted number back to raw number
+      const parseFormattedNumber = (value) => {
+        return value.replace(/,/g, '');
+      };
+
+      const handleFormattedChange = (setter) => (e) => {
+        const rawValue = parseFormattedNumber(e.target.value);
+        setter(formatNumber(rawValue));
+      };
+    
     return (
         <Box component="main" sx={{ flexGrow: 1, width: '100%', overflowX: 'hidden', maxWidth: '1000px', background: '#F2F2F2' }}>
             <Typography variant="h5" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
@@ -190,15 +210,15 @@ function CreateFundingRound({ onSuccess }) {
                 <Grid item xs={12} sm={11}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <label><b>StartUp Name</b></label>
+                            <label>StartUp Name *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.selectedStartupId}>
                                 <Select fullWidth variant="outlined" value={selectedStartupId} onChange={(e) => setSelectedStartupId(e.target.value)} sx={{ height: '45px' }}>
                                     {startups.map((startup) => (
                                         <MenuItem key={startup.id} value={startup.id}>{startup.companyName}</MenuItem>
                                     ))}
                                 </Select>
-                                {errors.selectedStartupId && <FormHelperText>{errors.selectedStartupId}</FormHelperText>}
                             </FormControl>
+                            {errors.selectedStartupId && <FormHelperText sx={{color:'red'}}>{errors.selectedStartupId}</FormHelperText>}
                         </Grid>
                     </Grid>
                 </Grid>
@@ -212,7 +232,7 @@ function CreateFundingRound({ onSuccess }) {
                 <Grid item xs={12} sm={11}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <label><b>Funding Type</b></label>
+                            <label>Funding Type *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.fundingType}>
                                 <Select fullWidth variant="outlined" value={fundingType} onChange={(e) => setFundingType(e.target.value)} sx={{ height: '45px' }}>
                                     <MenuItem value={'Pre-Seed'}>Pre-Seed</MenuItem>
@@ -223,11 +243,11 @@ function CreateFundingRound({ onSuccess }) {
                                     <MenuItem value={'Series D'}>Series D</MenuItem>
                                 </Select>
                             </FormControl>
-                            {errors.fundingType && <FormHelperText>{errors.fundingType}</FormHelperText>}
+                            {errors.fundingType && <FormHelperText sx={{color:'red'}}>{errors.fundingType}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><b>Announced Date</b><br />Month</label>
+                            <label><b>Announced Date</b><br />Month *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.announcedMonth}>
                                 <Select labelId="month-label" value={announcedMonth} onChange={(e) => setAnnouncedMonth(e.target.value)} sx={{ height: '45px' }}>
                                     {months.map((month, index) => (
@@ -235,11 +255,11 @@ function CreateFundingRound({ onSuccess }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.announcedMonth && <FormHelperText>{errors.announcedMonth}</FormHelperText>}
+                            {errors.announcedMonth && <FormHelperText sx={{color:'red'}}>{errors.announcedMonth}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><br />Day</label>
+                            <label><br />Day *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.announcedDay}>
                                 <Select labelId="day-label" value={announcedDay} onChange={(e) => setAnnouncedDay(e.target.value)} sx={{ height: '45px' }}>
                                     {days.map((day) => (
@@ -247,11 +267,11 @@ function CreateFundingRound({ onSuccess }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.announcedDay && <FormHelperText>{errors.announcedDay}</FormHelperText>}
+                            {errors.announcedDay && <FormHelperText sx={{color:'red'}}>{errors.announcedDay}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><br />Year</label>
+                            <label><br />Year *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.announcedYear}>
                                 <Select labelId="year-label" value={announcedYear} onChange={(e) => setAnnouncedYear(e.target.value)} sx={{ height: '45px' }}>
                                     {years.map((year) => (
@@ -259,11 +279,11 @@ function CreateFundingRound({ onSuccess }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.announcedYear && <FormHelperText>{errors.announcedYear}</FormHelperText>}
+                            {errors.announcedYear && <FormHelperText sx={{color:'red'}}>{errors.announcedYear}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><b>Closed on Date</b><br />Month</label>
+                            <label><b>Closed on Date</b><br />Month *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.closedMonth}>
                                 <Select labelId="month-label" value={closedMonth} onChange={(e) => setClosedMonth(e.target.value)} sx={{ height: '45px' }}>
                                     {months.map((month, index) => (
@@ -271,11 +291,11 @@ function CreateFundingRound({ onSuccess }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.closedMonth && <FormHelperText>{errors.closedMonth}</FormHelperText>}
+                            {errors.closedMonth && <FormHelperText sx={{color:'red'}}>{errors.closedMonth}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><br />Day</label>
+                            <label><br />Day *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.closedDay}>
                                 <Select labelId="day-label" value={closedDay} onChange={(e) => setClosedDay(e.target.value)} sx={{ height: '45px' }}>
                                     {days.map((day) => (
@@ -283,11 +303,11 @@ function CreateFundingRound({ onSuccess }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.closedDay && <FormHelperText>{errors.closedDay}</FormHelperText>}
+                            {errors.closedDay && <FormHelperText sx={{color:'red'}}>{errors.closedDay}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><br />Year</label>
+                            <label><br />Year *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.closedYear}>
                                 <Select labelId="year-label" value={closedYear} onChange={(e) => setClosedYear(e.target.value)} sx={{ height: '45px' }}>
                                     {years.map((year) => (
@@ -295,26 +315,25 @@ function CreateFundingRound({ onSuccess }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.closedYear && <FormHelperText>{errors.closedYear}</FormHelperText>}
+                            {errors.closedYear && <FormHelperText sx={{color:'red'}}>{errors.closedYear}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={8}>
-                            <label><b>Target Funding</b><br />Amount</label>
+                            <label>Target Funding Amount *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.targetFunding}>
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    type='number'
-                                    value={targetFunding}
-                                    onChange={(e) => setTargetFunding(e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                    error={!!errors.targetFunding}/>
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                value={targetFunding}
+                                onChange={handleFormattedChange(setTargetFunding)}
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                error={!!errors.targetFunding}
+                            />
                             </FormControl>
-                            {errors.targetFunding && <FormHelperText>{errors.targetFunding}</FormHelperText>}
+                            {errors.targetFunding && <FormHelperText sx={{color:'red'}}>{errors.targetFunding}</FormHelperText>}
                         </Grid>
-
                         <Grid item xs={4}>
-                            <label><br />Currency</label>
+                            <label>Currency</label>
                             <Select
                                 fullWidth
                                 variant="outlined"
@@ -331,39 +350,41 @@ function CreateFundingRound({ onSuccess }) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <label><b>Pre-Money Valuation</b></label>
+                            <label>Pre-Money Valuation *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.preMoneyValuation}>
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    type='number'
-                                    value={preMoneyValuation}
-                                    onChange={(e) => setPreMoneyValuation(e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                    error={!!errors.preMoneyValuation}/>
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                value={preMoneyValuation}
+                                onChange={handleFormattedChange(setPreMoneyValuation)}
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                error={!!errors.preMoneyValuation}
+                            />
                             </FormControl>
-                            {errors.preMoneyValuation && <FormHelperText>{errors.preMoneyValuation}</FormHelperText>}
+                            {errors.preMoneyValuation && <FormHelperText sx={{color:'red'}}>{errors.preMoneyValuation}</FormHelperText>}
                         </Grid>
-
                         <Grid item xs={12}>
                             <Typography sx={{ color: '#007490'}}>
-                                A minimum share is the smallest amount of money you need to invest in a company to become a shareholder. For example, if the minimum share is P10,000, this means you have to spend P10,000 to buy just one share of that company.
+                            The price per share refers to the amount of money you need to pay to purchase one share of a company's stock. For example, if the price per share is P10,000, you would need to invest P10,000 to acquire a single share in that company.                            
                             </Typography>
                         </Grid>
 
                         <Grid item xs={8}>
-                            <label><b>Minimum Share</b></label>
+                            <label>Price per Share *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.minimumShare}>
-                                <TextField fullWidth variant="outlined" type='number' value={minimumShare}
-                                    onChange={(e) => setMinimumShare(e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                    error={!!errors.minimumShare}/>
+                            <TextField 
+                                fullWidth 
+                                variant="outlined" 
+                                value={minimumShare}
+                                onChange={handleFormattedChange(setMinimumShare)}
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                error={!!errors.minimumShare}
+                            />
                             </FormControl>
-                            {errors.minimumShare && <FormHelperText>{errors.minimumShare}</FormHelperText>}
+                            {errors.minimumShare && <FormHelperText sx={{color:'red'}}>{errors.minimumShare}</FormHelperText>}
                         </Grid>
-
                         <Grid item xs={4}>
-                            <label><b>Currency</b></label>
+                            <label>Currency</label>
                             <Select
                                 fullWidth
                                 variant="outlined"
@@ -392,7 +413,7 @@ function CreateFundingRound({ onSuccess }) {
                     <Grid item xs={12} sm={11} key={index}>
                         <Grid container spacing={2}>
                             <Grid item xs={4}>
-                                <label><b>Shareholder's Name</b></label>
+                                <label>Shareholder's Name</label>
                                 <Autocomplete options={allInvestors}
                                     getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
                                     value={investor.name ? allInvestors.find((option) => option.id === investor.name.id) : null}
@@ -402,19 +423,22 @@ function CreateFundingRound({ onSuccess }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label><b>Title</b></label>
+                                <label>Title</label>
                                 <TextField fullWidth variant="outlined" value={investor.title}
                                     onChange={(e) => handleInvestorChange(index, 'title', e.target.value)}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
                             </Grid>
 
                             <Grid item xs={3.5}>
-                                <label><b>Shares</b></label>
-                                <TextField fullWidth variant="outlined" type="number" value={investor.shares}
+                                <label>Shares</label>
+                                <TextField 
+                                    fullWidth 
+                                    variant="outlined" 
+                                    value={investor.shares}
                                     onChange={(e) => handleSharesChange(index, e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
-                            </Grid>
-
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} 
+                                    />
+                                </Grid>
                             <Grid item xs={.5}>
                                 {investors.length > 0 && (
                                     <IconButton  sx = {{ mt: 3 }} color="error" aria-label="remove"
@@ -433,8 +457,8 @@ function CreateFundingRound({ onSuccess }) {
                 </Grid>
             </Grid>
 
-            <Button variant="contained" sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }} style={{ marginLeft: '74%' }} onClick={handleCreateFundingRound}>
-                Create Funding Round
+            <Button variant="contained" sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }} style={{ marginLeft: '80.56%' }} onClick={handleCreateFundingRound}>
+                Create Round
             </Button>
 
             {/* Success Dialog */}

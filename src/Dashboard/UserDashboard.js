@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import StarsIcon from "@mui/icons-material/Stars";
-import { Box, Typography, Toolbar, Grid, Menu, MenuItem, Tabs, Tab, ListItemText, ListItem, Button } from "@mui/material";
+import { Box, Typography, Toolbar, Grid, Menu, MenuItem, Tabs, Tab, ListItemText, ListItem, Button, Divider } from "@mui/material";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
-import StarIcon from "@mui/icons-material/Star";
-import Person2Icon from "@mui/icons-material/Person2";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOnRounded";
+import { History, AddCircle, MonetizationOnRounded, Person2, Business} from '@mui/icons-material';
 
 import Navbar from "../Navbar/Navbar";
 import CreateFundingRoundDialog from "../Dialogs/CreateFundingRoundDialog";
@@ -75,7 +72,6 @@ function UserDashboard() {
     };
 
     useEffect(() => {
-      
         fetchBusinessProfiles();
         fetchFundingRounds();
         fetchAllInvestorsByEachUsersCompany();
@@ -430,14 +426,14 @@ return (
                     <PopupState variant="popover" popupId="demo-popup-menu">
                         {(popupState) => (
                         <>
-                            <CreateButton startIcon={<StarsIcon />}{...bindTrigger(popupState)}>Create</CreateButton>
+                            <CreateButton {...bindTrigger(popupState)}><AddCircle sx={{ mr: 1}} />Create</CreateButton>
                             <Menu {...bindMenu(popupState)}>
                             <MenuItem onClick={() => { handleOpenBusinessProfile(); popupState.close(); }}> 
-                                <Person2Icon sx={{ mr: 1, color: "#007490" }} /> Business Profile
+                                <Person2 sx={{ mr: 1, color: "#007490" }} /> Business Profile
                             </MenuItem>
                             
                             <MenuItem onClick={() => { handleOpenFundingRound(); popupState.close(); }}> 
-                                <MonetizationOnIcon sx={{ mr: 1, color: "#007490" }} /> Funding Round
+                                <MonetizationOnRounded sx={{ mr: 1, color: "#007490" }} /> Funding Round
                             </MenuItem>
                             </Menu>
                         </>
@@ -449,7 +445,7 @@ return (
             {/* Top Row - 5 Boxes */}
             <Grid item xs={12} sm={6}>
                 <TopInfoBox>
-                    <TopInfoIcon><StarIcon sx={{ color: '#005b6e' }} /></TopInfoIcon>
+                    <TopInfoIcon><Business sx={{ color: '#005b6e' }} /></TopInfoIcon>
                     <TopInfoText>Highest-Funded Company</TopInfoText>
                     <TopInfoTitle>{highestMoneyRaisedCompany.companyName || 'None'}</TopInfoTitle>
                 </TopInfoBox>
@@ -457,9 +453,9 @@ return (
 
             <Grid item xs={12} sm={6}>
                 <TopInfoBox>
-                    <TopInfoIcon><Person2Icon sx={{ color: '#005b6e' }} /></TopInfoIcon>
+                    <TopInfoIcon><Person2 sx={{ color: '#005b6e' }} /></TopInfoIcon>
                     <TopInfoText>Top Investment Contributor</TopInfoText>
-                    <TopInfoTitle>{topInvestor.topInvestorName}</TopInfoTitle>
+                    <TopInfoTitle>{topInvestor.topInvestorName || 'None'}</TopInfoTitle>
                 </TopInfoBox>
             </Grid>
 
@@ -500,113 +496,119 @@ return (
 
           {/* Middle Row - Two Boxes */}
           <Grid item xs={12} sm={9}>
-            <Box sx={{ backgroundColor: "white", height: 420, display: "flex", flexDirection: "column", borderRadius: 2, boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", overflow: "hidden", }}>
-              <GraphTitle variant="h6">Total Investment Graph</GraphTitle>
+            <RecentActivityBox>
+              <GraphTitle>Monthly Funding Overview</GraphTitle>
               <MonthlyFundingChart userId={userId} />
-            </Box>
+            </RecentActivityBox>
           </Grid>
 
           <Grid item xs={12} sm={3}>
             <RecentActivityBox>
-                <RecentActivityTitle variant="h6">Recent Activity</RecentActivityTitle>
+                <RecentActivityTitle><History sx={{ mr: 1 }} />Recent Activity</RecentActivityTitle>
+                <Divider />
                 <RecentActivityList>
-                    {recentActivities.length === 0 ? (
-                        <ListItem>
-                            <ListItemText primary="No recent activity" />
-                        </ListItem>
-                    ) : (
-                        recentActivities
-                          .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-                          .slice(0, 10)
-                          .map((activity, index) => {
-                            const formattedTimestamp = new Date(activity.timestamp).toLocaleString('en-US', {
-                                year: 'numeric',  month: 'long',   day: 'numeric',  hour: 'numeric',  minute: 'numeric', hour12: true     
-                            });
+                {recentActivities.length === 0 ? (
+                    <ListItem>
+                    <ListItemText primary="No recent activity" />
+                    </ListItem>
+                ) : (
+                    recentActivities
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                    .slice(0, 10)
+                    .map((activity, index) => {
+                        const formattedTimestamp = new Date(activity.timestamp).toLocaleString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true,
+                        });
 
-                            return (
-                                <ListItem key={index}>
-                                    <ListItemText
-                                        primary={activity.action}
-                                          secondary={
-                                            <div>
-                                                <div>{activity.details}</div>
-                                                <div>{formattedTimestamp}</div>
-                                            </div>
-                                        }/>
-                                </ListItem>
-                            );
-                        })
-                    )}
-                    {recentActivities.length > 10 && (
-                    <Box display="flex" justifyContent="center">
-                        <Button size='small' variant="text" color="primary" onClick={handleViewHistoryClick} >View History</Button> 
+                        return (
+                        <div key={index}>
+                            <ListItem>
+                            <ListItemText
+                                primary={activity.action}
+                                secondary={
+                                <div>
+                                    <div>{activity.details}</div>
+                                    <div style={{ fontSize: '0.875rem', color: '#757575' }}>{formattedTimestamp}</div>
+                                </div>
+                                } />
+                            </ListItem>
+                            {index < recentActivities.length - 1 && <Divider />} 
+                        </div>
+                        );
+                    })
+                )}
+                {recentActivities.length > 10 && (
+                    <Box display="flex" justifyContent="center" mt={2}>
+                    <Button size="small" variant="contained" color="primary" onClick={handleViewHistoryClick}>
+                        View History
+                    </Button>
                     </Box>
-                    )}
-                </RecentActivityList>  
+                )}
+                </RecentActivityList>
             </RecentActivityBox>
-        </Grid>
+            </Grid>
 
-          <Grid item xs={12}>
-            <Tabs value={tabValue} onChange={handleTabChange} aria-label="tabs"
-                sx={{ mt: 2, "& .MuiTabs-indicator": { backgroundColor: "#007490" }, }}>
-            <Tab label="My Profile" 
-                sx={{ color: tabValue === 0 ? "#007490" : "text.secondary", "&.Mui-selected": { color: "#007490",},}}/>
-            <Tab label="My Funding Round"
-                sx={{color: tabValue === 1 ? "#007490" : "text.secondary", "&.Mui-selected": {color: "#007490",},}}/>
-            <Tab label="My Captable"
-                sx={{ color: tabValue === 2 ? "#007490" : "text.secondary", "&.Mui-selected": { color: "#007490", },}}/>
-            </Tabs>
+            <Grid item xs={12}>
+                <Tabs value={tabValue} onChange={handleTabChange} aria-label="tabs"
+                    sx={{ mt: 2, "& .MuiTabs-indicator": { backgroundColor: "#007490" }, }}>
+                <Tab label="My Profile" 
+                    sx={{ color: tabValue === 0 ? "#007490" : "text.secondary", "&.Mui-selected": { color: "#007490",},}}/>
+                <Tab label="My Funding Round"
+                    sx={{color: tabValue === 1 ? "#007490" : "text.secondary", "&.Mui-selected": {color: "#007490",},}}/>
+                <Tab label="My Captable"
+                    sx={{ color: tabValue === 2 ? "#007490" : "text.secondary", "&.Mui-selected": { color: "#007490", },}}/>
+                </Tabs>
 
-            <Box sx={{ pt: 3}}>
-                {tabValue === 0 && (
-                    <BusinessProfileTable 
-                        businessProfiles={businessProfiles}
-                        handleOpenStartUp={handleOpenStartUp}
-                        handleOpenInvestor={handleOpenInvestor}
-                        handleOpenDeleteDialog={handleOpenDeleteDialog}
-                        selectedBusinessProfile={selectedBusinessProfile}
-                        openViewStartup={openViewStartup}
-                        openViewInvestor={openViewInvestor}
-                        openDeleteDialog={openDeleteDialog}
-                        handleCloseStartUp={handleCloseStartUp}
-                        handleCloseInvestor={handleCloseInvestor}
-                        handleCloseDeleteDialog={handleCloseDeleteDialog}
-                        handleSoftDelete={handleSoftDelete}
-                        profileToDelete={profileToDelete}/>                            
-                    )}
-                            
-                {tabValue === 1 && (
-                    <FundingRoundTable 
-                        filteredFundingRounds={filteredFundingRounds}
-                        fundingRounds={fundingRounds}
-                        handleViewFundingRound={handleViewFundingRound}
-                        handleSoftDeleteFundingRound={handleSoftDeleteFundingRound}
-                        selectedFundingRoundDetails={selectedFundingRoundDetails}
-                        openViewFundingRound={openViewFundingRound}
-                        handleCloseFundingRound={handleCloseFundingRound}
-                        handleCloseFundingProfile={handleCloseFundingProfile}
-                        businessProfiles={businessProfiles}
-                        onTotalAmountFundedChange={handleTotalAmountFundedChange}
-                        onFundingRoundsCountChange={handleFundingRoundsCountChange}
-                        onMoneyRaisedCountChange={handleMoneyRaisedCountChange}
-                        onHighestMoneyRaisedCompanyChange={handleHighestMoneyRaisedCompanyChange} />
-                    )}
+                <Box sx={{ pt: 3}}>
+                    {tabValue === 0 && (
+                        <BusinessProfileTable 
+                            businessProfiles={businessProfiles}
+                            handleOpenStartUp={handleOpenStartUp}
+                            handleOpenInvestor={handleOpenInvestor}
+                            handleOpenDeleteDialog={handleOpenDeleteDialog}
+                            selectedBusinessProfile={selectedBusinessProfile}
+                            openViewStartup={openViewStartup}
+                            openViewInvestor={openViewInvestor}
+                            openDeleteDialog={openDeleteDialog}
+                            handleCloseStartUp={handleCloseStartUp}
+                            handleCloseInvestor={handleCloseInvestor}
+                            handleCloseDeleteDialog={handleCloseDeleteDialog}
+                            handleSoftDelete={handleSoftDelete}
+                            profileToDelete={profileToDelete}/>                            
+                        )}
+                                
+                    {tabValue === 1 && (
+                        <FundingRoundTable 
+                            filteredFundingRounds={filteredFundingRounds}
+                            fundingRounds={fundingRounds}
+                            handleViewFundingRound={handleViewFundingRound}
+                            handleSoftDeleteFundingRound={handleSoftDeleteFundingRound}
+                            selectedFundingRoundDetails={selectedFundingRoundDetails}
+                            openViewFundingRound={openViewFundingRound}
+                            handleCloseFundingRound={handleCloseFundingRound}
+                            handleCloseFundingProfile={handleCloseFundingProfile}
+                            businessProfiles={businessProfiles}
+                            onTotalAmountFundedChange={handleTotalAmountFundedChange}
+                            onFundingRoundsCountChange={handleFundingRoundsCountChange}
+                            onMoneyRaisedCountChange={handleMoneyRaisedCountChange}
+                            onHighestMoneyRaisedCompanyChange={handleHighestMoneyRaisedCompanyChange} />
+                        )}
 
-                {tabValue === 2 && (
-                    <CapTable 
-                        filteredCapTables={filteredCapTables}
-                        businessProfiles={businessProfiles} 
-                        selectedStartupCapTable={selectedStartupCapTable} 
-                        handleStartupChangeCapTable={handleStartupChangeCapTable} />
-                    )}
-                </Box>
-            </Grid>  
-        </Grid>
+                    {tabValue === 2 && (
+                        <CapTable 
+                            filteredCapTables={filteredCapTables}
+                            businessProfiles={businessProfiles} 
+                            selectedStartupCapTable={selectedStartupCapTable} 
+                            handleStartupChangeCapTable={handleStartupChangeCapTable} />
+                        )}
+                    </Box>
+                </Grid>  
+            </Grid>
 
-        <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} />
-        <CreateFundingRoundDialog open={openCreateFundingRound} onClose={handleCloseFundingRound} />
-        <ActivitiesDialog open={dialogOpen} onClose={handleCloseDialog} activities={recentActivities}/>
-    </Container>
+            <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} />
+            <CreateFundingRoundDialog open={openCreateFundingRound} onClose={handleCloseFundingRound} />
+            <ActivitiesDialog open={dialogOpen} onClose={handleCloseDialog} activities={recentActivities}/>
+        </Container>
     </>
   );
 }

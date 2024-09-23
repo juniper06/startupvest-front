@@ -104,7 +104,7 @@ function CapTable({
             ) : (
               <TableRow>
                 <TableCell colSpan={4} sx={tableStyles.cell}>
-                  <Typography variant="body2">No investors found in this company.</Typography>
+                  <Typography variant="body2" color="textSecondary">No investors found in this company.</Typography>
                 </TableCell>
               </TableRow>
             )}

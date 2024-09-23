@@ -19,6 +19,10 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const [targetFunding, setTargetFunding] = useState('');
     const [preMoneyValuation, setPreMoneyValuation] = useState('');
     const [minimumShare, setMinimumShare] = useState('');
+    const [formattedMoneyRaised, setFormattedMoneyRaised] = useState('');
+    const [formattedTargetFunding, setFormattedTargetFunding] = useState('');
+    const [formattedPreMoneyValuation, setFormattedPreMoneyValuation] = useState('');
+    const [formattedMinimumShare, setFormattedMinimumShare] = useState('');
 
 
     //CAP TABLE
@@ -110,10 +114,33 @@ function ViewFundingRound({ fundingRoundDetails }) {
         setInvestors([...investors, { name: '', title: '', shares: '' }]);
     };
 
+    const formatNumber = (num) => {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+
+    const unformatNumber = (str) => {
+        return str.replace(/,/g, '');
+    };
+
     const handleSharesChange = (index, value) => {
-        const updatedInvestors = [...investors];
-        updatedInvestors[index].shares = value;
-        setInvestors(updatedInvestors);
+        const unformattedValue = unformatNumber(value);
+        if (!isNaN(unformattedValue) || unformattedValue === '') {
+            const updatedInvestors = [...investors];
+            updatedInvestors[index] = {
+                ...updatedInvestors[index],
+                shares: unformattedValue, // Store the actual numeric value
+                formattedShares: formatNumber(unformattedValue) // Store the formatted value for display
+            };
+            setInvestors(updatedInvestors);
+        }
+    };
+
+    const handleNumberChange = (setter) => (e) => {
+        const value = e.target.value;
+        const unformattedValue = unformatNumber(value);
+        if (!isNaN(unformattedValue) || unformattedValue === '') {
+            setter(formatNumber(unformattedValue));
+        }
     };
 
     // Initialize the investors state with existing investors
@@ -126,6 +153,10 @@ function ViewFundingRound({ fundingRoundDetails }) {
             setCurrency(fundingRoundDetails.moneyRaisedCurrency);
             setMoneyRaised(fundingRoundDetails.moneyRaised);
             setMinimumShare(fundingRoundDetails.minimumShare);
+            setFormattedMoneyRaised(formatNumber(fundingRoundDetails.moneyRaised));
+            setFormattedTargetFunding(formatNumber(fundingRoundDetails.targetFunding));
+            setFormattedPreMoneyValuation(formatNumber(fundingRoundDetails.preMoneyValuation));
+            setFormattedMinimumShare(formatNumber(fundingRoundDetails.minimumShare));
 
             const announcedDate = new Date(fundingRoundDetails.announcedDate);
             setAnnouncedDay(announcedDate.getDate());
@@ -143,7 +174,8 @@ function ViewFundingRound({ fundingRoundDetails }) {
             const existingInvestors = fundingRoundDetails.capTableInvestors.map(investor => ({
                 name: investor.investor.id, // Assuming this is the investor ID
                 title: investor.title,
-                shares: investor.shares
+                shares: investor.shares.toString(), // Ensure it's a string
+                formattedShares: formatNumber(investor.shares.toString()) // Add formatted version for display
             }));
             setInvestors(existingInvestors);
         }
@@ -158,7 +190,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
             const updatedInvestors = investors.map(investor => ({
                 id: investor.name,  // Assuming this is the investor ID 
                 title: investor.title,
-                shares: parseInt(investor.shares)
+                shares: parseInt(unformatNumber(investor.shares))
             }));
     
             const updatePayload = {
@@ -167,11 +199,11 @@ function ViewFundingRound({ fundingRoundDetails }) {
                     fundingType,
                     announcedDate: `${announcedYear}-${String(announcedMonth).padStart(2, '0')}-${String(announcedDay).padStart(2, '0')}`,
                     closedDate: `${closedYear}-${String(closedMonth).padStart(2, '0')}-${String(closedDay).padStart(2, '0')}`,
-                    moneyRaised,
+                    moneyRaised: parseInt(unformatNumber(formattedMoneyRaised)),
                     moneyRaisedCurrency: currency,
-                    targetFunding,
-                    preMoneyValuation,
-                    minimumShare,
+                    targetFunding: parseInt(unformatNumber(formattedTargetFunding)),
+                    preMoneyValuation: parseInt(unformatNumber(formattedPreMoneyValuation)),
+                    minimumShare: parseFloat(unformatNumber(formattedMinimumShare)),
                 },
                 investors: updatedInvestors
             };
@@ -252,7 +284,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         <Grid item xs={4}>
                             <label><b>Announced Date</b><br />Month</label>
                             <FormControl fullWidth variant="outlined">
-                                <Select labelId="month-label" value={announcedMonth} onChange={(e) => setAnnouncedMonth(e.target.value)} disabled={!isEditMode} sx={{ height: '45px' }}>
+                                <Select labelId="month-label" value={announcedMonth} onChange={(e) => setAnnouncedMonth(e.target.value)} sx={{ height: '45px' }} disabled>
                                     {months.map((month, index) => (
                                         <MenuItem key={index} value={index + 1}>{month}</MenuItem>
                                     ))}
@@ -263,7 +295,8 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         <Grid item xs={4}>
                             <label><br />Day</label>
                             <FormControl fullWidth variant="outlined">
-                                <Select labelId="day-label" value={announcedDay} onChange={(e) => setAnnouncedDay(e.target.value)} disabled={!isEditMode} sx={{ height: '45px' }}>
+                                <Select labelId="day-label" value={announcedDay} onChange={(e) => setAnnouncedDay(e.target.value)} 
+                                sx={{ height: '45px' }} disabled>
                                     {days.map((day) => (
                                         <MenuItem key={day} value={day}>{day}</MenuItem>
                                     ))}
@@ -274,7 +307,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         <Grid item xs={4}>
                             <label><br />Year</label>
                             <FormControl fullWidth variant="outlined">
-                                <Select labelId="year-label" value={announcedYear} onChange={(e) => setAnnouncedYear(e.target.value)} disabled={!isEditMode} sx={{ height: '45px' }} >
+                                <Select labelId="year-label" value={announcedYear} onChange={(e) => setAnnouncedYear(e.target.value)} sx={{ height: '45px' }} disabled>
                                     {years.map((year) => (
                                         <MenuItem key={year} value={year}>{year}</MenuItem>
                                     ))}
@@ -319,20 +352,18 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         </Grid>
 
                         <Grid item xs={8}>
-                            <label><b>Money Raised</b><br />Amount</label>
+                            <label>Money Raised Amount</label>
                             <TextField
                                 fullWidth
                                 variant="outlined"
-                                type='number'
-                                value={moneyRaised}
-                                onChange={(e) => setMoneyRaised(e.target.value)}
+                                value={formattedMoneyRaised}
+                                onChange={handleNumberChange(setFormattedMoneyRaised)}
                                 disabled
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} 
-                            />
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><br />Currency</label>
+                            <label>Currency</label>
                             <Select
                                 fullWidth
                                 variant="outlined"
@@ -350,24 +381,22 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         </Grid>
 
                         <Grid item xs={8}>
-                            <label><b>Target Funding</b><br />Amount</label>
+                            <label>Target Funding Amount</label>
                             <TextField
                                 fullWidth
                                 variant="outlined"
-                                type='number'
-                                value={targetFunding}
-                                onChange={(e) => setTargetFunding(e.target.value)}
+                                value={formattedTargetFunding}
+                                onChange={handleNumberChange(setFormattedTargetFunding)}
                                 disabled={!isEditMode}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                error={!!errors.targetFunding} // Set error state
-                            />
-                                {errors.targetFunding && (
-                                <FormHelperText error>{errors.targetFunding}</FormHelperText> // Display error message
-                            )} 
+                                error={!!errors.targetFunding} />
+                            {errors.targetFunding && (
+                                <FormHelperText error>{errors.targetFunding}</FormHelperText>
+                            )}
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><br />Currency</label>
+                            <label>Currency</label>
                             <Select
                                 fullWidth
                                 variant="outlined"
@@ -389,37 +418,35 @@ function ViewFundingRound({ fundingRoundDetails }) {
                             <TextField
                                 fullWidth
                                 variant="outlined"
-                                type='number'
-                                value={preMoneyValuation}
-                                onChange={(e) => setPreMoneyValuation(e.target.value)}
+                                value={formattedPreMoneyValuation}
+                                onChange={handleNumberChange(setFormattedPreMoneyValuation)}
                                 disabled={!isEditMode}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                error={!!errors.preMoneyValuation} // Set error state
-                            />
-                                {errors.preMoneyValuation && (
-                                <FormHelperText error>{errors.preMoneyValuation}</FormHelperText> // Display error message
+                                error={!!errors.preMoneyValuation}/>
+                            {errors.preMoneyValuation && (
+                                <FormHelperText error>{errors.preMoneyValuation}</FormHelperText>
                             )}
                         </Grid>
 
                         <Grid item xs={12}>
                             <Typography sx={{ color: '#007490'}}>
-                                A minimum share is the smallest amount of money you need to invest in a company to become a shareholder. For example, if the minimum share is P10,000, this means you have to spend P10,000 to buy just one share of that company.
+                            The price per share refers to the amount of money you need to pay to purchase one share of a company's stock. For example, if the price per share is P10,000, you would need to invest P10,000 to acquire a single share in that company.
                             </Typography>
                         </Grid>
                         
                         <Grid item xs={8}>
-                            <label><b>Minimum Share</b></label>
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    type='number'
-                                    value={minimumShare}
-                                    onChange={(e) => setMinimumShare(e.target.value)}
-                                    disabled
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                            <label>Price per Share</label>
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                value={formattedMinimumShare}
+                                onChange={handleNumberChange(setFormattedMinimumShare)}
+                                disabled
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
                         </Grid>
+
                         <Grid item xs={4}>
-                            <label><b>Currency</b></label>
+                            <label>Currency</label>
                             <Select
                                 fullWidth
                                 variant="outlined"
@@ -480,11 +507,11 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 <TextField
                                     fullWidth
                                     variant="outlined"
-                                    type="number"
-                                    value={investor.shares}
+                                    value={investor.formattedShares} // Use the formatted value for display
                                     onChange={(e) => handleSharesChange(index, e.target.value)}
                                     disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                />
                             </Grid>
 
                             <Grid item xs={.5}>

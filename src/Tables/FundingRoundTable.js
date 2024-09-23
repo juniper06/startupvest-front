@@ -46,24 +46,27 @@ function FundingRoundTable({
     ? fundingRounds.filter(round => round.startup && userCreatedStartupIds.includes(round.startup.id))
     : fundingRounds.filter(round => round.startup && round.startup.id === selectedStartupFunding);
 
+  // Sort funding rounds by closedDate in ascending order
+  const sortedFundingRounds = filteredFundingRounds.sort((a, b) => new Date(a.closedDate) - new Date(b.closedDate));
+
   // Calculate the total amount funded and rounds with moneyRaised > 0
   useEffect(() => {
-    const totalFunded = filteredFundingRounds.reduce((sum, round) => sum + (round.moneyRaised || 0), 0);
+    const totalFunded = sortedFundingRounds.reduce((sum, round) => sum + (round.moneyRaised || 0), 0);
     setTotalAmountFunded(totalFunded);
-    setFilteredFundingRoundsCount(filteredFundingRounds.length);
+    setFilteredFundingRoundsCount(sortedFundingRounds.length);
     onTotalAmountFundedChange(totalFunded);
 
-    const roundsWithMoneyRaised = filteredFundingRounds.filter(round => round.moneyRaised > 0).length;
+    const roundsWithMoneyRaised = sortedFundingRounds.filter(round => round.moneyRaised > 0).length;
     setFundingRoundsWithMoneyRaised(roundsWithMoneyRaised);
     
     if (onMoneyRaisedCountChange) {
       onMoneyRaisedCountChange(roundsWithMoneyRaised);
     }
 
-    onFundingRoundsCountChange(filteredFundingRounds.length);
+    onFundingRoundsCountChange(sortedFundingRounds.length);
 
     // Calculate and update the highest money raised company
-    const companyMoneyRaised = filteredFundingRounds.reduce((acc, round) => {
+    const companyMoneyRaised = sortedFundingRounds.reduce((acc, round) => {
       const companyId = round.startup?.id;
       if (companyId) {
         if (!acc[companyId]) {
@@ -86,24 +89,29 @@ function FundingRoundTable({
     if (onHighestMoneyRaisedCompanyChange) {
       onHighestMoneyRaisedCompanyChange(highestMoneyRaised);
     }
-  }, [filteredFundingRounds, onTotalAmountFundedChange, onFundingRoundsCountChange, onMoneyRaisedCountChange, onHighestMoneyRaisedCompanyChange]);
+  }, [sortedFundingRounds, onTotalAmountFundedChange, onFundingRoundsCountChange, onMoneyRaisedCountChange, onHighestMoneyRaisedCompanyChange]);
 
-  const totalMoneyRaised = filteredFundingRounds.reduce((sum, round) => sum + (round.moneyRaised || 0), 0);
-  const totalTargetFunding = filteredFundingRounds.reduce((sum, round) => sum + (round.targetFunding || 0), 0);
+  const totalMoneyRaised = sortedFundingRounds.reduce((sum, round) => sum + (round.moneyRaised || 0), 0);
+  const totalTargetFunding = sortedFundingRounds.reduce((sum, round) => sum + (round.targetFunding || 0), 0);
 
-  const currencySymbol = filteredFundingRounds.length > 0 ? filteredFundingRounds[0].moneyRaisedCurrency : '';
+  const currencySymbol = sortedFundingRounds.length > 0 ? sortedFundingRounds[0].moneyRaisedCurrency : '';
 
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) return '';
     return `${currencySymbol} ${Number(value).toLocaleString()}`;
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   const startIndex = localFundingPage * localFundingRowsPerPage;
   const endIndex = startIndex + localFundingRowsPerPage;
 
-  const paginatedFundingRounds = filteredFundingRounds.slice(startIndex, endIndex);
+  const paginatedFundingRounds = sortedFundingRounds.slice(startIndex, endIndex);
 
-  const totalPages = Math.ceil(filteredFundingRounds.length / localFundingRowsPerPage);
+  const totalPages = Math.ceil(sortedFundingRounds.length / localFundingRowsPerPage);
 
   const handleOpenDeleteFundingRoundDialog = (round) => {
     setFundingRoundToDelete(round);
@@ -152,6 +160,9 @@ function FundingRoundTable({
           <TableHead sx={tableStyles.head}>
             <TableRow>
               <TableCell sx={tableStyles.cell}>
+                <Typography sx={tableStyles.typography}>Closed on Date</Typography>
+              </TableCell>
+              <TableCell sx={tableStyles.cell}>
                 <Typography sx={tableStyles.typography}>Funding Type</Typography>
               </TableCell>
               <TableCell sx={tableStyles.cell}>
@@ -170,6 +181,7 @@ function FundingRoundTable({
             {paginatedFundingRounds.length > 0 ? (
               paginatedFundingRounds.map((round) => (
                 <TableRow key={round.id}>
+                  <TableCell sx={tableStyles.cell}>{formatDate(round.closedDate)}</TableCell>
                   <TableCell sx={tableStyles.cell}>{round.fundingType}</TableCell>
                   <TableCell sx={tableStyles.cell}>
                     {formatCurrency(round.moneyRaised)}
@@ -185,7 +197,7 @@ function FundingRoundTable({
                       View
                     </Button>
                     <Button
-                      variant="outlined"
+                      variant="text"
                       sx={tableStyles.deleteButton}
                       onClick={() => handleOpenDeleteFundingRoundDialog(round)}>
                       Delete
@@ -195,8 +207,8 @@ function FundingRoundTable({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} sx={tableStyles.cell}>
-                  No funding rounds available for your startups.
+                <TableCell colSpan={5} sx={tableStyles.cell}>
+                  <Typography variant="body2" color="textSecondary">No funding rounds available for your startups.</Typography>
                 </TableCell>
               </TableRow>
             )}
@@ -205,6 +217,7 @@ function FundingRoundTable({
           {paginatedFundingRounds.length > 0 && (
             <TableBody>
               <TableRow>
+                <TableCell sx={tableStyles.cell}></TableCell>
                 <TableCell sx={tableStyles.cell}><Typography sx={{ fontWeight: 'bold' }}>Total</Typography></TableCell>
                 <TableCell sx={{ ...tableStyles.cell, fontWeight: 'bold' }}>
                   {formatCurrency(totalMoneyRaised)}
