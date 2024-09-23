@@ -19,6 +19,10 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const [targetFunding, setTargetFunding] = useState('');
     const [preMoneyValuation, setPreMoneyValuation] = useState('');
     const [minimumShare, setMinimumShare] = useState('');
+    const [formattedMoneyRaised, setFormattedMoneyRaised] = useState('');
+    const [formattedTargetFunding, setFormattedTargetFunding] = useState('');
+    const [formattedPreMoneyValuation, setFormattedPreMoneyValuation] = useState('');
+    const [formattedMinimumShare, setFormattedMinimumShare] = useState('');
 
 
     //CAP TABLE
@@ -110,10 +114,33 @@ function ViewFundingRound({ fundingRoundDetails }) {
         setInvestors([...investors, { name: '', title: '', shares: '' }]);
     };
 
+    const formatNumber = (num) => {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+
+    const unformatNumber = (str) => {
+        return str.replace(/,/g, '');
+    };
+
     const handleSharesChange = (index, value) => {
-        const updatedInvestors = [...investors];
-        updatedInvestors[index].shares = value;
-        setInvestors(updatedInvestors);
+        const unformattedValue = unformatNumber(value);
+        if (!isNaN(unformattedValue) || unformattedValue === '') {
+            const updatedInvestors = [...investors];
+            updatedInvestors[index] = {
+                ...updatedInvestors[index],
+                shares: unformattedValue, // Store the actual numeric value
+                formattedShares: formatNumber(unformattedValue) // Store the formatted value for display
+            };
+            setInvestors(updatedInvestors);
+        }
+    };
+
+    const handleNumberChange = (setter) => (e) => {
+        const value = e.target.value;
+        const unformattedValue = unformatNumber(value);
+        if (!isNaN(unformattedValue) || unformattedValue === '') {
+            setter(formatNumber(unformattedValue));
+        }
     };
 
     // Initialize the investors state with existing investors
@@ -126,6 +153,10 @@ function ViewFundingRound({ fundingRoundDetails }) {
             setCurrency(fundingRoundDetails.moneyRaisedCurrency);
             setMoneyRaised(fundingRoundDetails.moneyRaised);
             setMinimumShare(fundingRoundDetails.minimumShare);
+            setFormattedMoneyRaised(formatNumber(fundingRoundDetails.moneyRaised));
+            setFormattedTargetFunding(formatNumber(fundingRoundDetails.targetFunding));
+            setFormattedPreMoneyValuation(formatNumber(fundingRoundDetails.preMoneyValuation));
+            setFormattedMinimumShare(formatNumber(fundingRoundDetails.minimumShare));
 
             const announcedDate = new Date(fundingRoundDetails.announcedDate);
             setAnnouncedDay(announcedDate.getDate());
@@ -143,7 +174,8 @@ function ViewFundingRound({ fundingRoundDetails }) {
             const existingInvestors = fundingRoundDetails.capTableInvestors.map(investor => ({
                 name: investor.investor.id, // Assuming this is the investor ID
                 title: investor.title,
-                shares: investor.shares
+                shares: investor.shares.toString(), // Ensure it's a string
+                formattedShares: formatNumber(investor.shares.toString()) // Add formatted version for display
             }));
             setInvestors(existingInvestors);
         }
@@ -158,7 +190,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
             const updatedInvestors = investors.map(investor => ({
                 id: investor.name,  // Assuming this is the investor ID 
                 title: investor.title,
-                shares: parseInt(investor.shares)
+                shares: parseInt(unformatNumber(investor.shares))
             }));
     
             const updatePayload = {
@@ -167,11 +199,11 @@ function ViewFundingRound({ fundingRoundDetails }) {
                     fundingType,
                     announcedDate: `${announcedYear}-${String(announcedMonth).padStart(2, '0')}-${String(announcedDay).padStart(2, '0')}`,
                     closedDate: `${closedYear}-${String(closedMonth).padStart(2, '0')}-${String(closedDay).padStart(2, '0')}`,
-                    moneyRaised,
+                    moneyRaised: parseInt(unformatNumber(formattedMoneyRaised)),
                     moneyRaisedCurrency: currency,
-                    targetFunding,
-                    preMoneyValuation,
-                    minimumShare,
+                    targetFunding: parseInt(unformatNumber(formattedTargetFunding)),
+                    preMoneyValuation: parseInt(unformatNumber(formattedPreMoneyValuation)),
+                    minimumShare: parseFloat(unformatNumber(formattedMinimumShare)),
                 },
                 investors: updatedInvestors
             };
@@ -324,9 +356,8 @@ function ViewFundingRound({ fundingRoundDetails }) {
                             <TextField
                                 fullWidth
                                 variant="outlined"
-                                type='number'
-                                value={moneyRaised}
-                                onChange={(e) => setMoneyRaised(e.target.value)}
+                                value={formattedMoneyRaised}
+                                onChange={handleNumberChange(setFormattedMoneyRaised)}
                                 disabled
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                         </Grid>
@@ -354,14 +385,14 @@ function ViewFundingRound({ fundingRoundDetails }) {
                             <TextField
                                 fullWidth
                                 variant="outlined"
-                                type='number'
-                                value={targetFunding}
-                                onChange={(e) => setTargetFunding(e.target.value)}
+                                value={formattedTargetFunding}
+                                onChange={handleNumberChange(setFormattedTargetFunding)}
                                 disabled={!isEditMode}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                 error={!!errors.targetFunding} />
-                                {errors.targetFunding && (<FormHelperText error>{errors.targetFunding}</FormHelperText> 
-                            )} 
+                            {errors.targetFunding && (
+                                <FormHelperText error>{errors.targetFunding}</FormHelperText>
+                            )}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -387,14 +418,14 @@ function ViewFundingRound({ fundingRoundDetails }) {
                             <TextField
                                 fullWidth
                                 variant="outlined"
-                                type='number'
-                                value={preMoneyValuation}
-                                onChange={(e) => setPreMoneyValuation(e.target.value)}
+                                value={formattedPreMoneyValuation}
+                                onChange={handleNumberChange(setFormattedPreMoneyValuation)}
                                 disabled={!isEditMode}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                 error={!!errors.preMoneyValuation}/>
-                                {errors.preMoneyValuation && (
-                                <FormHelperText error>{errors.preMoneyValuation}</FormHelperText>)}
+                            {errors.preMoneyValuation && (
+                                <FormHelperText error>{errors.preMoneyValuation}</FormHelperText>
+                            )}
                         </Grid>
 
                         <Grid item xs={12}>
@@ -405,15 +436,15 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         
                         <Grid item xs={8}>
                             <label>Price per Share</label>
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    type='number'
-                                    value={minimumShare}
-                                    onChange={(e) => setMinimumShare(e.target.value)}
-                                    disabled
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                value={formattedMinimumShare}
+                                onChange={handleNumberChange(setFormattedMinimumShare)}
+                                disabled
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
                         </Grid>
+
                         <Grid item xs={4}>
                             <label>Currency</label>
                             <Select
@@ -476,11 +507,11 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 <TextField
                                     fullWidth
                                     variant="outlined"
-                                    type="number"
-                                    value={investor.shares}
+                                    value={investor.formattedShares} // Use the formatted value for display
                                     onChange={(e) => handleSharesChange(index, e.target.value)}
                                     disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                />
                             </Grid>
 
                             <Grid item xs={.5}>
