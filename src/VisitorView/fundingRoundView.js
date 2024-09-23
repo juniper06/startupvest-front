@@ -73,6 +73,11 @@ function FundingRoundView() {
     currentPage * rowsPerPage
   );
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
     <>
       <Navbar />
@@ -120,7 +125,7 @@ function FundingRoundView() {
 
                       <Grid item xs={6}>
                         <Typography><strong>Closed on Date</strong></Typography>
-                        <Typography variant="body1">{fundinground.closedDate}</Typography>
+                        <Typography variant="body1">{formatDate(fundinground.closedDate)}</Typography>
                       </Grid>
 
                       <Grid item xs={3}>
@@ -148,6 +153,7 @@ function FundingRoundView() {
                         <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', color: 'white' }}>Investor Name</TableCell>
                         <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', color: 'white'  }}>Title</TableCell>
                         <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', color: 'white'  }}>Share</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', color: 'white'  }}>Total Share</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -165,6 +171,9 @@ function FundingRoundView() {
                             <TableCell sx={{ textAlign: 'center' }}>{investorDetail.title || 'N/A'}</TableCell>
                             <TableCell sx={{ textAlign: 'center' }}>
                               {Number(investorDetail.shares || 0).toLocaleString()}
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center' }}>
+                            {fundinground.moneyRaisedCurrency} {investorDetail.totalInvestment ? Number(investorDetail.totalInvestment).toLocaleString() : 'N/A'}
                             </TableCell>
                           </TableRow>
                         );

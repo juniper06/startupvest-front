@@ -231,6 +231,11 @@ export default function FundingRound() {
     [order, orderBy, page, rowsPerPage, filteredRows],
   );
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
     <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px` }}>
       <Navbar />
@@ -265,7 +270,7 @@ export default function FundingRound() {
                       {row.moneyRaisedCurrency} {row.moneyRaised === '---' ? row.moneyRaised : Number(row.moneyRaised).toLocaleString()}
                     </TableCell>
                     <TableCell align="left">{row.announcedDate}</TableCell>
-                    <TableCell align="left">{row.closedDate}</TableCell>
+                    <TableCell align="left">{formatDate(row.closedDate)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
