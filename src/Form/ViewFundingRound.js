@@ -27,7 +27,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
     //CAP TABLE
     const [allInvestors, setAllInvestors] = useState([]); // to store all fetched investors
-    const [investors, setInvestors] = useState([{ name: null, title: '', shares: '' }]);
+    const [investors, setInvestors] = useState([{ name: null, title: '', shares: '', investorRemoved: false }]);
     const [errors, setErrors] = useState({});
 
     const days = [...Array(31).keys()].map(i => i + 1);
@@ -111,7 +111,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
     };
 
     const handleAddInvestor = () => {
-        setInvestors([...investors, { name: '', title: '', shares: '' }]);
+        setInvestors([...investors, { name: '', title: '', shares: '', investorRemoved: false }]);
     };
 
     const formatNumber = (num) => {
@@ -171,12 +171,14 @@ function ViewFundingRound({ fundingRoundDetails }) {
         }
 
         if (fundingRoundDetails?.capTableInvestors) {
-            const existingInvestors = fundingRoundDetails.capTableInvestors.map(investor => ({
-                name: investor.investor.id, // Assuming this is the investor ID
-                title: investor.title,
-                shares: investor.shares.toString(), // Ensure it's a string
-                formattedShares: formatNumber(investor.shares.toString()) // Add formatted version for display
-            }));
+            const existingInvestors = fundingRoundDetails.capTableInvestors
+                .filter(investor => !investor.investorRemoved) // Filter out removed investors
+                .map(investor => ({
+                    name: investor.investor.id, 
+                    title: investor.title,
+                    shares: investor.shares.toString(),
+                    formattedShares: formatNumber(investor.shares.toString())
+                }));
             setInvestors(existingInvestors);
         }
     }, [fundingRoundDetails]);
@@ -221,10 +223,24 @@ function ViewFundingRound({ fundingRoundDetails }) {
         setIsEditMode(false);
     };
 
-    const handleRemoveInvestor = (index) => {
-        const updatedInvestors = [...investors];
-        updatedInvestors.splice(index, 1);
-        setInvestors(updatedInvestors);
+    const handleRemoveInvestor = async (index) => {
+        try {
+            const investorToRemove = investors[index];
+            
+            // Remove the investor from the UI first
+            const updatedInvestors = investors.filter((_, i) => i !== index);
+            setInvestors(updatedInvestors);
+    
+            // Send a request to the backend to mark the investor as removed (if needed)
+            const response = await axios.put(`http://localhost:3000/cap-table-investor/${investorToRemove.name}/${fundingRoundDetails.id}`, {
+                investorRemoved: true,  // Assuming you're updating this flag in the backend
+            });
+    
+            console.log('Investor removed successfully:', response.data);
+        } catch (error) {
+            console.error('Error removing investor:', error);
+            // Optionally, handle the error and revert the state change if necessary
+        }
     };
 
     const toggleEditMode = () => {
@@ -515,15 +531,14 @@ function ViewFundingRound({ fundingRoundDetails }) {
                             </Grid>
 
                             <Grid item xs={.5}>
-                                {investors.length > 0 && isEditMode && (
-                                    <IconButton 
-                                        sx = {{ mt: 3 }}
-                                        color="error" 
-                                        onClick={() => handleRemoveInvestor(index)}
-                                        aria-label="remove"> 
-                                        <CloseIcon />
-                                    </IconButton>
-                                )}
+                            {investors.length > 0 && (
+                                <IconButton sx={{ mt: 3 }} color="error" aria-label="remove"
+                                disabled={!isEditMode}
+                                value={investor.id}
+                                onClick={() => handleRemoveInvestor(index)}>
+                                <CloseIcon />
+                                </IconButton>
+                            )}
                             </Grid>
                         </Grid>
                     </Grid>
