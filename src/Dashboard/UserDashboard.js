@@ -13,16 +13,8 @@ import CapTable from "../Tables/CapTableTable";
 import ActivitiesDialog from "../Dialogs/AcitivtiesDialog";
 
 import { logActivity } from '../utils/activityUtils';
-
 import MonthlyFundingChart from "../Components/Chart";
-
 import { Container, HeaderBox, StatsBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle,   CreateButton, GraphTitle, RecentActivityTitle } from "../styles/UserDashboard";
-import { chartOptions } from "../styles/chartOptions";
-import { createChartData } from "../utils/chartDataUtils";
-
-import { Line } from 'react-chartjs-2';
-// import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-// Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function UserDashboard() {
     const [tabValue, setTabValue] = useState(1);
@@ -59,9 +51,7 @@ function UserDashboard() {
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [recentActivities, setRecentActivities] = useState([]);
-
-    const [userId, setUserId] = useState(null); // State to store the userId
-
+    const [userId, setUserId] = useState(null);
 
     const handleViewHistoryClick = () => {
         setDialogOpen(true);
@@ -251,7 +241,6 @@ function UserDashboard() {
             },
             }
         );
-        console.log("Number of Investors", response.data);
         setInvestorCount(response.data.length);
         } catch (error) {
         console.error("Error fetching funding round details:", error);
@@ -268,8 +257,7 @@ function UserDashboard() {
               },
             }
           );
-          console.log("Top Investor", response.data);
-          setTopInvestor(response.data); // Set the fetched data into state
+          setTopInvestor(response.data);
         } catch (error) {
           console.error("Error fetching top investor details:", error);
         }
@@ -367,51 +355,6 @@ function UserDashboard() {
     setSelectedStartupCapTable(selectedCompanyId);
     fetchAllInvestorsByEachUsersCompany(selectedCompanyId);
   };
-
-    // Monthly Funding Chart
-    // const MonthlyFundingChart = ({ userId }) => {
-    //     const [chartData, setChartData] = useState({ labels: [], datasets: [] });
-    //     const [loading, setLoading] = useState(true);
-    
-    //     useEffect(() => {
-    //         const fetchMonthlyFunding = async () => {
-    //             const userId = localStorage.getItem('userId');
-    
-    //             if (!userId) {
-    //                 console.error('User ID is not available');
-    //                 return;
-    //             }
-    
-    //             try {
-    //                 const response = await axios.get(`http://localhost:3000/funding-rounds/monthly-funding/${userId}`, {
-    //                     headers: {
-    //                         Authorization: `Bearer ${localStorage.getItem('token')}`,
-    //                     },
-    //                 });
-    
-    //                 const data = response.data;
-    //                 const chartData = createChartData(data); // Use the utility function
-    
-    //                 setChartData(chartData);
-    //                 setLoading(false);
-    //             } catch (error) {
-    //                 console.error('Error fetching monthly funding data:', error);
-    //                 setLoading(false);
-    //             }
-    //         };
-    
-    //         fetchMonthlyFunding();
-    //     }, [userId]);
-    
-    //     if (loading) return <p>Loading chart data...</p>;
-    
-    //     return (
-    //         <div style={{ height: '400px', width: '100%' }}>
-    //             <Line data={chartData} options={chartOptions} />
-    //         </div>
-    //     );
-    // };
-
 
 return (
     <>
@@ -532,14 +475,13 @@ return (
                                 </div>
                                 } />
                             </ListItem>
-                            {index < recentActivities.length - 1 && <Divider />} 
                         </div>
                         );
                     })
                 )}
                 {recentActivities.length > 10 && (
                     <Box display="flex" justifyContent="center" mt={2}>
-                    <Button size="small" variant="contained" color="primary" onClick={handleViewHistoryClick}>
+                    <Button size="small" variant="text" color="primary" onClick={handleViewHistoryClick}>
                         View History
                     </Button>
                     </Box>

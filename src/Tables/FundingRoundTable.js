@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, FormControl, Select, MenuItem, Stack, Pagination } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, FormControl, Select, MenuItem, Stack, Pagination, Tooltip } from '@mui/material';
+import HistoryIcon from '@mui/icons-material/History';
+
+import FundingHistoryDialog from '../Dialogs/FundingHistoryDialog';
 import ViewFundingRoundDialog from '../Dialogs/ViewFundingRoundDialog';
 import ConfirmDeleteDialog from '../Dialogs/ConfirmDeleteFundingRoundDialog';
 import { tableStyles } from '../styles/tables';
@@ -17,7 +20,7 @@ function FundingRoundTable({
   onTotalAmountFundedChange,
   onFundingRoundsCountChange,
   onMoneyRaisedCountChange,
-  onHighestMoneyRaisedCompanyChange, // New prop
+  onHighestMoneyRaisedCompanyChange,
 }) {
   const [localFundingPage, setLocalFundingPage] = useState(fundingPage);
   const [localFundingRowsPerPage, setLocalFundingRowsPerPage] = useState(fundingRowsPerPage);
@@ -31,7 +34,8 @@ function FundingRoundTable({
   const [fundingRoundsWithMoneyRaised, setFundingRoundsWithMoneyRaised] = useState(0);
   const [highestMoneyRaisedCompany, setHighestMoneyRaisedCompany] = useState({ companyName: '', totalMoneyRaised: 0 });
 
-  // Handle the startup filter change
+  const [openHistoryDialog, setOpenHistoryDialog] = useState(false);
+
   const handleStartupChangeFunding = (event) => {
     setSelectedStartupFunding(event.target.value);
   };
@@ -93,7 +97,6 @@ function FundingRoundTable({
 
   const totalMoneyRaised = sortedFundingRounds.reduce((sum, round) => sum + (round.moneyRaised || 0), 0);
   const totalTargetFunding = sortedFundingRounds.reduce((sum, round) => sum + (round.targetFunding || 0), 0);
-
   const currencySymbol = sortedFundingRounds.length > 0 ? sortedFundingRounds[0].moneyRaisedCurrency : '';
 
   const formatCurrency = (value) => {
@@ -108,9 +111,7 @@ function FundingRoundTable({
 
   const startIndex = localFundingPage * localFundingRowsPerPage;
   const endIndex = startIndex + localFundingRowsPerPage;
-
   const paginatedFundingRounds = sortedFundingRounds.slice(startIndex, endIndex);
-
   const totalPages = Math.ceil(sortedFundingRounds.length / localFundingRowsPerPage);
 
   const handleOpenDeleteFundingRoundDialog = (round) => {
@@ -134,16 +135,21 @@ function FundingRoundTable({
     setLocalFundingPage(newPage - 1);
   };
 
+  const handleOpenHistoryDialog = () => {
+    setOpenHistoryDialog(true);
+};
+
+  const handleCloseHistoryDialog = () => {
+    setOpenHistoryDialog(false);
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant="subtitle1" sx={{ pr: 1 }}>By Company:</Typography>
           <FormControl sx={{ minWidth: 200 }}>
-            <Select 
-              value={selectedStartupFunding} 
-              onChange={handleStartupChangeFunding} 
-              variant="outlined" 
+            <Select  value={selectedStartupFunding}  onChange={handleStartupChangeFunding} variant="outlined" 
               sx={{ minWidth: 150, height: '45px' }}>
               <MenuItem value="All">All</MenuItem>
               {businessProfiles.filter(profile => profile.type === 'Startup')
@@ -152,6 +158,9 @@ function FundingRoundTable({
                 ))}
             </Select>
           </FormControl>
+          <Tooltip title="View History">
+            <HistoryIcon  sx={{ ml: 2, mr: 2, cursor: 'pointer', color: '#36454F' }} onClick={handleOpenHistoryDialog} />
+          </Tooltip>
         </Box>
       </Box>
 
@@ -183,23 +192,13 @@ function FundingRoundTable({
                 <TableRow key={round.id}>
                   <TableCell sx={tableStyles.cell}>{formatDate(round.closedDate)}</TableCell>
                   <TableCell sx={tableStyles.cell}>{round.fundingType}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{formatCurrency(round.moneyRaised)}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{formatCurrency(round.targetFunding)}</TableCell>
                   <TableCell sx={tableStyles.cell}>
-                    {formatCurrency(round.moneyRaised)}
-                  </TableCell>
-                  <TableCell sx={tableStyles.cell}>
-                    {formatCurrency(round.targetFunding)}
-                  </TableCell>
-                  <TableCell sx={tableStyles.cell}>
-                    <Button
-                      variant="contained"
-                      sx={tableStyles.actionButton}
-                      onClick={() => handleViewFundingRound(round.id)}>
+                    <Button variant="contained" sx={tableStyles.actionButton} onClick={() => handleViewFundingRound(round.id)}>
                       View
                     </Button>
-                    <Button
-                      variant="text"
-                      sx={tableStyles.deleteButton}
-                      onClick={() => handleOpenDeleteFundingRoundDialog(round)}>
+                    <Button variant="text" sx={tableStyles.deleteButton} onClick={() => handleOpenDeleteFundingRoundDialog(round)}>
                       Delete
                     </Button>
                   </TableCell>
@@ -219,12 +218,8 @@ function FundingRoundTable({
               <TableRow>
                 <TableCell sx={tableStyles.cell}></TableCell>
                 <TableCell sx={tableStyles.cell}><Typography sx={{ fontWeight: 'bold' }}>Total</Typography></TableCell>
-                <TableCell sx={{ ...tableStyles.cell, fontWeight: 'bold' }}>
-                  {formatCurrency(totalMoneyRaised)}
-                </TableCell>
-                <TableCell sx={{ ...tableStyles.cell, fontWeight: 'bold' }}>
-                  {formatCurrency(totalTargetFunding)}
-                </TableCell>
+                <TableCell sx={{ ...tableStyles.cell, fontWeight: 'bold' }}>{formatCurrency(totalMoneyRaised)}</TableCell>
+                <TableCell sx={{ ...tableStyles.cell, fontWeight: 'bold' }}>{formatCurrency(totalTargetFunding)}</TableCell>
                 <TableCell sx={tableStyles.cell}></TableCell>
               </TableRow>
             </TableBody>
@@ -236,13 +231,13 @@ function FundingRoundTable({
         </Stack>
       </TableContainer>
 
-      <ViewFundingRoundDialog open={openViewFundingRound} fundingRoundDetails={selectedFundingRoundDetails} onClose={handleCloseFundingProfile} />
+      <ViewFundingRoundDialog open={openViewFundingRound} fundingRoundDetails={selectedFundingRoundDetails} 
+      onClose={handleCloseFundingProfile} />
+      
+      <ConfirmDeleteDialog open={openDeleteFundingRoundDialog} onClose={handleCloseDeleteFundingRoundDialog} 
+      onConfirm={handleConfirmDelete} companyName={fundingRoundToDelete ? fundingRoundToDelete.companyName : ''} />
 
-      <ConfirmDeleteDialog
-        open={openDeleteFundingRoundDialog}
-        onClose={handleCloseDeleteFundingRoundDialog}
-        onConfirm={handleConfirmDelete}
-        companyName={fundingRoundToDelete ? fundingRoundToDelete.companyName : ''} />
+      <FundingHistoryDialog open={openHistoryDialog} fundingRounds={sortedFundingRounds} onClose={handleCloseHistoryDialog} />
     </Box>
   );
 }

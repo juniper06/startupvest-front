@@ -89,7 +89,7 @@ export const CreateButton = styled(Button)`
 
 export const RecentActivityBox = styled(Box)`
   background-color: white;
-  height: 420px;
+  height: 450px;
   display: flex;
   flex-direction: column;
   border-radius: 5px;
@@ -100,7 +100,7 @@ export const RecentActivityBox = styled(Box)`
 
 export const GraphTitle = styled(Typography)`
   font-weight: bold;
-  padding: 15px 15px 15px 30px;
+  padding: 15px 15px 0 30px;
   color: #00779d;
   font-size: 18px;
 `;
