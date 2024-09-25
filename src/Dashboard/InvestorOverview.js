@@ -78,7 +78,7 @@ function InvestorOverview() {
 
   useEffect(() => {
     const fetchFundingRounds = async () => {
-      if (!userData?.id) return; // Add a check for userData being available
+      if (!userData?.id) return;
 
       setLoading(true);
       try {
@@ -120,7 +120,7 @@ function InvestorOverview() {
         const userInvestedRows = fetchedRows.filter(row => row.capTableInvestors.length > 0);
         setRows(userInvestedRows);
         setFilteredRows(userInvestedRows);
-        await fetchAllProfilePictures(userInvestedRows); // Wait for profile picture fetching
+        await fetchAllProfilePictures(userInvestedRows);
       } catch (error) {
         console.error('Error fetching funding rounds:', error);
       } finally {
@@ -176,7 +176,7 @@ function InvestorOverview() {
     await Promise.all(
       fundingRounds.map(async (fundingRound) => {
         const startupId = fundingRound.startupId;
-        if (!startupId) return; // Skip if there's no startup ID
+        if (!startupId) return;
 
         try {
           const response = await axios.get(`http://localhost:3000/profile-picture/startup/${startupId}`, {
@@ -192,7 +192,6 @@ function InvestorOverview() {
         }
       })
     );
-
     setProfilePictures(pictures);
   };
 
@@ -252,8 +251,8 @@ function InvestorOverview() {
               <Table sx={tableStyles} aria-label="investments table">
                 <TableHead sx={tableStyles.head}>
                   <TableRow>
-                    <TableCell sx={tableStyles.cell}>
-                      <Typography sx={tableStyles.typography}>Company Name</Typography>
+                    <TableCell>
+                      <Typography sx={{ fontWeight: 'bold', color: 'white', ml: 10 }}>Company Name</Typography>
                     </TableCell>
                     <TableCell sx={tableStyles.cell}>
                       <Typography sx={tableStyles.typography}>Type</Typography>
@@ -262,7 +261,7 @@ function InvestorOverview() {
                       <Typography sx={tableStyles.typography}>Shares</Typography>
                     </TableCell>
                     <TableCell sx={tableStyles.cell}>
-                      <Typography sx={tableStyles.typography}>Money Raised</Typography>
+                      <Typography sx={tableStyles.typography}>Total Share</Typography>
                     </TableCell>
                     <TableCell sx={tableStyles.cell}>
                       <Typography sx={tableStyles.typography}>Percentage</Typography>
@@ -274,13 +273,15 @@ function InvestorOverview() {
                   {filteredRows.length > 0 ? (
                     filteredRows.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((row) => (
                       <TableRow key={row.id} hover onClick={() => handleRowClick(row)}>
-                        <TableCell sx={tableStyles.cell}>
-                          <Box display="flex" alignItems="center" justifyContent="center">
+                          <TableCell sx={{ ...tableStyles.cell, width: '30%'}}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', ml: 5 }}>
                             <Avatar src={profilePictures[row.startupId]} sx={{ mr: 2, border: '2px rgba(0, 116, 144, 1) solid', borderRadius: 1 }} variant='square' />
                             {row.startupName}
                           </Box>
                         </TableCell>
+
                         <TableCell sx={tableStyles.cell}>{row.fundingType}</TableCell>
+                        
                         <TableCell sx={tableStyles.cell}>
                           {row.capTableInvestors.map((investor, index) => (
                             <div key={index}>
@@ -288,9 +289,15 @@ function InvestorOverview() {
                             </div>
                           ))}
                         </TableCell>
+
                         <TableCell sx={tableStyles.cell}>
-                          {row.moneyRaisedCurrency} {Number(row.moneyRaised).toLocaleString()}
+                          {row.capTableInvestors.map((investor, index) => (
+                            <div key={index}>
+                              {row.moneyRaisedCurrency} {Number(investor.totalInvestment).toLocaleString()}
+                            </div>
+                          ))}                        
                         </TableCell>
+
                         <TableCell sx={tableStyles.cell}>
                             {row.capTableInvestors.map((investor) => {
                                 const userShares = investor.shares || 0;

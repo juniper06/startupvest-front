@@ -5,20 +5,18 @@ import SearchIcon from '@mui/icons-material/Search';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
 import Navbar from '../Navbar/Navbar';
 
 const drawerWidth = 240;
 
-function createData(id, transactionName, startupName, fundingType, moneyRaised, 
-  moneyRaisedCurrency, announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, 
+function createData(id, transactionName, startupName, fundingType, moneyRaised, moneyRaisedCurrency, announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, 
   minimumShare, startupId ) {
   return {
     id,
     transactionName,
     startupName,
     fundingType,
-    moneyRaised: isNaN(moneyRaised) ? '---' : moneyRaised, // Ensure moneyRaised is valid or fallback to '---'
+    moneyRaised: isNaN(moneyRaised) ? '---' : moneyRaised,
     moneyRaisedCurrency,
     announcedDate,
     closedDate,
@@ -76,18 +74,12 @@ function EnhancedTableHead(props) {
     <TableHead>
       <TableRow>
         {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align="left"
-            padding={headCell.disablePadding ? 'none' : 'normal'}
+          <TableCell key={headCell.id} align="left" padding={headCell.disablePadding ? 'none' : 'normal'} 
             sortDirection={orderBy === headCell.id ? order : false}
             style={{ width: headCell.width, fontWeight: 'bold', backgroundColor: '#007490', color: '#ffffff' }}>
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-              style={{ color: '#ffffff' }}>
-              {headCell.label}
+            <TableSortLabel active={orderBy === headCell.id} direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={createSortHandler(headCell.id)} style={{ color: '#ffffff' }}> 
+                {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -136,7 +128,6 @@ export default function FundingRound() {
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
   const [profilePictures, setProfilePictures] = useState({});
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -156,11 +147,11 @@ export default function FundingRound() {
           fundingRound.preMoneyValuation || 'N/A',
           fundingRound.capTableInvestors,
           fundingRound.minimumShare || 'N/A',
-          fundingRound.startup?.id  // Ensure you add the startupId here
+          fundingRound.startup?.id  
         ));
         setRows(fetchedRows);
         setFilteredRows(fetchedRows);
-        fetchAllProfilePictures(response.data); // Fetch profile pictures after setting rows
+        fetchAllProfilePictures(response.data); 
       } catch (error) {
         console.error('Error fetching funding rounds:', error);
       }
@@ -174,7 +165,7 @@ export default function FundingRound() {
     await Promise.all(
       fundingRounds.map(async (fundingRound) => {
         const startupId = fundingRound.startup?.id;
-        if (!startupId) return; // Skip if there's no startup ID
+        if (!startupId) return
   
         try {
           const response = await axios.get(`http://localhost:3000/profile-picture/startup/${startupId}`, {
@@ -184,15 +175,14 @@ export default function FundingRound() {
             responseType: 'blob',
           });
   
-          const imageUrl = URL.createObjectURL(response.data); // Convert blob to URL
-          pictures[fundingRound.id] = imageUrl; // Store image URL against the funding round ID
+          const imageUrl = URL.createObjectURL(response.data); 
+          pictures[fundingRound.id] = imageUrl; 
         } catch (error) {
           console.error(`Failed to fetch profile picture for startup ID ${startupId}:`, error);
         }
       })
     );
-  
-    setProfilePictures(pictures); // Set state with all fetched profile pictures
+    setProfilePictures(pictures); 
   };
   
   const handleRowClick = (fundinground) => {
@@ -245,10 +235,7 @@ export default function FundingRound() {
         <EnhancedTableToolbar onRequestSearch={handleSearch} />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
-            <EnhancedTableHead
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort} />
+            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
               <TableBody>
                 {visibleRows.map((row, index) => (
                   <TableRow hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', height: '75px' }} onClick={() => handleRowClick(row)}>
@@ -257,10 +244,9 @@ export default function FundingRound() {
                         <Avatar
                           variant="rounded"
                           sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }}
-                          src={profilePictures[row.id] || ''} // Use the correct ID to fetch the profile picture
-                          alt={row.startupName}
-                        >
-                          {profilePictures[row.id] ? '' : row.startupName.charAt(0)} {/* Display the first letter if image is missing */}
+                          src={profilePictures[row.id] || ''} 
+                          alt={row.startupName}>
+                          {profilePictures[row.id] ? '' : row.startupName.charAt(0)}
                         </Avatar>
                         {row.startupName}
                       </Box>
@@ -269,7 +255,7 @@ export default function FundingRound() {
                     <TableCell align="left">
                       {row.moneyRaisedCurrency} {row.moneyRaised === '---' ? row.moneyRaised : Number(row.moneyRaised).toLocaleString()}
                     </TableCell>
-                    <TableCell align="left">{row.announcedDate}</TableCell>
+                    <TableCell align="left">{formatDate(row.announcedDate)}</TableCell>
                     <TableCell align="left">{formatDate(row.closedDate)}</TableCell>
                   </TableRow>
                 ))}
