@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import countries from '../static/countries';
 import { Box, Typography, TextField, Avatar, Select, MenuItem, Grid, Button, Autocomplete } from '@mui/material';
+import genderOptions from '../static/genderOptions';
 import axios from 'axios';
 
 function ViewInvestorProfile({ profile }) {
@@ -27,8 +28,8 @@ function ViewInvestorProfile({ profile }) {
   const [linkedIn, setLinkedIn] = useState(profile ? profile.linkedIn : '');
 
   const handleAvatarClick = (event) => {
-    event.preventDefault(); // Prevent default action
-    event.stopPropagation(); // Stop the click from propagating to the input
+    event.preventDefault(); 
+    event.stopPropagation(); 
     fileInputRef.current.click();
 };
 
@@ -41,7 +42,6 @@ function ViewInvestorProfile({ profile }) {
       };
       reader.readAsDataURL(file);
 
-      // Directly call the upload function when a new file is selected
       handleUploadProfilePicture(file);
     }
   };
@@ -76,7 +76,6 @@ function ViewInvestorProfile({ profile }) {
           },
         });
 
-        // The picture is uploaded in the handleAvatarChange, so we don't need to call it here again.
       } catch (error) {
         console.error('Failed to update profile:', error);
       }
@@ -99,7 +98,6 @@ function ViewInvestorProfile({ profile }) {
           },
         });
 
-        // Fetch the updated profile picture
         await fetchProfilePicture();
       } catch (error) {
         console.error('Failed to upload profile picture:', error);
@@ -113,7 +111,7 @@ function ViewInvestorProfile({ profile }) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        responseType: 'blob', // Important for getting the image as a blob
+        responseType: 'blob',
       });
 
       const imageUrl = URL.createObjectURL(response.data);
@@ -138,28 +136,11 @@ function ViewInvestorProfile({ profile }) {
 
                 <Grid item xs={12} sm={3}>
                     <label htmlFor="avatar-upload" onClick={handleAvatarClick}>
-                    <Avatar
-                        sx={{
-                            width: 200,
-                            height: 200,
-                            mb: 2,
-                            ml: 49.5,
-                            cursor: 'pointer',
-                            border: '5px rgba(0, 116, 144, 1) solid'
-                        }}
-                        src={avatar}
-                        onClick={handleAvatarClick} // Attach the event handler here
-                    />
+                    <Avatar sx={{ width: 200, height: 200, mb: 2, ml: 49.5, cursor: 'pointer', border: '5px rgba(0, 116, 144, 1) solid' }} src={avatar} onClick={handleAvatarClick} />
                     </label>
                 
-                    <input
-                    type="file"
-                    accept="image/*"
-                    id="avatar-upload"
-                    onChange={handleAvatarChange}
-                    disabled={!isEditable} 
-                    ref={fileInputRef}
-                    style={{ display: 'none'}}/>                      
+                    <input type="file" accept="image/*" id="avatar-upload" onChange={handleAvatarChange}
+                    disabled={!isEditable} ref={fileInputRef} style={{ display: 'none'}}/>                      
                 </Grid>
 
                 <Box component="main" sx={{mr: 5, borderRadius: 2 }}>
@@ -197,10 +178,11 @@ function ViewInvestorProfile({ profile }) {
                                 <Grid item xs={6}>
                                     <label>Gender *</label>
                                     <Select fullWidth variant="outlined" value={gender} onChange={(e) => setGender(e.target.value)} disabled={!isEditable} sx={{ height: '45px' }}>
-                                        <MenuItem value={'Male'}>Male</MenuItem>
-                                        <MenuItem value={'Female'}>Female</MenuItem>
-                                        <MenuItem value={'Neutral'}>Neutral</MenuItem>
-                                        <MenuItem value={'Other'}>Other</MenuItem>
+                                    {genderOptions.map((option) => (
+                                          <MenuItem key={option.value} value={option.value}>
+                                              {option.label}
+                                          </MenuItem>
+                                      ))}
                                     </Select>
                                 </Grid>
 
@@ -226,8 +208,7 @@ function ViewInvestorProfile({ profile }) {
 
                                 <Grid item xs={4}>
                                     <label>Country *</label>
-                                    <Autocomplete
-                                        options={countries}
+                                    <Autocomplete options={countries}
                                         getOptionLabel={(option) => option.label}
                                         value={countries.find(c => c.label === country) || null}
                                         onChange={(event, newValue) => {
@@ -235,30 +216,22 @@ function ViewInvestorProfile({ profile }) {
                                         }}
                                         renderOption={(props, option) => (
                                             <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-                                                <img
-                                                    loading="lazy"
-                                                    width="20"
+                                                <img loading="lazy" width="20"
                                                     src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
                                                     srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                                                    alt=""
-                                                />
+                                                    alt="" />
                                                 {option.label} ({option.code}) +{option.phone}
                                             </Box>
                                         )}
                                         renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                fullWidth
-                                                variant="outlined"
+                                            <TextField {...params} fullWidth variant="outlined"
                                                 inputProps={{
                                                     ...params.inputProps,
                                                     autoComplete: 'new-password',
                                                 }}
-                                                disabled={!isEditable}
-                                            />
+                                                disabled={!isEditable} />
                                         )}
-                                        sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px'} }}
-                                    />
+                                        sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px'} }} />
                                 </Grid>
 
                                 <Grid item xs={4}>
@@ -314,7 +287,8 @@ function ViewInvestorProfile({ profile }) {
                         </Grid>
                     </Grid>
 
-                    <Button variant="contained" sx={{ width: 150, background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }} style={{marginLeft: '83.5%'}} onClick={handleUpdateProfile}>
+                    <Button variant="contained" 
+                    sx={{ width: 150, background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }} style={{marginLeft: '83.5%'}} onClick={handleUpdateProfile}>
                         {isEditable ? 'Save Changes' : 'Edit Profile'}
                     </Button>
                 </Box>

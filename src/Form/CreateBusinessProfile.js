@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import countries from '../static/countries';
 import industries from '../static/industries';
+import quantityOptions from '../static/quantityOptions';
 import SuccessCreateBusinessProfileDialog from '../Dialogs/SuccessCreateBusinessProfileDialog';
 import { Box, Typography, TextField, Select, MenuItem, Grid, FormControl, CardContent, Button, Autocomplete, FormHelperText } from '@mui/material';
 import { Business, MonetizationOn } from '@mui/icons-material'; 
@@ -123,7 +124,7 @@ function CreateBusinessProfile({ onSuccess }) {
       setTimeout(() => {
         setSuccessDialogOpen(false);
         onSuccess();
-      }, 2500);
+      }, 1500);
     } catch (error) {
       console.error('Failed to create profile:', error);
     }
@@ -165,11 +166,7 @@ function CreateBusinessProfile({ onSuccess }) {
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <label>Company Name *</label>
-                                    <TextField 
-                                        fullWidth 
-                                        required
-                                        variant="outlined"
-                                        value={companyName}
+                                    <TextField fullWidth  required variant="outlined" value={companyName}
                                         onChange={(e) => setCompanyName(e.target.value)}
                                         sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                         error={!!errors.companyName} />
@@ -178,13 +175,8 @@ function CreateBusinessProfile({ onSuccess }) {
 
                                 <Grid item xs={12}>
                                     <label>Company Description *</label>
-                                    <TextField
-                                        fullWidth
-                                        variant="outlined"
-                                        value={companyDescription}
+                                    <TextField fullWidth variant="outlined" value={companyDescription} multiline rows={4}
                                         onChange={(e) => setCompanyDescription(e.target.value)}
-                                        multiline
-                                        rows={4}
                                         error={!!errors.companyDescription}/>
                                         {errors.companyDescription && (<FormHelperText error>{errors.companyDescription}</FormHelperText>)}
                                 </Grid>
@@ -192,9 +184,7 @@ function CreateBusinessProfile({ onSuccess }) {
                             <Grid item xs={4}>
                                 <label><b>Founded Date</b><br/>Month *</label>
                                 <FormControl fullWidth variant="outlined">
-                                    <Select                              
-                                        labelId="month-label"
-                                        value={foundedMonth}
+                                    <Select labelId="month-label" value={foundedMonth} 
                                         onChange={(e) => setFoundedMonth(e.target.value)}
                                         sx={{ height: '45px' }}
                                         error={!!errors.foundedMonth}>  
@@ -210,10 +200,7 @@ function CreateBusinessProfile({ onSuccess }) {
                             <Grid item xs={4}>
                                 <label><br/>Day *</label>
                                 <FormControl fullWidth variant="outlined">
-                                    <Select
-                                        labelId="day-label"
-                                        error={!!errors.foundedDay}
-                                        value={foundedDay}
+                                    <Select labelId="day-label" error={!!errors.foundedDay} value={foundedDay}
                                         onChange={(e) => setFoundedDay(e.target.value)}
                                         sx={{ height: '45px' }}>
                                         {days.map((day) => (
@@ -227,10 +214,7 @@ function CreateBusinessProfile({ onSuccess }) {
                             <Grid item xs={4}>
                             <label><br/>Year *</label>
                             <FormControl fullWidth variant="outlined">
-                                <Select
-                                    labelId="year-label"
-                                    error={!!errors.foundedYear}
-                                    value={foundedYear}
+                                <Select labelId="year-label" error={!!errors.foundedYear} value={foundedYear}
                                     onChange={(e) => setFoundedYear(e.target.value)}
                                     sx={{ height: '45px' }}>
                                     {years.map((year) => (
@@ -245,10 +229,7 @@ function CreateBusinessProfile({ onSuccess }) {
                             <label>Type of Company *</label>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>  
-                                    <Select 
-                                        fullWidth 
-                                        variant="outlined"
-                                        value={typeOfCompany}
+                                    <Select  fullWidth  variant="outlined" value={typeOfCompany}
                                         onChange={(e) => setTypeOfCompany(e.target.value)}
                                         sx={{ height: '45px' }}
                                         error={!!errors.typeOfCompany}>
@@ -264,17 +245,15 @@ function CreateBusinessProfile({ onSuccess }) {
                             <label>No. of Employees *</label>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>  
-                                    <Select 
-                                        fullWidth 
-                                        variant="outlined"
-                                        value={numberOfEmployees}
+                                    <Select fullWidth  variant="outlined" value={numberOfEmployees}
                                         onChange={(e) => setNumberOfEmployees(e.target.value)}
                                         sx={{ height: '45px' }}
                                         error={!!errors.numberOfEmployees}>
-                                        <MenuItem value={'lessthan10'}>less than 10</MenuItem>
-                                        <MenuItem value={'10-50'}>10-50</MenuItem>
-                                        <MenuItem value={'50-100'}>50-100</MenuItem>
-                                        <MenuItem value={'100 above'}>100 above</MenuItem>
+                                        {quantityOptions.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
                                     </Select>
                                     {errors.typeOfCompany && (<FormHelperText error>{errors.typeOfCompany}</FormHelperText>)}
                                 </Grid>

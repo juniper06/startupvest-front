@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Select, MenuItem, Grid, FormControl, FormHelperText, Autocomplete } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import fundingOptions from '../static/fundingOptions';
+import currencyOptions from '../static/currencyOptions';
 import axios from 'axios';
 
 function ViewFundingRound({ fundingRoundDetails }) {
@@ -15,7 +17,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const [closedDay, setClosedDay] = useState('');
     const [closedYear, setClosedYear] = useState('');
     const [moneyRaised, setMoneyRaised] = useState(0);
-    const [currency, setCurrency] = useState(''); // added currency state
+    const [currency, setCurrency] = useState('');
     const [targetFunding, setTargetFunding] = useState('');
     const [preMoneyValuation, setPreMoneyValuation] = useState('');
     const [minimumShare, setMinimumShare] = useState('');
@@ -24,9 +26,8 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const [formattedPreMoneyValuation, setFormattedPreMoneyValuation] = useState('');
     const [formattedMinimumShare, setFormattedMinimumShare] = useState('');
 
-
     //CAP TABLE
-    const [allInvestors, setAllInvestors] = useState([]); // to store all fetched investors
+    const [allInvestors, setAllInvestors] = useState([]); 
     const [investors, setInvestors] = useState([{ name: null, title: '', shares: '', investorRemoved: false }]);
     const [errors, setErrors] = useState({});
 
@@ -233,13 +234,11 @@ function ViewFundingRound({ fundingRoundDetails }) {
     
             // Send a request to the backend to mark the investor as removed (if needed)
             const response = await axios.put(`http://localhost:3000/cap-table-investor/${investorToRemove.name}/${fundingRoundDetails.id}`, {
-                investorRemoved: true,  // Assuming you're updating this flag in the backend
+                investorRemoved: true, 
             });
     
-            console.log('Investor removed successfully:', response.data);
         } catch (error) {
             console.error('Error removing investor:', error);
-            // Optionally, handle the error and revert the state change if necessary
         }
     };
 
@@ -259,12 +258,9 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         <Grid item xs={12}>
                         <label>StartUp Name</label>    
                         <FormControl fullWidth variant="outlined">
-                            <Select
-                                fullWidth
-                                variant="outlined"
+                            <Select fullWidth variant="outlined"
                                 value={fundingRoundDetails ? fundingRoundDetails.startup.id : selectedStartupId}
-                                onChange={(e) => setSelectedStartupId(e.target.value)}
-                                disabled={!!fundingRoundDetails}
+                                onChange={(e) => setSelectedStartupId(e.target.value)} disabled={!!fundingRoundDetails}
                                 sx={{ height: '45px' }}>
                                 {startups.map((startup) => (
                                     <MenuItem key={startup.id} value={startup.id}>{startup.companyName}</MenuItem>
@@ -286,13 +282,14 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         <Grid item xs={12}>
                         <label>Funding Type</label> 
                             <FormControl fullWidth variant="outlined">
-                                <Select fullWidth variant="outlined" value={fundingType} onChange={(e) => setFundingType(e.target.value)} disabled={!!fundingRoundDetails} sx={{ height: '45px' }}>
-                                    <MenuItem value={'Pre-Seed'}>Pre-Seed</MenuItem>
-                                    <MenuItem value={'Seed'}>Seed</MenuItem>
-                                    <MenuItem value={'Series A'}>Series A</MenuItem>
-                                    <MenuItem value={'Series B'}>Series B</MenuItem>
-                                    <MenuItem value={'Series C'}>Series C</MenuItem>
-                                    <MenuItem value={'Series D'}>Series D</MenuItem>
+                                <Select fullWidth variant="outlined" value={fundingType} 
+                                onChange={(e) => setFundingType(e.target.value)} disabled={!!fundingRoundDetails} 
+                                sx={{ height: '45px' }}>
+                                    {fundingOptions.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -369,41 +366,28 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
                         <Grid item xs={8}>
                             <label>Money Raised Amount</label>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                value={formattedMoneyRaised}
-                                onChange={handleNumberChange(setFormattedMoneyRaised)}
-                                disabled
+                            <TextField fullWidth variant="outlined" value={formattedMoneyRaised}
+                                onChange={handleNumberChange(setFormattedMoneyRaised)} disabled
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                         </Grid>
 
                         <Grid item xs={4}>
                             <label>Currency</label>
-                            <Select
-                                fullWidth
-                                variant="outlined"
-                                value={currency}
-                                onChange={(e) => setCurrency(e.target.value)}
-                                disabled
+                            <Select fullWidth variant="outlined" value={currency}
+                                onChange={(e) => setCurrency(e.target.value)} disabled
                                 sx={{ height: '45px' }}>
-                                <MenuItem value="₱">PESO</MenuItem>
-                                <MenuItem value="$">USD</MenuItem>
-                                <MenuItem value="€">EUR</MenuItem>
-                                <MenuItem value="£">GBP</MenuItem>
-                                <MenuItem value="¥">JPY</MenuItem>
-                                <MenuItem value="₩">KRW</MenuItem>
+                                {currencyOptions.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </Grid>
 
                         <Grid item xs={8}>
                             <label>Target Funding Amount</label>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                value={formattedTargetFunding}
-                                onChange={handleNumberChange(setFormattedTargetFunding)}
-                                disabled={!isEditMode}
+                            <TextField fullWidth variant="outlined" value={formattedTargetFunding}
+                                onChange={handleNumberChange(setFormattedTargetFunding)} disabled={!isEditMode}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                 error={!!errors.targetFunding} />
                             {errors.targetFunding && (
@@ -413,30 +397,21 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
                         <Grid item xs={4}>
                             <label>Currency</label>
-                            <Select
-                                fullWidth
-                                variant="outlined"
-                                value={currency}
-                                onChange={(e) => setCurrency(e.target.value)}
-                                disabled={!isEditMode}
+                            <Select fullWidth variant="outlined" value={currency}
+                                onChange={(e) => setCurrency(e.target.value)} disabled={!isEditMode}
                                 sx={{ height: '45px' }}>
-                                <MenuItem value="₱">PESO</MenuItem>
-                                <MenuItem value="$">USD</MenuItem>
-                                <MenuItem value="€">EUR</MenuItem>
-                                <MenuItem value="£">GBP</MenuItem>
-                                <MenuItem value="¥">JPY</MenuItem>
-                                <MenuItem value="₩">KRW</MenuItem>
+                                {currencyOptions.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </Grid>
 
                         <Grid item xs={12}>
                             <label>Pre-Money Valuation</label>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                value={formattedPreMoneyValuation}
-                                onChange={handleNumberChange(setFormattedPreMoneyValuation)}
-                                disabled={!isEditMode}
+                            <TextField fullWidth variant="outlined" value={formattedPreMoneyValuation}
+                                onChange={handleNumberChange(setFormattedPreMoneyValuation)} disabled={!isEditMode}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                 error={!!errors.preMoneyValuation}/>
                             {errors.preMoneyValuation && (
@@ -452,30 +427,21 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         
                         <Grid item xs={8}>
                             <label>Price per Share</label>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                value={formattedMinimumShare}
-                                onChange={handleNumberChange(setFormattedMinimumShare)}
-                                disabled
+                            <TextField fullWidth variant="outlined" value={formattedMinimumShare}
+                                onChange={handleNumberChange(setFormattedMinimumShare)} disabled
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
                         </Grid>
 
                         <Grid item xs={4}>
                             <label>Currency</label>
-                            <Select
-                                fullWidth
-                                variant="outlined"
-                                value={currency}
-                                onChange={(e) => setCurrency(e.target.value)}
-                                disabled
+                            <Select fullWidth variant="outlined" value={currency}
+                                onChange={(e) => setCurrency(e.target.value)} disabled
                                 sx={{ height: '45px' }}>
-                                <MenuItem value="₱">PESO</MenuItem>
-                                <MenuItem value="$">USD</MenuItem>
-                                <MenuItem value="€">EUR</MenuItem>
-                                <MenuItem value="£">GBP</MenuItem>
-                                <MenuItem value="¥">JPY</MenuItem>
-                                <MenuItem value="₩">KRW</MenuItem>
+                                {currencyOptions.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </Grid>
                     </Grid>
@@ -509,32 +475,22 @@ function ViewFundingRound({ fundingRoundDetails }) {
                             
                             <Grid item xs={4}>
                                 <label>Title</label>
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    value={investor.title}
-                                    onChange={(e) => handleInvestorChange(index, 'title', e.target.value)}
-                                    disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                                <TextField fullWidth variant="outlined" value={investor.title} 
+                                onChange={(e) => handleInvestorChange(index, 'title', e.target.value)} disabled={!isEditMode}
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                             </Grid>
                             
                             <Grid item xs={3.5}>
                                 <label>Shares</label>
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    value={investor.formattedShares} // Use the formatted value for display
-                                    onChange={(e) => handleSharesChange(index, e.target.value)}
-                                    disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                />
+                                <TextField fullWidthvariant="outlined" value={investor.formattedShares}
+                                    onChange={(e) => handleSharesChange(index, e.target.value)}disabled={!isEditMode}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                             </Grid>
 
                             <Grid item xs={.5}>
                             {investors.length > 0 && (
                                 <IconButton sx={{ mt: 3 }} color="error" aria-label="remove"
-                                disabled={!isEditMode}
-                                value={investor.id}
+                                disabled={!isEditMode} value={investor.id}
                                 onClick={() => handleRemoveInvestor(index)}>
                                 <CloseIcon />
                                 </IconButton>
@@ -544,7 +500,8 @@ function ViewFundingRound({ fundingRoundDetails }) {
                     </Grid>
                 ))}
                 <Grid item xs={12} sm={11}>
-                    <Button variant="outlined" sx={{ color: 'rgba(0, 116, 144, 1)', borderColor: 'rgba(0, 116, 144, 1)', '&:hover': { color: 'rgba(0, 116, 144, 0.7)', borderColor: 'rgba(0, 116, 144, 0.7)' } }} onClick={handleAddInvestor} disabled={!isEditMode}>
+                    <Button variant="outlined" sx={{ color: 'rgba(0, 116, 144, 1)', borderColor: 'rgba(0, 116, 144, 1)', '&:hover': { color: 'rgba(0, 116, 144, 0.7)', borderColor: 'rgba(0, 116, 144, 0.7)' } }} 
+                    onClick={handleAddInvestor} disabled={!isEditMode}>
                         Add Investor
                     </Button>
                 </Grid>

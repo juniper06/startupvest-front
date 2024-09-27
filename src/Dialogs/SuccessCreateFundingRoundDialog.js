@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 function SuccessCreateFundingRoundDialog({ open, onClose, companyName, fundingType }) {
     const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(open);
@@ -11,32 +12,23 @@ function SuccessCreateFundingRoundDialog({ open, onClose, companyName, fundingTy
             timer = setTimeout(() => {
                 setIsSuccessDialogOpen(false);
                 onClose();
-            }, 2500);
+            }, 1500);
         }
         return () => clearTimeout(timer);
     }, [open, onClose]);
 
     return (
         <>
-            <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-                <DialogTitle sx={{ bgcolor: '#4caf50', color: 'white', mb: 3 }}>
+            <Dialog open={isSuccessDialogOpen} onClose={onClose} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ bgcolor: '#4caf50', color: 'white', mb: 2, display: 'flex', alignItems: 'center' }}>
+                    <CheckCircleIcon sx={{ fontSize: 30, marginRight: 1 }} />
                     <Typography variant="h6">Funding Round Created</Typography>
                 </DialogTitle>
                 <DialogContent>
-                    <Typography variant="body1">
+                    <Typography variant="body1" sx={{ mb: 2 }}>
                         The {fundingType} funding round for <strong>{companyName}</strong> has been successfully created.
                     </Typography>
                 </DialogContent>
-                <DialogActions>
-                    <Button 
-                        onClick={() => {
-                            setIsSuccessDialogOpen(false);
-                            onClose();
-                        }} 
-                        sx={{ color: '#4caf50', '&:hover': { backgroundColor: '#e8f5e9' } }}>
-                        OK
-                    </Button>
-                </DialogActions>
             </Dialog>
         </>
     );

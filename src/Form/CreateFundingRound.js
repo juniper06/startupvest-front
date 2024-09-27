@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Select, MenuItem, Grid, FormControl, FormHelperText, Autocomplete } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import currencyOptions from '../static/currencyOptions';
+import fundingOptions from '../static/fundingOptions';
 import axios from 'axios';
 
 import SuccessCreateFundingRoundDialog from '../Dialogs/SuccessCreateFundingRoundDialog';
@@ -160,24 +162,18 @@ function CreateFundingRound({ onSuccess }) {
             setTimeout(() => {
                 setSuccessDialogOpen(false);
                 onSuccess();
-            }, 2500);
+            }, 1500);
         } catch (error) {
             console.error('Failed to create funding round:', error);
         }
     };
-
-    // const handleSharesChange = (index, value) => {
-    //     const updatedInvestors = [...investors];
-    //     updatedInvestors[index].shares = value;
-    //     setInvestors(updatedInvestors);
-    // };
 
     const handleSharesChange = (index, value) => {
         const updatedInvestors = [...investors];
         const rawValue = parseFormattedNumber(value);
         updatedInvestors[index].shares = formatNumber(rawValue);
         setInvestors(updatedInvestors);
-      };
+    };
 
     const handleRemoveInvestor = (index) => {
         const updatedInvestors = [...investors];
@@ -188,17 +184,16 @@ function CreateFundingRound({ onSuccess }) {
     const formatNumber = (value) => {
         if (!value) return '';
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      };
+    };
       
-      // Helper function to parse formatted number back to raw number
-      const parseFormattedNumber = (value) => {
+    const parseFormattedNumber = (value) => {
         return value.replace(/,/g, '');
-      };
+    };
 
-      const handleFormattedChange = (setter) => (e) => {
+    const handleFormattedChange = (setter) => (e) => {
         const rawValue = parseFormattedNumber(e.target.value);
         setter(formatNumber(rawValue));
-      };
+    };
     
     return (
         <Box component="main" sx={{ flexGrow: 1, width: '100%', overflowX: 'hidden', maxWidth: '1000px', background: '#F2F2F2' }}>
@@ -235,12 +230,11 @@ function CreateFundingRound({ onSuccess }) {
                             <label>Funding Type *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.fundingType}>
                                 <Select fullWidth variant="outlined" value={fundingType} onChange={(e) => setFundingType(e.target.value)} sx={{ height: '45px' }}>
-                                    <MenuItem value={'Pre-Seed'}>Pre-Seed</MenuItem>
-                                    <MenuItem value={'Seed'}>Seed</MenuItem>
-                                    <MenuItem value={'Series A'}>Series A</MenuItem>
-                                    <MenuItem value={'Series B'}>Series B</MenuItem>
-                                    <MenuItem value={'Series C'}>Series C</MenuItem>
-                                    <MenuItem value={'Series D'}>Series D</MenuItem>
+                                {fundingOptions.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
                                 </Select>
                             </FormControl>
                             {errors.fundingType && <FormHelperText sx={{color:'red'}}>{errors.fundingType}</FormHelperText>}
@@ -321,31 +315,23 @@ function CreateFundingRound({ onSuccess }) {
                         <Grid item xs={8}>
                             <label>Target Funding Amount *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.targetFunding}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                value={targetFunding}
+                            <TextField fullWidth variant="outlined" value={targetFunding}
                                 onChange={handleFormattedChange(setTargetFunding)}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                error={!!errors.targetFunding}
-                            />
+                                error={!!errors.targetFunding} />
                             </FormControl>
                             {errors.targetFunding && <FormHelperText sx={{color:'red'}}>{errors.targetFunding}</FormHelperText>}
                         </Grid>
                         <Grid item xs={4}>
                             <label>Currency</label>
-                            <Select
-                                fullWidth
-                                variant="outlined"
-                                value={currency}
+                            <Select fullWidth variant="outlined" value={currency}
                                 onChange={(e) => setCurrency(e.target.value)}
                                 sx={{ height: '45px' }}>
-                                <MenuItem value="₱">PESO</MenuItem>
-                                <MenuItem value="$">USD</MenuItem>
-                                <MenuItem value="€">EUR</MenuItem>
-                                <MenuItem value="£">GBP</MenuItem>
-                                <MenuItem value="¥">JPY</MenuItem>
-                                <MenuItem value="₩">KRW</MenuItem>
+                                {currencyOptions.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </Grid>
 
@@ -385,19 +371,14 @@ function CreateFundingRound({ onSuccess }) {
                         </Grid>
                         <Grid item xs={4}>
                             <label>Currency</label>
-                            <Select
-                                fullWidth
-                                variant="outlined"
-                                value={currency}
-                                onChange={(e) => setCurrency(e.target.value)}
-                                disabled
+                            <Select fullWidth variant="outlined" value={currency}
+                                onChange={(e) => setCurrency(e.target.value)} disabled
                                 sx={{ height: '45px' }}>
-                                <MenuItem value="₱">PESO</MenuItem>
-                                <MenuItem value="$">USD</MenuItem>
-                                <MenuItem value="€">EUR</MenuItem>
-                                <MenuItem value="£">GBP</MenuItem>
-                                <MenuItem value="¥">JPY</MenuItem>
-                                <MenuItem value="₩">KRW</MenuItem>
+                                {currencyOptions.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </Grid>
                     </Grid>
@@ -431,13 +412,9 @@ function CreateFundingRound({ onSuccess }) {
 
                             <Grid item xs={3.5}>
                                 <label>Shares</label>
-                                <TextField 
-                                    fullWidth 
-                                    variant="outlined" 
-                                    value={investor.shares}
+                                <TextField  fullWidth  variant="outlined" value={investor.shares}
                                     onChange={(e) => handleSharesChange(index, e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} 
-                                    />
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}  />
                                 </Grid>
                             <Grid item xs={.5}>
                                 {investors.length > 0 && (
