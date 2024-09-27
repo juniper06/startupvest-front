@@ -6,6 +6,7 @@ import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
+import { StyledPaper, StyledAvatar, StyledTableRow, StyledTableCell, StyledStack } from '../styles/components'; 
 
 const drawerWidth = 240;
 
@@ -108,9 +109,8 @@ function EnhancedTableToolbar({ onRequestSearch }) {
   };
 
   return (
-    <Toolbar sx={{ pt: 5, mb: 3 }}>
-      <Typography sx={{ flex: '1 1 100%', color: 'rgba(0, 116, 144, 1)', fontWeight: 'bold' }} variant="h5" id="tableTitle"
-        component="div">
+    <Toolbar sx={{ pt: 12, mb: 3, ml: -3 }}>
+      <Typography sx={{ flex: '1 1 100%', color: 'rgba(0, 116, 144, 1)', fontWeight: 'bold' }} variant="h5">
         Search Funding Round
       </Typography>
 
@@ -136,17 +136,17 @@ export default function FundingRound() {
         const response = await axios.get('http://localhost:3000/funding-rounds/all');
         const fetchedRows = response.data.map(fundingRound => createData(
           fundingRound.id,
-          fundingRound.transactionName,
-          fundingRound.startup?.companyName ?? 'N/A',
-          fundingRound.fundingType,
+          fundingRound.transactionName || '---',
+          fundingRound.startup?.companyName ?? '---',
+          fundingRound.fundingType || '---',
           fundingRound.moneyRaised || '---',
           fundingRound.moneyRaisedCurrency || 'USD',
           new Date(fundingRound.announcedDate).toLocaleDateString(),
           new Date(fundingRound.closedDate).toLocaleDateString(),
           fundingRound.avatar || '',
-          fundingRound.preMoneyValuation || 'N/A',
+          fundingRound.preMoneyValuation || '---',
           fundingRound.capTableInvestors,
-          fundingRound.minimumShare || 'N/A',
+          fundingRound.minimumShare || '---',
           fundingRound.startup?.id  
         ));
         setRows(fetchedRows);
@@ -229,44 +229,34 @@ export default function FundingRound() {
   return (
     <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px` }}>
       <Navbar />
-      <Toolbar />
-
-      <Paper sx={{ width: '100%', p: 3 }} elevation={0}>
+      <StyledPaper elevation={0}>
         <EnhancedTableToolbar onRequestSearch={handleSearch} />
         <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
+          <Table stickyHeader>
             <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
-              <TableBody>
-                {visibleRows.map((row, index) => (
-                  <TableRow hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', height: '75px' }} onClick={() => handleRowClick(row)}>
-                    <TableCell component="th" scope="row" padding="none">
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar
-                          variant="rounded"
-                          sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }}
-                          src={profilePictures[row.id] || ''} 
-                          alt={row.startupName}>
-                          {profilePictures[row.id] ? '' : row.startupName.charAt(0)}
-                        </Avatar>
-                        {row.startupName}
-                      </Box>
-                    </TableCell>
-                    <TableCell align="left">{row.fundingType}</TableCell>
-                    <TableCell align="left">
-                      {row.moneyRaisedCurrency} {row.moneyRaised === '---' ? row.moneyRaised : Number(row.moneyRaised).toLocaleString()}
-                    </TableCell>
-                    <TableCell align="left">{formatDate(row.announcedDate)}</TableCell>
-                    <TableCell align="left">{formatDate(row.closedDate)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+            <TableBody>
+              {visibleRows.map((row) => (
+                <StyledTableRow key={row.id} onClick={() => handleRowClick(row)}>
+                  <StyledTableCell>
+                    <StyledStack direction="row" alignItems="center">
+                      <StyledAvatar alt={row.startupName} src={profilePictures[row.id]} variant='rounded'/>
+                      {row.startupName}
+                    </StyledStack>
+                  </StyledTableCell>
+                  <StyledTableCell>{row.fundingType}</StyledTableCell>
+                  <StyledTableCell>
+                    {row.moneyRaisedCurrency} {row.moneyRaised === '---' ? row.moneyRaised : Number(row.moneyRaised).toLocaleString()}
+                  </StyledTableCell>
+                  <StyledTableCell>{formatDate(row.announcedDate)}</StyledTableCell>
+                  <StyledTableCell>{formatDate(row.closedDate)}</StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
           </Table>
         </TableContainer>
-
-        <Stack spacing={2} sx={{ mt: 2, mb: 2, alignItems: 'center' }}>
-          <Pagination count={Math.ceil(filteredRows.length / rowsPerPage)} page={page} onChange={handlePageChange} size="large"/>
-        </Stack>
-      </Paper>
+        <Pagination count={Math.ceil(filteredRows.length / rowsPerPage)} page={page} onChange={handlePageChange}
+          sx={{ mt: 2, mb: 3, display: 'flex', justifyContent: 'center' }} />
+      </StyledPaper>
     </Box>
   );
 }

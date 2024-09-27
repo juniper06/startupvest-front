@@ -58,11 +58,9 @@ function Login() {
 
   return (
     <Container sx={styles.container}>
-      <Grid container>
-        <Grid item xs={12} sm={1}>
-        </Grid>
-
-        <Grid item xs={12} sm={6} textAlign="center">
+      <Grid container justifyContent="center">
+        {/* LEFT SIDE (only show on large screens) */}
+        <Grid item xs={12} lg={6} display={{ xs: 'none', lg: 'block' }} textAlign="center">
           <Paper elevation={3} sx={styles.paperLeft}>
             <Typography variant='h4' sx={styles.welcomeText}>
               Welcome back! <br />
@@ -78,7 +76,7 @@ function Login() {
         </Grid>
 
         {/* LOGIN FORM */}
-        <Grid item xs={12} sm={5} paddingX={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <Grid item xs={12} md={8} lg={5} paddingX={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <img src="images/logo.png" alt="Logo" style={{ width: '70%', marginBottom: '10px', maxWidth: '100%' }} />
           <Paper elevation={3} style={styles.formContainer}>
             <form onSubmit={handleSubmit} sx={styles.form}>
@@ -128,11 +126,11 @@ function Login() {
                         aria-label="toggle password visibility"
                         onClick={handleTogglePasswordVisibility}
                         edge="end"
-                        size='small'>
+                        size="small">
                         {showPassword ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
                       </IconButton>
                     </InputAdornment>
-                  )
+                  ),
                 }}/>
 
               <Typography variant="body2" sx={styles.forgotPassword}>
@@ -145,7 +143,10 @@ function Login() {
 
               <div style={{ marginTop: '16px' }}>
                 <Typography variant="body2" sx={styles.signUpLink}>
-                  Don't have an account? <Link component={RouterLink} to="/signup" sx={styles.signUpLink}>Sign Up</Link>
+                  Don't have an account?{' '}
+                  <Link component={RouterLink} to="/signup" sx={styles.signUpLink}>
+                    Sign Up
+                  </Link>
                 </Typography>
               </div>
             </form>
@@ -153,9 +154,8 @@ function Login() {
         </Grid>
       </Grid>
 
-      <Snackbar
-        open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+      <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} 
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert onClose={handleCloseAlert} severity="success" sx={styles.snackbar}>
           Login successful! Redirecting to homepage...
         </Alert>

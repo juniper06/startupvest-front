@@ -1,11 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Toolbar, Typography, Paper, TextField, Avatar, Stack, Pagination } from '@mui/material';
+import { Box, Table, TableBody, TableContainer, TableHead, TableRow, TableSortLabel, Toolbar, Typography, TextField, Pagination, TableCell } from '@mui/material';
 import PropTypes from 'prop-types';
 import SearchIcon from '@mui/icons-material/Search';
 import { visuallyHidden } from '@mui/utils';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../Navbar/Navbar';
+import { StyledPaper, StyledAvatar, StyledTableRow, StyledTableCell, StyledStack } from '../styles/components'; 
 
 const drawerWidth = 240;
 
@@ -33,7 +34,6 @@ function stableSort(array, comparator) {
 
 const headCells = [
   { id: 'startup', numeric: false, disablePadding: false, label: 'StartUp Name' },
-  { id: 'industry', numeric: false, disablePadding: false, label: 'Industry' },
   { id: 'location', numeric: false, disablePadding: false, label: 'Location' },
   { id: 'founded', numeric: false, disablePadding: false, label: 'Founded Date' },
   { id: 'description', numeric: false, disablePadding: false, label: 'Description', width: '38%' },
@@ -49,18 +49,12 @@ function EnhancedTableHead(props) {
     <TableHead>
       <TableRow>
         {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align="left"
-            padding={headCell.disablePadding ? 'none' : 'normal'}
+          <TableCell key={headCell.id} align="left" padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
-            style={{ width: headCell.width, fontWeight: 'bold', backgroundColor: '#007490', color: '#ffffff' }}>
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-              style={{ color: '#ffffff' }}>
-              {headCell.label}
+            style={{ width: headCell.width, fontWeight: 'bold', backgroundColor: '#007490', color: '#ffffff', }}>
+            <TableSortLabel active={orderBy === headCell.id} direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={createSortHandler(headCell.id)} style={{ color: '#ffffff' }}>
+                {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -89,7 +83,7 @@ function EnhancedTableToolbar({ onRequestSearch }) {
   };
 
   return (
-    <Toolbar sx={{ pt: 5, mb: 3 }}>
+    <Toolbar sx={{ pt: 12, mb: 3, ml: -3 }}>
       <Typography sx={{ flex: '1 1 100%', color: 'rgba(0, 116, 144, 1)', fontWeight: 'bold' }} variant="h5">
         Search Companies
       </Typography>
@@ -111,12 +105,17 @@ export default function Companies() {
   const navigate = useNavigate();
   const [profilePictures, setProfilePictures] = useState({});
 
+  const formatAddress = (streetAddress, city, country) => {
+    const parts = [streetAddress, city, country].filter(Boolean); 
+    return parts.join(', ');
+  };
+
   useEffect(() => {
     axios.get('http://localhost:3000/startups/all')
       .then((response) => {
         setRows(response.data);
         setFilteredRows(response.data);
-        fetchAllProfilePictures(response.data); // Fetch profile pictures after data is loaded
+        fetchAllProfilePictures(response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -135,18 +134,18 @@ export default function Companies() {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`,
             },
-            responseType: 'blob', // Important for getting the image as a blob
+            responseType: 'blob', 
           });
 
-          const imageUrl = URL.createObjectURL(response.data); // Convert blob to URL
-          pictures[startup.id] = imageUrl; // Store image URL against startup ID
+          const imageUrl = URL.createObjectURL(response.data); 
+          pictures[startup.id] = imageUrl;
         } catch (error) {
           console.error(`Failed to fetch profile picture for startup ID ${startup.id}:`, error);
         }
       })
     );
 
-    setProfilePictures(pictures); // Set state with all fetched profile pictures
+    setProfilePictures(pictures); 
   };
 
   const handleRequestSort = (event, property) => {
@@ -183,56 +182,41 @@ export default function Companies() {
     [filteredRows, order, orderBy, page, rowsPerPage]
   );
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px` }}>
+    <Box sx={{ display: 'flex', width: `${drawerWidth}`}}>
       <Navbar />
-      <Toolbar />
-
-      <Paper sx={{ width: '100%', p: 3 }} elevation={0}>
+      <StyledPaper>
         <EnhancedTableToolbar onRequestSearch={handleSearch} />
         <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
-            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort}/>
+          <Table>
+            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
             <TableBody>
               {visibleRows.map((row, index) => (
-                <TableRow hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', height: '75px' }}
-                  onClick={() => handleRowClick(row)}>
-                  <TableCell component="th" scope="row" padding="none">
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar
-                        variant='rounded'
-                        sx={{ width: 30, height: 30, mr: 2, ml: 2, border: '2px solid rgba(0, 116, 144, 1)' }}
-                        src={profilePictures[row.id]} // Use the fetched profile picture URL
-                        alt={row.companyName}>
-                        {row.companyName.charAt(0)} {/* Default to the first letter if no picture */}
-                      </Avatar>
+                <StyledTableRow hover tabIndex={-1} key={row.id} onClick={() => handleRowClick(row)}>
+                  <StyledTableCell>
+                    <StyledStack direction="row">
+                      <StyledAvatar alt={row.startup} src={profilePictures[row.id]} variant='rounded' />
                       {row.companyName}
-                    </Box>
-                  </TableCell>
-                  <TableCell align="left">{row.industry}</TableCell>
-                  <TableCell align="left">{row.streetAddress}</TableCell>
-                  <TableCell align="left">{row.foundedDate}</TableCell>
-                  <TableCell align="left" sx={{ textAlign: 'justify' }}>{row.companyDescription.split(' ').slice(0, 20).join(' ')}...</TableCell>
-                </TableRow>
+                    </StyledStack>
+                  </StyledTableCell>  
+                  <StyledTableCell>{formatAddress(row.streetAddress, row.city, row.country)}</StyledTableCell>
+                  <StyledTableCell>{row.foundedDate}</StyledTableCell>
+                  <StyledTableCell sx={{ textAlign: 'justify' }}>
+                    {row.companyDescription.split(' ').slice(0, 15).join(' ')}...
+                  </StyledTableCell>
+                </StyledTableRow>
               ))}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={headCells.length} />
+                  <StyledTableCell colSpan={6} />
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </TableContainer>
-
-        {/* Pagination controls */}
-        <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
-          <Pagination count={Math.ceil(filteredRows.length / rowsPerPage)} page={page + 1} onChange={handleChangePage} size="large"/>
-        </Stack>
-      </Paper>
+        <Pagination count={Math.ceil(filteredRows.length / rowsPerPage)} page={page + 1} onChange={handleChangePage}
+          sx={{ mt: 2, mb: 3, display: 'flex', justifyContent: 'center' }} />
+      </StyledPaper>
     </Box>
   );
 }
