@@ -92,6 +92,17 @@ function Faqs() {
 
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6">Can I create more than one investor profile?</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                            No, you cannot create multiple investor profiles. If you have an existing account, you can use it to invest in multiple companies, but you are limited to a single investor profile.
+                        </Typography>
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography variant="h6">What types of funding can I offer on StartUpVest?</Typography>
                     </AccordionSummary>
                     <AccordionDetails>

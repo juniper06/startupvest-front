@@ -337,7 +337,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.closedMonth && <FormHelperText>{errors.closedMonth}</FormHelperText>}
+                            {errors.closedMonth && <FormHelperText sx={{color:'red'}}>{errors.closedMonth}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -349,7 +349,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.closedDay && <FormHelperText>{errors.closedDay}</FormHelperText>}
+                            {errors.closedDay && <FormHelperText sx={{color:'red'}}>{errors.closedDay}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -361,7 +361,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                            {errors.closedYear && <FormHelperText>{errors.closedYear}</FormHelperText>}
+                            {errors.closedYear && <FormHelperText sx={{color:'red'}}>{errors.closedYear}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={8}>
@@ -391,7 +391,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                 error={!!errors.targetFunding} />
                             {errors.targetFunding && (
-                                <FormHelperText error>{errors.targetFunding}</FormHelperText>
+                                <FormHelperText error sx={{color:'red'}}>{errors.targetFunding}</FormHelperText>
                             )}
                         </Grid>
 
@@ -415,7 +415,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                 error={!!errors.preMoneyValuation}/>
                             {errors.preMoneyValuation && (
-                                <FormHelperText error>{errors.preMoneyValuation}</FormHelperText>
+                                <FormHelperText error sx={{color:'red'}}>{errors.preMoneyValuation}</FormHelperText>
                             )}
                         </Grid>
 
