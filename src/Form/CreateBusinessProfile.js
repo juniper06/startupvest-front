@@ -1,93 +1,95 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import countries from '../static/countries';
 import industries from '../static/industries';
+import genderOptions from '../static/genderOptions';
 import quantityOptions from '../static/quantityOptions';
 import SuccessCreateBusinessProfileDialog from '../Dialogs/SuccessCreateBusinessProfileDialog';
-import { Box, Typography, TextField, Select, MenuItem, Grid, FormControl, CardContent, Button, Autocomplete, FormHelperText } from '@mui/material';
+import { Box, Typography, TextField, Select, MenuItem, Grid, FormControl, CardContent, Button, Autocomplete, FormHelperText, Tooltip } from '@mui/material';
 import { Business, MonetizationOn } from '@mui/icons-material'; 
 import { StyledCard } from '../styles/CardStyles';
 import axios from 'axios';
 
 import { logActivity } from '../utils/activityUtils';
 
-function CreateBusinessProfile({ onSuccess }) {
-  const [selectedProfileType, setSelectedProfileType] = useState(null);
+function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
+    const [selectedProfileType, setSelectedProfileType] = useState(null);
 
-  // Profile Form Data Usestates
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [emailAddress, setEmailAddress] = useState('');
-  const [contactInformation, setContactInformation] = useState('');
-  const [gender, setGender] = useState('');
-  const [biography, setBiography] = useState('');
-  const [streetAddress, setStreetAddress] = useState('');
-  const [country, setCountry] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [website, setWebsite] = useState('');
-  const [facebook, setFacebook] = useState('');
-  const [twitter, setTwitter] = useState('');
-  const [instagram, setInstagram] = useState('');
-  const [linkedIn, setLinkedIn] = useState('');
-  const [companyName, setCompanyName] = useState('');
-  const [companyDescription, setCompanyDescription] = useState('');
-  const [foundedDay, setFoundedDay] = useState('');
-  const [foundedMonth, setFoundedMonth] = useState('');
-  const [foundedYear, setFoundedYear] = useState('');
-  const [typeOfCompany, setTypeOfCompany] = useState('');
-  const [numberOfEmployees, setNumberOfEmployees] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [contactEmail, setContactEmail] = useState('');
-  const [industry, setIndustry] = useState('');
-  const cardTypes = [
-    { label: 'Startup Company', icon: <Business />, color: '#007490' },
-    { label: 'Investor', icon: <MonetizationOn />, color: '#4CAF50' },
-  ];
-  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  
-  // Error State Variables
-  const [errors, setErrors] = useState({});
-  const days = [...Array(31).keys()].map(i => i + 1);
-  const months = Array.from({ length: 12 }, (_, i) => {
-    return new Intl.DateTimeFormat('en', { month: 'long' }).format(new Date(2000, i, 1));
-  });
-  const years = [...Array(51).keys()].map(i => new Date().getFullYear() - i);
+    // Profile Form Data Usestates
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [emailAddress, setEmailAddress] = useState('');
+    const [contactInformation, setContactInformation] = useState('');
+    const [gender, setGender] = useState('');
+    const [biography, setBiography] = useState('');
+    const [streetAddress, setStreetAddress] = useState('');
+    const [country, setCountry] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [postalCode, setPostalCode] = useState('');
+    const [website, setWebsite] = useState('');
+    const [facebook, setFacebook] = useState('');
+    const [twitter, setTwitter] = useState('');
+    const [instagram, setInstagram] = useState('');
+    const [linkedIn, setLinkedIn] = useState('');
+    const [companyName, setCompanyName] = useState('');
+    const [companyDescription, setCompanyDescription] = useState('');
+    const [foundedDay, setFoundedDay] = useState('');
+    const [foundedMonth, setFoundedMonth] = useState('');
+    const [foundedYear, setFoundedYear] = useState('');
+    const [typeOfCompany, setTypeOfCompany] = useState('');
+    const [numberOfEmployees, setNumberOfEmployees] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [contactEmail, setContactEmail] = useState('');
+    const [industry, setIndustry] = useState('');
+    const [successDialogOpen, setSuccessDialogOpen] = useState(false);
 
-  const handleCardClick = (cardType) => {
-    setSelectedProfileType(cardType);
-  };
+    const cardTypes = [
+        { label: 'Startup Company', icon: <Business />, color: '#007490' },
+        { label: 'Investor', icon: <MonetizationOn />, color: '#4CAF50' },
+    ];
+    
+    // Error State Variables
+    const [errors, setErrors] = useState({});
+    const days = [...Array(31).keys()].map(i => i + 1);
+    const months = Array.from({ length: 12 }, (_, i) => {
+        return new Intl.DateTimeFormat('en', { month: 'long' }).format(new Date(2000, i, 1));
+    });
+    const years = [...Array(51).keys()].map(i => new Date().getFullYear() - i);
 
-  const validateFields = () => {
-    const requiredErrorMessage = 'This field cannot be empty.';
-    const newErrors = {};
+    const handleCardClick = (cardType) => {
+        setSelectedProfileType(cardType);
+    };
 
-    if (selectedProfileType === 'Startup Company') {
-      if (!companyName) newErrors.companyName = requiredErrorMessage;
-      if (!companyDescription) newErrors.companyDescription = requiredErrorMessage;
-      if (!foundedMonth) newErrors.foundedMonth = requiredErrorMessage;
-      if (!foundedDay) newErrors.foundedDay = requiredErrorMessage;
-      if (!foundedYear) newErrors.foundedYear = requiredErrorMessage;
-      if (!typeOfCompany) newErrors.typeOfCompany = requiredErrorMessage;
-      if (!numberOfEmployees) newErrors.numberOfEmployees = requiredErrorMessage;
-      if (!phoneNumber) newErrors.phoneNumber = requiredErrorMessage;
-      if (!contactEmail) newErrors.contactEmail = requiredErrorMessage;
-      if (!industry) newErrors.industry = requiredErrorMessage;
-    } else if (selectedProfileType === 'Investor') {
-      if (!firstName) newErrors.firstName = requiredErrorMessage;
-      if (!lastName) newErrors.lastName = requiredErrorMessage;
-      if (!emailAddress) newErrors.emailAddress = requiredErrorMessage;
-      if (!contactInformation) newErrors.contactInformation = requiredErrorMessage;
-      if (!gender) newErrors.gender = requiredErrorMessage;
-      if (!biography) newErrors.biography = requiredErrorMessage;
-    }
+    const validateFields = () => {
+        const requiredErrorMessage = 'This field cannot be empty.';
+        const newErrors = {};
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; 
-  };
+        if (selectedProfileType === 'Startup Company') {
+        if (!companyName) newErrors.companyName = requiredErrorMessage;
+        if (!companyDescription) newErrors.companyDescription = requiredErrorMessage;
+        if (!foundedMonth) newErrors.foundedMonth = requiredErrorMessage;
+        if (!foundedDay) newErrors.foundedDay = requiredErrorMessage;
+        if (!foundedYear) newErrors.foundedYear = requiredErrorMessage;
+        if (!typeOfCompany) newErrors.typeOfCompany = requiredErrorMessage;
+        if (!numberOfEmployees) newErrors.numberOfEmployees = requiredErrorMessage;
+        if (!phoneNumber) newErrors.phoneNumber = requiredErrorMessage;
+        if (!contactEmail) newErrors.contactEmail = requiredErrorMessage;
+        if (!industry) newErrors.industry = requiredErrorMessage;
+        } else if (selectedProfileType === 'Investor') {
+        if (!firstName) newErrors.firstName = requiredErrorMessage;
+        if (!lastName) newErrors.lastName = requiredErrorMessage;
+        if (!emailAddress) newErrors.emailAddress = requiredErrorMessage;
+        if (!contactInformation) newErrors.contactInformation = requiredErrorMessage;
+        if (!gender) newErrors.gender = requiredErrorMessage;
+        if (!biography) newErrors.biography = requiredErrorMessage;
+        }
 
-  const handleCreateProfile = async () => {
-    if (!validateFields()) return;
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0; 
+    };
+
+    const handleCreateProfile = async () => {
+        if (!validateFields()) return;
   
     const profileData = {
       firstName, lastName, emailAddress, contactInformation, gender, biography,
@@ -128,12 +130,11 @@ function CreateBusinessProfile({ onSuccess }) {
     } catch (error) {
       console.error('Failed to create profile:', error);
     }
-  };
+};
  
     return (
         <>
         <Box component="main" sx={{ flexGrow: 1, width: '100%', overflowX: 'hidden', maxWidth: '1000px',  background: '#F2F2F2'}}>
-
             <Box component="main" sx={{mr: 5, borderRadius: 2 }}>
                 <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
                     Profile Type 
@@ -141,17 +142,30 @@ function CreateBusinessProfile({ onSuccess }) {
 
                 <Box sx={{ display: 'flex', gap: 2, pl: 5, pb: 2, textAlign: 'center', flexDirection: { xs: 'column', sm: 'row' }, backgroundColor: '#f5f5f5', borderRadius: 2, }}>
                 {cardTypes.map(({ label, icon, color }) => (
-                <StyledCard key={label} onClick={() => handleCardClick(label)} selected={selectedProfileType === label} color={color}>
-                    <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
-                        {icon}<Typography variant="h5" component="div" sx={{ fontWeight: 'bold', ml: 1 }}>{label}
-                        </Typography>
-                    </Box>
-                    <Typography variant="body2" color="text.secondary">
-                        Click to choose
-                    </Typography>
-                    </CardContent>
-                </StyledCard>
+                    <Tooltip key={label} arrow
+                        title={hasInvestorProfile && label === 'Investor' ? "You can only create one profile for Investor." : ""}
+                         disableHoverListener={!hasInvestorProfile || label !== 'Investor'}>
+                        
+                        <StyledCard key={label} color={color}
+                            onClick={() => {
+                                if (hasInvestorProfile && label === 'Investor') {
+                                    return; 
+                                }
+                                handleCardClick(label);
+                            }}
+                            selected={selectedProfileType === label}
+                            disabled={hasInvestorProfile && label === 'Investor'} >
+                            <CardContent>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
+                                    {icon}
+                                    <Typography variant="h5" sx={{ fontWeight: 'bold', ml: 1 }}>{label}</Typography>
+                                </Box>
+                                <Typography variant="body2" color="text.secondary">
+                                    Click to choose
+                                </Typography>
+                            </CardContent>
+                        </StyledCard>
+                    </Tooltip>
                 ))}
             </Box>
 
@@ -457,12 +471,12 @@ function CreateBusinessProfile({ onSuccess }) {
                             <Grid item xs={6}>
                                 <label>Gender *</label>
                                     <Select fullWidth variant="outlined" value={gender} onChange={(e) => setGender(e.target.value)}
-                                        sx={{ height: '45px',}}
-                                        error={!!errors.gender}>
-                                        <MenuItem value={'male'}>Male</MenuItem>
-                                        <MenuItem value={'female'}>Female</MenuItem>
-                                        <MenuItem value={'neutral'}>Neutral</MenuItem>
-                                        <MenuItem value={'other'}>Other</MenuItem>
+                                        sx={{ height: '45px',}} error={!!errors.gender}>
+                                        {genderOptions.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
                                     </Select>
                                     {errors.gender && (<FormHelperText error>{errors.gender}</FormHelperText>)}
                             </Grid>
@@ -575,7 +589,9 @@ function CreateBusinessProfile({ onSuccess }) {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Button variant="contained" sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' }}} style={{marginLeft: '82.7%'}} onClick={handleCreateProfile} onClose={handleCreateProfile}>
+                
+                <Button variant="contained" sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' }}} style={{marginLeft: '82.7%'}} 
+                    onClick={handleCreateProfile} onClose={handleCreateProfile}>
                     Create Profile
                 </Button>
             </>
@@ -584,9 +600,7 @@ function CreateBusinessProfile({ onSuccess }) {
         </Box>
 
         {/* Success Dialog */}
-        <SuccessCreateBusinessProfileDialog
-            open={successDialogOpen}
-            onClose={() => setSuccessDialogOpen(false)}
+        <SuccessCreateBusinessProfileDialog open={successDialogOpen} onClose={() => setSuccessDialogOpen(false)}
             companyName={companyName}
             firstName={firstName}
             lastName={lastName}/>

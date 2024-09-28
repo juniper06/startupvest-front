@@ -19,7 +19,7 @@ export const HeaderBox = styled(Box)`
 `;
 
 export const StatsBox = styled(Box)`
-  background: linear-gradient(to bottom, #0093d0, #00779d, #005b6e);
+  background: linear-gradient(to top, #0093d0, #00779d, #005b6e);
   color: white;
   height: 70px; 
   display: flex;
@@ -30,7 +30,7 @@ export const StatsBox = styled(Box)`
 `;
 
 export const TopInfoBox = styled(Box)`
-  background: linear-gradient(135deg, #0093d0, #005b6e);
+  background: linear-gradient(to top, #0093d0, #00779d, #005b6e);
   height: 70px;
   display: flex;
   flex-direction: column;

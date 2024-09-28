@@ -27,6 +27,7 @@ function UserDashboard() {
     const [openViewInvestor, setOpenViewInvestor] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [profileToDelete, setProfileToDelete] = useState(null);
+    const hasInvestorProfile = businessProfiles.some(profile => profile.type === "Investor");
 
     // FUNDING ROUND
     const [openCreateFundingRound, setOpenCreateFundingRound] = useState(false);
@@ -142,32 +143,28 @@ function UserDashboard() {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
             });
-
-        const responseInvestors = await axios.get(`http://localhost:3000/investors`, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            }
-        );
-
-        const startups = responseStartups.data
-            .filter((profile) => !profile.isDeleted)
-            .map((profile) => ({ ...profile, type: "Startup" }));
-        const investors = responseInvestors.data
-            .filter((profile) => !profile.isDeleted)
-            .map((profile) => ({ ...profile, type: "Investor" }));
-
-        setBusinessProfiles([...investors, ...startups]);
-
-        const allProfiles = [...investors, ...startups];
-        setBusinessProfiles(allProfiles);
-
-        setCompanyCount(startups.length);
-        return allProfiles; 
-    } catch (error) {
-         console.error('Failed to fetch business profiles:', error);
-    }
-};
+    
+            const responseInvestors = await axios.get(`http://localhost:3000/investors`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+    
+            const startups = responseStartups.data
+                .filter((profile) => !profile.isDeleted)
+                .map((profile) => ({ ...profile, type: "Startup" }));
+            const investors = responseInvestors.data
+                .filter((profile) => !profile.isDeleted)
+                .map((profile) => ({ ...profile, type: "Investor" }));
+    
+            setBusinessProfiles([...investors, ...startups]);
+        
+            setCompanyCount(startups.length);
+            return [...investors, ...startups]; 
+        } catch (error) {
+             console.error('Failed to fetch business profiles:', error);
+        }
+    };
 
     const handleSoftDelete = async () => {
         if (!profileToDelete) {
@@ -547,7 +544,8 @@ return (
                 </Grid>  
             </Grid>
 
-            <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} />
+            <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} 
+                hasInvestorProfile={hasInvestorProfile} />
             <CreateFundingRoundDialog open={openCreateFundingRound} onClose={handleCloseFundingRound} />
             <ActivitiesDialog open={dialogOpen} onClose={handleCloseDialog} activities={recentActivities}/>
         </Container>
