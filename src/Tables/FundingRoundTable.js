@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, FormControl, Select, MenuItem, Stack, Pagination, Tooltip } from '@mui/material';
-import HistoryIcon from '@mui/icons-material/History';
 
-import FundingHistoryDialog from '../Dialogs/FundingHistoryDialog';
 import ViewFundingRoundDialog from '../Dialogs/ViewFundingRoundDialog';
 import ConfirmDeleteDialog from '../Dialogs/ConfirmDeleteFundingRoundDialog';
 import { tableStyles } from '../styles/tables';
@@ -135,14 +133,6 @@ function FundingRoundTable({
     setLocalFundingPage(newPage - 1);
   };
 
-  const handleOpenHistoryDialog = () => {
-    setOpenHistoryDialog(true);
-};
-
-  const handleCloseHistoryDialog = () => {
-    setOpenHistoryDialog(false);
-  };
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
@@ -158,9 +148,6 @@ function FundingRoundTable({
                 ))}
             </Select>
           </FormControl>
-          <Tooltip title="View History">
-            <HistoryIcon  sx={{ ml: 2, mr: 2, cursor: 'pointer', color: '#36454F' }} onClick={handleOpenHistoryDialog} />
-          </Tooltip>
         </Box>
       </Box>
 
@@ -236,8 +223,6 @@ function FundingRoundTable({
       
       <ConfirmDeleteDialog open={openDeleteFundingRoundDialog} onClose={handleCloseDeleteFundingRoundDialog} 
       onConfirm={handleConfirmDelete} companyName={fundingRoundToDelete ? fundingRoundToDelete.companyName : ''} />
-
-      <FundingHistoryDialog open={openHistoryDialog} fundingRounds={sortedFundingRounds} onClose={handleCloseHistoryDialog} />
     </Box>
   );
 }

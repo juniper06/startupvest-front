@@ -17,7 +17,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const [closedDay, setClosedDay] = useState('');
     const [closedYear, setClosedYear] = useState('');
     const [moneyRaised, setMoneyRaised] = useState(0);
-    const [currency, setCurrency] = useState('');
+    const [currency, setCurrency] = useState(''); 
     const [targetFunding, setTargetFunding] = useState('');
     const [preMoneyValuation, setPreMoneyValuation] = useState('');
     const [minimumShare, setMinimumShare] = useState('');
@@ -27,7 +27,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const [formattedMinimumShare, setFormattedMinimumShare] = useState('');
 
     //CAP TABLE
-    const [allInvestors, setAllInvestors] = useState([]); 
+    const [allInvestors, setAllInvestors] = useState([]);
     const [investors, setInvestors] = useState([{ name: null, title: '', shares: '', investorRemoved: false }]);
     const [errors, setErrors] = useState({});
 
@@ -40,7 +40,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const [isEditMode, setIsEditMode] = useState(false);
 
     useEffect(() => {
-        console.log('Received Funding Round Details:', fundingRoundDetails); // Check the received data
+        console.log('Received Funding Round Details:', fundingRoundDetails); 
     }, [fundingRoundDetails]);
 
     useEffect(() => {
@@ -129,8 +129,8 @@ function ViewFundingRound({ fundingRoundDetails }) {
             const updatedInvestors = [...investors];
             updatedInvestors[index] = {
                 ...updatedInvestors[index],
-                shares: unformattedValue, // Store the actual numeric value
-                formattedShares: formatNumber(unformattedValue) // Store the formatted value for display
+                shares: unformattedValue, 
+                formattedShares: formatNumber(unformattedValue)
             };
             setInvestors(updatedInvestors);
         }
@@ -161,19 +161,19 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
             const announcedDate = new Date(fundingRoundDetails.announcedDate);
             setAnnouncedDay(announcedDate.getDate());
-            setAnnouncedMonth(announcedDate.getMonth() + 1); // getMonth() is zero-based
+            setAnnouncedMonth(announcedDate.getMonth() + 1); 
             setAnnouncedYear(announcedDate.getFullYear());
     
             // Initialize closedDate state variables
             const closedDate = new Date(fundingRoundDetails.closedDate);
             setClosedDay(closedDate.getDate());
-            setClosedMonth(closedDate.getMonth() + 1); // getMonth() is zero-based
+            setClosedMonth(closedDate.getMonth() + 1); 
             setClosedYear(closedDate.getFullYear());
         }
 
         if (fundingRoundDetails?.capTableInvestors) {
             const existingInvestors = fundingRoundDetails.capTableInvestors
-                .filter(investor => !investor.investorRemoved) // Filter out removed investors
+                .filter(investor => !investor.investorRemoved) 
                 .map(investor => ({
                     name: investor.investor.id, 
                     title: investor.title,
@@ -186,12 +186,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
     const handleUpdateFundingRound = async () => {
         if (!validateYears()) {
-            return; // Exit if validation fails
+            return; 
         }
 
         try {
             const updatedInvestors = investors.map(investor => ({
-                id: investor.name,  // Assuming this is the investor ID 
+                id: investor.name, 
                 title: investor.title,
                 shares: parseInt(unformatNumber(investor.shares))
             }));
@@ -232,11 +232,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
             const updatedInvestors = investors.filter((_, i) => i !== index);
             setInvestors(updatedInvestors);
     
-            // Send a request to the backend to mark the investor as removed (if needed)
+            // Send a request to the backend to mark the investor as removed
             const response = await axios.put(`http://localhost:3000/cap-table-investor/${investorToRemove.name}/${fundingRoundDetails.id}`, {
                 investorRemoved: true, 
             });
     
+            console.log('Investor removed successfully:', response.data);
         } catch (error) {
             console.error('Error removing investor:', error);
         }
@@ -260,7 +261,8 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         <FormControl fullWidth variant="outlined">
                             <Select fullWidth variant="outlined"
                                 value={fundingRoundDetails ? fundingRoundDetails.startup.id : selectedStartupId}
-                                onChange={(e) => setSelectedStartupId(e.target.value)} disabled={!!fundingRoundDetails}
+                                onChange={(e) => setSelectedStartupId(e.target.value)}
+                                disabled={!!fundingRoundDetails}
                                 sx={{ height: '45px' }}>
                                 {startups.map((startup) => (
                                     <MenuItem key={startup.id} value={startup.id}>{startup.companyName}</MenuItem>
@@ -282,14 +284,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         <Grid item xs={12}>
                         <label>Funding Type</label> 
                             <FormControl fullWidth variant="outlined">
-                                <Select fullWidth variant="outlined" value={fundingType} 
-                                onChange={(e) => setFundingType(e.target.value)} disabled={!!fundingRoundDetails} 
-                                sx={{ height: '45px' }}>
-                                    {fundingOptions.map((option) => (
-                                        <MenuItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </MenuItem>
-                                    ))}
+                                <Select fullWidth variant="outlined" value={fundingType} onChange={(e) => setFundingType(e.target.value)} disabled={!!fundingRoundDetails} sx={{ height: '45px' }}>
+                                {fundingOptions.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -456,7 +456,6 @@ function ViewFundingRound({ fundingRoundDetails }) {
                 {investors.map((investor, index) => (
                     <Grid item xs={12} sm={11} key={index}>
                         <Grid container spacing={2}>
-                            
                             <Grid item xs={4}>
                                 <label>Shareholder Name</label>
                                 <FormControl fullWidth variant="outlined">
@@ -475,24 +474,25 @@ function ViewFundingRound({ fundingRoundDetails }) {
                             
                             <Grid item xs={4}>
                                 <label>Title</label>
-                                <TextField fullWidth variant="outlined" value={investor.title} 
-                                onChange={(e) => handleInvestorChange(index, 'title', e.target.value)} disabled={!isEditMode}
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                                <TextField fullWidth variant="outlined" value={investor.title}
+                                    onChange={(e) => handleInvestorChange(index, 'title', e.target.value)}
+                                    disabled={!isEditMode}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                             </Grid>
                             
                             <Grid item xs={3.5}>
                                 <label>Shares</label>
-                                <TextField fullWidthvariant="outlined" value={investor.formattedShares}
-                                    onChange={(e) => handleSharesChange(index, e.target.value)}disabled={!isEditMode}
+                                <TextField fullWidth variant="outlined" value={investor.formattedShares}
+                                    onChange={(e) => handleSharesChange(index, e.target.value)} disabled={!isEditMode}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                             </Grid>
 
                             <Grid item xs={.5}>
                             {investors.length > 0 && (
                                 <IconButton sx={{ mt: 3 }} color="error" aria-label="remove"
-                                disabled={!isEditMode} value={investor.id}
-                                onClick={() => handleRemoveInvestor(index)}>
-                                <CloseIcon />
+                                    disabled={!isEditMode} value={investor.id}
+                                    onClick={() => handleRemoveInvestor(index)}>
+                                    <CloseIcon />
                                 </IconButton>
                             )}
                             </Grid>
@@ -500,8 +500,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                     </Grid>
                 ))}
                 <Grid item xs={12} sm={11}>
-                    <Button variant="outlined" sx={{ color: 'rgba(0, 116, 144, 1)', borderColor: 'rgba(0, 116, 144, 1)', '&:hover': { color: 'rgba(0, 116, 144, 0.7)', borderColor: 'rgba(0, 116, 144, 0.7)' } }} 
-                    onClick={handleAddInvestor} disabled={!isEditMode}>
+                    <Button variant="outlined" sx={{ color: 'rgba(0, 116, 144, 1)', borderColor: 'rgba(0, 116, 144, 1)', '&:hover': { color: 'rgba(0, 116, 144, 0.7)', borderColor: 'rgba(0, 116, 144, 0.7)' } }} onClick={handleAddInvestor} disabled={!isEditMode}>
                         Add Investor
                     </Button>
                 </Grid>
