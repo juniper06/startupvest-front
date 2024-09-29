@@ -10,6 +10,8 @@ function ViewStartupProfile({ profile }) {
     const fileInputRef = useRef(null);
     const [isEditable, setIsEditable] = useState(false);
     const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const RequiredAsterisk = <span style={{ color: 'red' }}>*</span>;
 
     let month = '', day = '', year = '';
     if (profile && profile.foundedDate) {
@@ -83,47 +85,61 @@ function ViewStartupProfile({ profile }) {
         return Object.keys(newErrors).length === 0;
       };
 
-    const handleUpdateProfile = async () => {
+      const handleUpdateProfile = async () => {
         if (isEditable) {
-          if (!validateFields()) {
-            return; // Don't proceed if there are validation errors
-          }
+            if (!validateFields()) {
+                return; // Don't proceed if there are validation errors
+            }
     
-        try {
-          const profileData = {
-            streetAddress: streetAddress,
-            country: country,
-            city: city,
-            state: state,
-            postalCode: postalCode,
-            website: website,
-            facebook: facebook,
-            twitter: twitter,
-            instagram: instagram,
-            linkedIn: linkedIn,
-            companyName: companyName,
-            companyDescription: companyDescription,
-            foundedDate: `${foundedMonth} ${foundedDay}, ${foundedYear}`,
-            typeOfCompany: typeOfCompany,
-            numberOfEmployees: numberOfEmployees,
-            phoneNumber: phoneNumber,
-            contactEmail: contactEmail,
-            industry: industry,
-          };
-      
-          const endpoint = `http://localhost:3000/startups/${profile.id}`;
-
-        await axios.put(endpoint, profileData, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
-        await handleUploadProfilePicture();
-        } catch (error) {
-            console.error('Failed to update profile:', error);
+            setIsLoading(true);
+    
+            try {
+                const profileData = {
+                    streetAddress: streetAddress,
+                    country: country,
+                    city: city,
+                    state: state,
+                    postalCode: postalCode,
+                    website: website,
+                    facebook: facebook,
+                    twitter: twitter,
+                    instagram: instagram,
+                    linkedIn: linkedIn,
+                    companyName: companyName,
+                    companyDescription: companyDescription,
+                    foundedDate: `${foundedMonth} ${foundedDay}, ${foundedYear}`,
+                    typeOfCompany: typeOfCompany,
+                    numberOfEmployees: numberOfEmployees,
+                    phoneNumber: phoneNumber,
+                    contactEmail: contactEmail,
+                    industry: industry,
+                };
+    
+                const endpoint = `http://localhost:3000/startups/${profile.id}`;
+                
+                await axios.put(endpoint, profileData, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+    
+                await handleUploadProfilePicture();
+    
+                setIsEditable(false);
+    
+                // Add a small delay before refreshing to ensure the server has processed the update
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+    
+            } catch (error) {
+                console.error('Failed to update profile:', error);
+                setIsLoading(false);
+                // Optionally, show an error message to the user
+            }
+        } else {
+            setIsEditable(true);
         }
-    }
-    setIsEditable(!isEditable);
     };
 
     const handleUploadProfilePicture = async () => {
@@ -199,7 +215,7 @@ function ViewStartupProfile({ profile }) {
                 <Grid item xs={12} sm={11.4}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <label>Company Name *</label>
+                            <label>Company Name {RequiredAsterisk}</label>
                             <TextField fullWidth variant="outlined" value={companyName}
                                 onChange={(e) => setCompanyName(e.target.value)} disabled={!isEditable}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
@@ -210,7 +226,7 @@ function ViewStartupProfile({ profile }) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <label>Company Description *</label>
+                            <label>Company Description {RequiredAsterisk}</label>
                             <TextField fullWidth variant="outlined" value={companyDescription}
                                 onChange={(e) => setCompanyDescription(e.target.value)} disabled={!isEditable} 
                                 multiline rows={5}
@@ -221,7 +237,7 @@ function ViewStartupProfile({ profile }) {
                         </Grid>
 
                     <Grid item xs={4}>
-                        <label><b>Founded Date *</b><br/>Month</label>
+                        <label><b>Founded Date {RequiredAsterisk}</b><br/>Month</label>
                         <FormControl fullWidth variant="outlined">
                             <Select labelId="month-label" value={foundedMonth}
                                 onChange={(e) => setFoundedMonth(e.target.value)} disabled={!isEditable} sx={{ height: '45px'}}
@@ -269,7 +285,7 @@ function ViewStartupProfile({ profile }) {
                 </Grid>
 
                 <Grid item xs={4}>
-                    <label>Type of Company *</label>
+                    <label>Type of Company {RequiredAsterisk}</label>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>  
                             <Select fullWidth variant="outlined" value={typeOfCompany}
@@ -286,7 +302,7 @@ function ViewStartupProfile({ profile }) {
                 </Grid>
 
                 <Grid item xs={4}>
-                    <label>No. of Employees *</label>
+                    <label>No. of Employees {RequiredAsterisk}</label>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>  
                             <Select  fullWidth  variant="outlined" value={numberOfEmployees}
@@ -306,7 +322,7 @@ function ViewStartupProfile({ profile }) {
                 </Grid>
 
                 <Grid item xs={4}>
-                    <label>Phone Number *</label>
+                    <label>Phone Number {RequiredAsterisk}</label>
                         <TextField fullWidth variant="outlined" type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} inputProps={{ min: 0, step: 1, pattern: "\\d{11}" }} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                             error={!!errors.phoneNumber}
                             />
@@ -316,7 +332,7 @@ function ViewStartupProfile({ profile }) {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <label>Contact Email *</label>
+                    <label>Contact Email {RequiredAsterisk}</label>
                         <TextField fullWidth variant="outlined" type='email' value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                             error={!!errors.contactEmail}
                             />
@@ -336,7 +352,7 @@ function ViewStartupProfile({ profile }) {
             <Grid item xs={12} sm={11.4}>
                 <Grid container spacing={2}>
                     <Grid item xs={8}>
-                        <label>Street Address *</label>
+                        <label>Street Address {RequiredAsterisk}</label>
                         <TextField fullWidth variant="outlined" value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                             error={!!errors.streetAddress}
                             />
@@ -346,7 +362,7 @@ function ViewStartupProfile({ profile }) {
                     </Grid>
 
                     <Grid item xs={4}>
-                        <label>Country *</label>
+                        <label>Country {RequiredAsterisk}</label>
                         <Autocomplete options={countries}
                             getOptionLabel={(option) => option.label}
                             value={countries.find(c => c.label === country) || null}
@@ -379,7 +395,7 @@ function ViewStartupProfile({ profile }) {
                     </Grid>
 
                     <Grid item xs={4}>
-                        <label>City *</label>
+                        <label>City {RequiredAsterisk}</label>
                         <TextField fullWidth variant="outlined" value={city} onChange={(e) => setCity(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                             error={!!errors.city}
                             />
@@ -389,7 +405,7 @@ function ViewStartupProfile({ profile }) {
                     </Grid>
 
                     <Grid item xs={4}>
-                        <label>Province/State *</label>
+                        <label>Province/State {RequiredAsterisk}</label>
                         <TextField fullWidth variant="outlined" value={state} onChange={(e) => setState(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                             error={!!errors.state}
                             />
@@ -399,7 +415,7 @@ function ViewStartupProfile({ profile }) {
                     </Grid>
 
                     <Grid item xs={4}>
-                        <label>Postal/Zip Code *</label>
+                        <label>Postal/Zip Code {RequiredAsterisk}</label>
                         <TextField fullWidth variant="outlined" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                         error={!!errors.postalCode}
                         />

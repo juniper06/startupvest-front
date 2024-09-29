@@ -8,6 +8,7 @@ import { Box, Typography, TextField, Select, MenuItem, Grid, FormControl, CardCo
     Button, Autocomplete, FormHelperText, Tooltip } from '@mui/material';
 import { Business, MonetizationOn } from '@mui/icons-material'; 
 import { StyledCard } from '../styles/CardStyles';
+import { NumericFormat } from 'react-number-format';
 import axios from 'axios';
 
 import { logActivity } from '../utils/activityUtils';
@@ -43,6 +44,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
     const [contactEmail, setContactEmail] = useState('');
     const [industry, setIndustry] = useState('');
     const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+    const RequiredAsterisk = <span style={{ color: 'red' }}>*</span>;
 
     const cardTypes = [
         { label: 'Startup Company', icon: <Business />, color: '#007490' },
@@ -123,7 +125,44 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
       console.error('Failed to create profile:', error);
     }
 };
- 
+
+const handleInputChange = (e, type) => {
+    const value = e.target.value;
+  
+    // Regular expression to match allowed characters
+    const isValid = /^[A-Za-z0-9 ]*$/.test(value); // Adjust pattern for postal codes
+  
+    if (isValid) {
+      if (type === 'phoneNumber') {
+        setPhoneNumber(value);
+        setErrors((prevErrors) => ({ ...prevErrors, phoneNumber: '' })); // Clear error if valid
+      } else if (type === 'contactInformation') {
+        setContactInformation(value);
+        setErrors((prevErrors) => ({ ...prevErrors, contactInformation: '' })); // Clear error if valid
+      } else if (type === 'postalCode') {
+        setPostalCode(value);
+        setErrors((prevErrors) => ({ ...prevErrors, postalCode: '' })); // Clear error if valid
+      }
+    } else {
+      if (type === 'phoneNumber') {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          phoneNumber: 'Please enter a valid phone number.',
+        }));
+      } else if (type === 'contactInformation') {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          contactInformation: 'Please enter valid contact information.',
+        }));
+      } else if (type === 'postalCode') {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          postalCode: 'Please enter a valid postal code.',
+        }));
+      }
+    }
+  };
+
     return (
         <>
         <Box component="main" sx={{ flexGrow: 1, width: '100%', overflowX: 'hidden', maxWidth: '1000px',  background: '#F2F2F2'}}>
@@ -171,7 +210,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                         <Grid item xs={12} sm={11.4}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
-                                    <label>Company Name *</label>
+                                    <label>Company Name {RequiredAsterisk}</label>
                                     <TextField fullWidth  required variant="outlined" value={companyName}
                                         onChange={(e) => setCompanyName(e.target.value)}
                                         sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
@@ -180,7 +219,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                                 </Grid>
 
                                 <Grid item xs={12}>
-                                    <label>Company Description *</label>
+                                    <label>Company Description {RequiredAsterisk}</label>
                                     <TextField fullWidth variant="outlined" value={companyDescription} multiline rows={4}
                                         onChange={(e) => setCompanyDescription(e.target.value)}
                                         error={!!errors.companyDescription}/>
@@ -188,7 +227,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                                 </Grid>
 
                             <Grid item xs={4}>
-                                <label><b>Founded Date</b><br/>Month *</label>
+                                <label><b>Founded Date {RequiredAsterisk}</b><br/>Month</label>
                                 <FormControl fullWidth variant="outlined">
                                     <Select labelId="month-label" value={foundedMonth} 
                                         onChange={(e) => setFoundedMonth(e.target.value)}
@@ -204,7 +243,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label><br/>Day *</label>
+                                <label><br/>Day</label>
                                 <FormControl fullWidth variant="outlined">
                                     <Select labelId="day-label" error={!!errors.foundedDay} value={foundedDay}
                                         onChange={(e) => setFoundedDay(e.target.value)}
@@ -218,7 +257,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                            <label><br/>Year *</label>
+                            <label><br/>Year</label>
                             <FormControl fullWidth variant="outlined">
                                 <Select labelId="year-label" error={!!errors.foundedYear} value={foundedYear}
                                     onChange={(e) => setFoundedYear(e.target.value)}
@@ -232,7 +271,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label>Type of Company *</label>
+                            <label>Type of Company {RequiredAsterisk}</label>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>  
                                     <Select  fullWidth  variant="outlined" value={typeOfCompany}
@@ -248,7 +287,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label>No. of Employees *</label>
+                            <label>No. of Employees {RequiredAsterisk}</label>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>  
                                     <Select fullWidth  variant="outlined" value={numberOfEmployees}
@@ -267,15 +306,21 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label>Phone Number *</label>
-                                <TextField fullWidth variant="outlined" type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} inputProps={{ min: 0, step: 1, pattern: "\\d{11}" }} 
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                    error={!!errors.phoneNumber} />
+                            <label>Phone Number {RequiredAsterisk}</label>
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                value={phoneNumber}
+                                onChange={(e) => handleInputChange(e, 'phoneNumber')}
+                                error={!!errors.phoneNumber}
+                                helperText={errors.phoneNumber}
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
+                                />
                                 {errors.typeOfCompany && (<FormHelperText error>{errors.typeOfCompany}</FormHelperText>)}
                         </Grid>
 
                         <Grid item xs={12}>
-                            <label>Contact Email *</label>
+                            <label>Contact Email {RequiredAsterisk}</label>
                                 <TextField fullWidth variant="outlined" type='email' value={contactEmail} onChange={(e) => setContactEmail(e.target.value)}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                     error={!!errors.contactEmail} />
@@ -286,7 +331,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                 </Grid>
 
                 <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
-                    Industry *
+                    Industry {RequiredAsterisk}
                 </Typography>
 
                 <Grid container spacing={3} sx={{ ml: 2 }}>
@@ -319,7 +364,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                     <Grid item xs={12} sm={11.4}>
                         <Grid container spacing={2}>
                             <Grid item xs={8}>
-                                <label>Street Address *</label>
+                                <label>Street Address {RequiredAsterisk}</label>
                                 <TextField fullWidth required variant="outlined" value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                     error={!!errors.streetAddress} />
@@ -327,7 +372,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>Country *</label>
+                                <label>Country {RequiredAsterisk}</label>
                                 <Autocomplete
                                     options={countries}
                                     getOptionLabel={(option) => option.label}
@@ -364,7 +409,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>City *</label>
+                                <label>City {RequiredAsterisk}</label>
                                 <TextField 
                                     fullWidth 
                                     variant="outlined" 
@@ -377,7 +422,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>Province/State *</label>
+                                <label>Province/State {RequiredAsterisk}</label>
                                 <TextField 
                                     fullWidth 
                                     variant="outlined" 
@@ -390,16 +435,16 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>Postal/Zip Code *</label>
-                                <TextField 
-                                    fullWidth 
-                                    variant="outlined" 
-                                    value={postalCode} 
-                                    onChange={(e) => setPostalCode(e.target.value)}
+                                <label>Postal/Zip Code {RequiredAsterisk}</label>
+                                <TextField
+                                    fullWidth
+                                    variant="outlined"
+                                    value={postalCode}
+                                    onChange={(e) => handleInputChange(e, 'postalCode')}
                                     error={!!errors.postalCode}
                                     helperText={errors.postalCode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                />
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
+                                    />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -457,14 +502,14 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                     <Grid item xs={12} sm={11.4}>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
-                                <label>First Name *</label>
+                                <label>First Name {RequiredAsterisk}</label>
                                 <TextField fullWidth variant="outlined" value={firstName} onChange={(e) => setFirstName(e.target.value)} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                 error={!!errors.firstName}/>
                                 {errors.firstName && (<FormHelperText error>{errors.firstName}</FormHelperText>)}
                             </Grid>
 
                             <Grid item xs={6}>
-                                <label>Last Name *</label>
+                                <label>Last Name {RequiredAsterisk}</label>
                                 <TextField fullWidth variant="outlined" value={lastName} onChange={(e) => setLastName(e.target.value)} 
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                 error={!!errors.lastName}/>
@@ -472,7 +517,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
 
                             <Grid item xs={12}>
-                                <label>Email Address *</label>
+                                <label>Email Address {RequiredAsterisk}</label>
                                 <TextField fullWidth variant="outlined" value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)} 
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                 error={!!errors.emailAddress}/>
@@ -480,15 +525,21 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
 
                             <Grid item xs={6}>
-                                <label>Contact Information *</label>
-                                <TextField fullWidth variant="outlined" value={contactInformation} onChange={(e) => setContactInformation(e.target.value)} 
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
-                                error={!!errors.contactInformation}/>
+                                <label>Contact Information {RequiredAsterisk}</label>
+                                <TextField
+                                    fullWidth
+                                    variant="outlined"
+                                    value={contactInformation}
+                                    onChange={(e) => handleInputChange(e, 'contactInformation')}
+                                    error={!!errors.contactInformation}
+                                    helperText={errors.contactInformation}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
+                                    />
                                 {errors.contactInformation && (<FormHelperText error>{errors.contactInformation}</FormHelperText>)}
                             </Grid>
 
                             <Grid item xs={6}>
-                                <label>Gender *</label>
+                                <label>Gender {RequiredAsterisk}</label>
                                     <Select fullWidth variant="outlined" value={gender} onChange={(e) => setGender(e.target.value)}
                                         sx={{ height: '45px',}} error={!!errors.gender}>
                                         {genderOptions.map((option) => (
@@ -501,7 +552,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
 
                             <Grid item xs={12}>
-                                <label>Biography *</label>
+                                <label>Biography {RequiredAsterisk}</label>
                                 <TextField fullWidth variant="outlined" multiline rows={4} value={biography} onChange={(e) => setBiography(e.target.value)}
                                 error={!!errors.biography} />
                                 {errors.biography && (<FormHelperText error>{errors.biography}</FormHelperText>)}
@@ -518,7 +569,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                     <Grid item xs={12} sm={11.4}>
                         <Grid container spacing={2}>
                             <Grid item xs={8}>
-                                <label>Street Address *</label>
+                                <label>Street Address {RequiredAsterisk}</label>
                                 <TextField 
                                     fullWidth 
                                     variant="outlined" 
@@ -531,7 +582,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>Country *</label>
+                                <label>Country {RequiredAsterisk}</label>
                                 <Autocomplete
                                     options={countries}
                                     getOptionLabel={(option) => option.label}
@@ -568,7 +619,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>City *</label>
+                                <label>City {RequiredAsterisk}</label>
                                 <TextField 
                                     fullWidth 
                                     variant="outlined" 
@@ -581,7 +632,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
     
                             <Grid item xs={4}>
-                                <label>Province/State *</label>
+                                <label>Province/State {RequiredAsterisk}</label>
                                 <TextField 
                                     fullWidth 
                                     variant="outlined" 
@@ -594,16 +645,16 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
      
                             <Grid item xs={4}>
-                                <label>Postal/Zip Code *</label>
-                                <TextField 
-                                    fullWidth 
-                                    variant="outlined" 
-                                    value={postalCode} 
-                                    onChange={(e) => setPostalCode(e.target.value)} 
+                                <label>Postal/Zip Code {RequiredAsterisk}</label>
+                                <TextField
+                                    fullWidth
+                                    variant="outlined"
+                                    value={postalCode}
+                                    onChange={(e) => handleInputChange(e, 'postalCode')}
                                     error={!!errors.postalCode}
                                     helperText={errors.postalCode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                />
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
+                                    />
                             </Grid>
                         </Grid>
                     </Grid>

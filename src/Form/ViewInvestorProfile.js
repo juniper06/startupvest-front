@@ -11,6 +11,7 @@ function ViewInvestorProfile({ profile }) {
 
   const [isEditable, setIsEditable] = useState(false);
   const [errors, setErrors] = useState({});
+  const RequiredAsterisk = <span style={{ color: 'red' }}>*</span>;
 
   const [firstName, setFirstName] = useState(profile ? profile.firstName : '');
   const [lastName, setLastName] = useState(profile ? profile.lastName : '');
@@ -101,8 +102,15 @@ function ViewInvestorProfile({ profile }) {
         });
 
         setIsEditable(false);
+
+        // Add a small delay before refreshing to ensure the server has processed the update
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+
       } catch (error) {
         console.error('Failed to update profile:', error);
+        // Optionally, show an error message to the user
       }
     } else {
       setIsEditable(true);
@@ -182,7 +190,7 @@ function ViewInvestorProfile({ profile }) {
                         <Grid item xs={12} sm={11.4}>
                             <Grid container spacing={2}>
                               <Grid item xs={6}>
-                                <label>First Name *</label>
+                                <label>First Name {RequiredAsterisk}</label>
                                 <TextField 
                                   fullWidth 
                                   variant="outlined" 
@@ -198,7 +206,7 @@ function ViewInvestorProfile({ profile }) {
                               </Grid>
 
                               <Grid item xs={6}>
-                                <label>Last Name *</label>
+                                <label>Last Name {RequiredAsterisk}</label>
                                 <TextField 
                                   fullWidth 
                                   variant="outlined" 
@@ -214,7 +222,7 @@ function ViewInvestorProfile({ profile }) {
                               </Grid>
 
                               <Grid item xs={12}>
-                                <label>Email Address *</label>
+                                <label>Email Address {RequiredAsterisk}</label>
                                 <TextField 
                                   fullWidth 
                                   variant="outlined" 
@@ -230,7 +238,7 @@ function ViewInvestorProfile({ profile }) {
                               </Grid>
 
                               <Grid item xs={6}>
-                                <label>Contact Information *</label>
+                                <label>Contact Information {RequiredAsterisk}</label>
                                 <TextField 
                                   fullWidth 
                                   variant="outlined" 
@@ -246,7 +254,7 @@ function ViewInvestorProfile({ profile }) {
                               </Grid>
 
                               <Grid item xs={6}>
-                                <label>Gender *</label>
+                                <label>Gender {RequiredAsterisk}</label>
                                 <Select 
                                   fullWidth 
                                   variant="outlined" 
@@ -268,7 +276,7 @@ function ViewInvestorProfile({ profile }) {
                               </Grid>
 
                               <Grid item xs={12}>
-                                <label>Biography *</label>
+                                <label>Biography {RequiredAsterisk}</label>
                                 <TextField 
                                   fullWidth 
                                   variant="outlined" 
@@ -295,7 +303,7 @@ function ViewInvestorProfile({ profile }) {
                         <Grid item xs={12} sm={11.4}>
                             <Grid container spacing={2}>
                               <Grid item xs={8}>
-                                <label>Street Address *</label>
+                                <label>Street Address {RequiredAsterisk}</label>
                                 <TextField 
                                   fullWidth 
                                   variant="outlined" 
@@ -311,7 +319,7 @@ function ViewInvestorProfile({ profile }) {
                               </Grid>
 
                               <Grid item xs={4}>
-                                <label>Country *</label>
+                                <label>Country {RequiredAsterisk}</label>
                                 <Autocomplete 
                                   options={countries}
                                   getOptionLabel={(option) => option.label}
@@ -352,7 +360,7 @@ function ViewInvestorProfile({ profile }) {
                               </Grid>
 
                               <Grid item xs={4}>
-                                <label>City *</label>
+                                <label>City {RequiredAsterisk}</label>
                                 <TextField 
                                   fullWidth 
                                   variant="outlined" 
@@ -368,7 +376,7 @@ function ViewInvestorProfile({ profile }) {
                               </Grid>
 
                               <Grid item xs={4}>
-                                <label>Province/State *</label>
+                                <label>Province/State {RequiredAsterisk}</label>
                                 <TextField 
                                   fullWidth 
                                   variant="outlined" 
@@ -384,7 +392,7 @@ function ViewInvestorProfile({ profile }) {
                               </Grid>
 
                               <Grid item xs={4}>
-                                <label>Postal/Zip Code *</label>
+                                <label>Postal/Zip Code {RequiredAsterisk}</label>
                                 <TextField 
                                   fullWidth 
                                   variant="outlined" 

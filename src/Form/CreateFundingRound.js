@@ -25,6 +25,7 @@ function CreateFundingRound({ onSuccess }) {
     const [preMoneyValuation, setPreMoneyValuation] = useState('');
     const [minimumShare, setMinimumShare] = useState('');
     const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+    const RequiredAsterisk = <span style={{ color: 'red' }}>*</span>;
 
     const selectedStartup = startups.find(startup => startup.id === selectedStartupId);
     const selectedCompanyName = selectedStartup ? selectedStartup.companyName : '';
@@ -222,7 +223,7 @@ function CreateFundingRound({ onSuccess }) {
                 <Grid item xs={12} sm={11}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <label>StartUp Name *</label>
+                            <label>StartUp Name {RequiredAsterisk}</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.selectedStartupId}>
                                 <Select fullWidth variant="outlined" value={selectedStartupId} onChange={(e) => setSelectedStartupId(e.target.value)} sx={{ height: '45px' }}>
                                     {startups.map((startup) => (
@@ -244,7 +245,7 @@ function CreateFundingRound({ onSuccess }) {
                 <Grid item xs={12} sm={11}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <label>Funding Type *</label>
+                            <label>Funding Type {RequiredAsterisk}</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.fundingType}>
                                 <Select fullWidth variant="outlined" value={fundingType} onChange={(e) => setFundingType(e.target.value)} sx={{ height: '45px' }}>
                                 {fundingOptions.map((option) => (
@@ -258,7 +259,7 @@ function CreateFundingRound({ onSuccess }) {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><b>Announced Date</b><br />Month *</label>
+                            <label><b>Announced Date {RequiredAsterisk}</b><br />Month</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.announcedMonth}>
                                 <Select labelId="month-label" value={announcedMonth} onChange={(e) => setAnnouncedMonth(e.target.value)} sx={{ height: '45px' }}>
                                     {months.map((month, index) => (
@@ -270,7 +271,7 @@ function CreateFundingRound({ onSuccess }) {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><br />Day *</label>
+                            <label><br />Day</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.announcedDay}>
                                 <Select labelId="day-label" value={announcedDay} onChange={(e) => setAnnouncedDay(e.target.value)} sx={{ height: '45px' }}>
                                     {days.map((day) => (
@@ -282,7 +283,7 @@ function CreateFundingRound({ onSuccess }) {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><br />Year *</label>
+                            <label><br />Year</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.announcedYear}>
                                 <Select labelId="year-label" value={announcedYear} onChange={(e) => setAnnouncedYear(e.target.value)} sx={{ height: '45px' }}>
                                     {years.map((year) => (
@@ -294,7 +295,7 @@ function CreateFundingRound({ onSuccess }) {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><b>Closed on Date</b><br />Month *</label>
+                            <label><b>Closed on Date {RequiredAsterisk}</b><br />Month</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.closedMonth}>
                                 <Select labelId="month-label" value={closedMonth} onChange={(e) => setClosedMonth(e.target.value)} sx={{ height: '45px' }}>
                                     {months.map((month, index) => (
@@ -306,7 +307,7 @@ function CreateFundingRound({ onSuccess }) {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><br />Day *</label>
+                            <label><br />Day</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.closedDay}>
                                 <Select labelId="day-label" value={closedDay} onChange={(e) => setClosedDay(e.target.value)} sx={{ height: '45px' }}>
                                     {days.map((day) => (
@@ -318,7 +319,7 @@ function CreateFundingRound({ onSuccess }) {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><br />Year *</label>
+                            <label><br />Year</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.closedYear}>
                                 <Select labelId="year-label" value={closedYear} onChange={(e) => setClosedYear(e.target.value)} sx={{ height: '45px' }}>
                                     {years.map((year) => (
@@ -330,7 +331,7 @@ function CreateFundingRound({ onSuccess }) {
                         </Grid>
 
                         <Grid item xs={8}>
-                            <label>Target Funding Amount *</label>
+                            <label>Target Funding Amount {RequiredAsterisk}</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.targetFunding}>
                                 <NumericFormat
                                     customInput={TextField}
@@ -359,7 +360,7 @@ function CreateFundingRound({ onSuccess }) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <label>Pre-Money Valuation *</label>
+                            <label>Pre-Money Valuation {RequiredAsterisk}</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.preMoneyValuation}>
                                 <NumericFormat
                                     customInput={TextField}
@@ -382,7 +383,7 @@ function CreateFundingRound({ onSuccess }) {
                         </Grid>
 
                         <Grid item xs={8}>
-                            <label>Price per Share *</label>
+                            <label>Price per Share {RequiredAsterisk}</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.minimumShare}>
                                 <NumericFormat
                                     customInput={TextField}
