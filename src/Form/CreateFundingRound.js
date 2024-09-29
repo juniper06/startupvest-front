@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import currencyOptions from '../static/currencyOptions';
 import fundingOptions from '../static/fundingOptions';
 import axios from 'axios';
-
+import { NumericFormat } from 'react-number-format';
 import SuccessCreateFundingRoundDialog from '../Dialogs/SuccessCreateFundingRoundDialog';
 import { logActivity } from '../utils/activityUtils';
 
@@ -168,10 +168,28 @@ function CreateFundingRound({ onSuccess }) {
         }
     };
 
-    const handleSharesChange = (index, value) => {
+    
+    const handleNumericChange = (values, sourceInfo) => {
+        const { formattedValue, floatValue } = values;
+        switch (sourceInfo.source) {
+            case 'targetFunding':
+                setTargetFunding(formattedValue);
+                break;
+            case 'preMoneyValuation':
+                setPreMoneyValuation(formattedValue);
+                break;
+            case 'minimumShare':
+                setMinimumShare(formattedValue);
+                break;
+            default:
+                break;
+        }
+    };
+
+    const handleSharesChange = (index, values) => {
+        const { formattedValue } = values;
         const updatedInvestors = [...investors];
-        const rawValue = parseFormattedNumber(value);
-        updatedInvestors[index].shares = formatNumber(rawValue);
+        updatedInvestors[index].shares = formattedValue;
         setInvestors(updatedInvestors);
     };
 
@@ -315,10 +333,16 @@ function CreateFundingRound({ onSuccess }) {
                         <Grid item xs={8}>
                             <label>Target Funding Amount *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.targetFunding}>
-                            <TextField fullWidth variant="outlined" value={targetFunding}
-                                onChange={handleFormattedChange(setTargetFunding)}
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                error={!!errors.targetFunding} />
+                                <NumericFormat
+                                    customInput={TextField}
+                                    thousandSeparator={true}
+                                    value={targetFunding}
+                                    onValueChange={(values) => handleNumericChange(values, { source: 'targetFunding' })}
+                                    variant="outlined"
+                                    fullWidth
+                                    error={!!errors.targetFunding}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                />
                             </FormControl>
                             {errors.targetFunding && <FormHelperText sx={{color:'red'}}>{errors.targetFunding}</FormHelperText>}
                         </Grid>
@@ -338,14 +362,16 @@ function CreateFundingRound({ onSuccess }) {
                         <Grid item xs={12}>
                             <label>Pre-Money Valuation *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.preMoneyValuation}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                value={preMoneyValuation}
-                                onChange={handleFormattedChange(setPreMoneyValuation)}
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                error={!!errors.preMoneyValuation}
-                            />
+                                <NumericFormat
+                                    customInput={TextField}
+                                    thousandSeparator={true}
+                                    value={preMoneyValuation}
+                                    onValueChange={(values) => handleNumericChange(values, { source: 'preMoneyValuation' })}
+                                    variant="outlined"
+                                    fullWidth
+                                    error={!!errors.preMoneyValuation}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                />
                             </FormControl>
                             {errors.preMoneyValuation && <FormHelperText sx={{color:'red'}}>{errors.preMoneyValuation}</FormHelperText>}
                         </Grid>
@@ -359,14 +385,16 @@ function CreateFundingRound({ onSuccess }) {
                         <Grid item xs={8}>
                             <label>Price per Share *</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.minimumShare}>
-                            <TextField 
-                                fullWidth 
-                                variant="outlined" 
-                                value={minimumShare}
-                                onChange={handleFormattedChange(setMinimumShare)}
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                error={!!errors.minimumShare}
-                            />
+                                <NumericFormat
+                                    customInput={TextField}
+                                    thousandSeparator={true}
+                                    value={minimumShare}
+                                    onValueChange={(values) => handleNumericChange(values, { source: 'minimumShare' })}
+                                    variant="outlined"
+                                    fullWidth
+                                    error={!!errors.minimumShare}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                />
                             </FormControl>
                             {errors.minimumShare && <FormHelperText sx={{color:'red'}}>{errors.minimumShare}</FormHelperText>}
                         </Grid>
@@ -413,10 +441,16 @@ function CreateFundingRound({ onSuccess }) {
 
                             <Grid item xs={3.5}>
                                 <label>Shares</label>
-                                <TextField  fullWidth  variant="outlined" value={investor.shares}
-                                    onChange={(e) => handleSharesChange(index, e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}  />
-                                </Grid>
+                                <NumericFormat
+                                    customInput={TextField}
+                                    thousandSeparator={true}
+                                    value={investor.shares}
+                                    onValueChange={(values) => handleSharesChange(index, values)}
+                                    variant="outlined"
+                                    fullWidth
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                />
+                            </Grid>
                             <Grid item xs={.5}>
                                 {investors.length > 0 && (
                                     <IconButton  sx = {{ mt: 3 }} color="error" aria-label="remove"

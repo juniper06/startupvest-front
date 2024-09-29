@@ -4,6 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import fundingOptions from '../static/fundingOptions';
 import currencyOptions from '../static/currencyOptions';
+import { NumericFormat } from 'react-number-format';
 import axios from 'axios';
 
 function ViewFundingRound({ fundingRoundDetails }) {
@@ -75,7 +76,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
         console.log(allInvestors);
     }, []);
 
-    const validateYears = () => {
+    const validateFields = () => {
         const newErrors = {};
 
         // Check if closedYear is earlier than announcedYear
@@ -93,12 +94,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
         }
 
         // Check if targetFunding and preMoneyValuation are empty
-        if (!targetFunding) {
-            newErrors.targetFunding = 'Target funding cannot be empty.';
+        if (!targetFunding && targetFunding !== 0) {
+            newErrors.targetFunding = 'This field cannot be empty.';
         }
-
-        if (!preMoneyValuation) {
-            newErrors.preMoneyValuation = 'Pre-money valuation cannot be empty.';
+        
+        if (!preMoneyValuation && preMoneyValuation !== 0) {
+            newErrors.preMoneyValuation = 'This field cannot be empty.';
         }
 
         setErrors(newErrors);
@@ -120,8 +121,9 @@ function ViewFundingRound({ fundingRoundDetails }) {
     };
 
     const unformatNumber = (str) => {
-        return str.replace(/,/g, '');
-    };
+        if (str == null) return '';
+        return String(str).replace(/,/g, '');
+      };      
 
     const handleSharesChange = (index, value) => {
         const unformattedValue = unformatNumber(value);
@@ -136,13 +138,12 @@ function ViewFundingRound({ fundingRoundDetails }) {
         }
     };
 
-    const handleNumberChange = (setter) => (e) => {
-        const value = e.target.value;
-        const unformattedValue = unformatNumber(value);
-        if (!isNaN(unformattedValue) || unformattedValue === '') {
-            setter(formatNumber(unformattedValue));
+    const handleNumberChange = (setter) => (values) => {
+        const { floatValue } = values;
+        if (!isNaN(floatValue) || floatValue === '') {
+          setter(floatValue);
         }
-    };
+      };  
 
     // Initialize the investors state with existing investors
     useEffect(() => {
@@ -185,7 +186,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
     }, [fundingRoundDetails]);
 
     const handleUpdateFundingRound = async () => {
-        if (!validateYears()) {
+        if (!validateFields()) {
             return; 
         }
 
@@ -202,11 +203,11 @@ function ViewFundingRound({ fundingRoundDetails }) {
                     fundingType,
                     announcedDate: `${announcedYear}-${String(announcedMonth).padStart(2, '0')}-${String(announcedDay).padStart(2, '0')}`,
                     closedDate: `${closedYear}-${String(closedMonth).padStart(2, '0')}-${String(closedDay).padStart(2, '0')}`,
-                    moneyRaised: parseInt(unformatNumber(formattedMoneyRaised)),
+                    moneyRaised: parseInt(formattedMoneyRaised), // Already unformatted
                     moneyRaisedCurrency: currency,
-                    targetFunding: parseInt(unformatNumber(formattedTargetFunding)),
-                    preMoneyValuation: parseInt(unformatNumber(formattedPreMoneyValuation)),
-                    minimumShare: parseFloat(unformatNumber(formattedMinimumShare)),
+                    targetFunding: parseInt(targetFunding), // Raw value from state
+                    preMoneyValuation: parseInt(preMoneyValuation), // Raw value from state
+                    minimumShare: parseFloat(formattedMinimumShare),
                 },
                 investors: updatedInvestors
             };
@@ -386,12 +387,25 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
                         <Grid item xs={8}>
                             <label>Target Funding Amount</label>
-                            <TextField fullWidth variant="outlined" value={formattedTargetFunding}
-                                onChange={handleNumberChange(setFormattedTargetFunding)} disabled={!isEditMode}
+                            <NumericFormat
+                                customInput={TextField}
+                                fullWidth
+                                variant="outlined"
+                                value={targetFunding}
+                                onValueChange={(values) => {
+                                    const { floatValue } = values;
+                                    setTargetFunding(floatValue);
+                                    setErrors(prev => ({ ...prev, targetFunding: '' }));
+                                }}
+                                disabled={!isEditMode}
+                                thousandSeparator
+                                allowNegative={false}
+                                decimalScale={2}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                error={!!errors.targetFunding} />
+                                error={!!errors.targetFunding}
+                            />
                             {errors.targetFunding && (
-                                <FormHelperText error sx={{color:'red'}}>{errors.targetFunding}</FormHelperText>
+                                <FormHelperText error>{errors.targetFunding}</FormHelperText>
                             )}
                         </Grid>
 
@@ -410,12 +424,25 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
                         <Grid item xs={12}>
                             <label>Pre-Money Valuation</label>
-                            <TextField fullWidth variant="outlined" value={formattedPreMoneyValuation}
-                                onChange={handleNumberChange(setFormattedPreMoneyValuation)} disabled={!isEditMode}
+                            <NumericFormat
+                                customInput={TextField}
+                                fullWidth
+                                variant="outlined"
+                                value={preMoneyValuation}
+                                onValueChange={(values) => {
+                                    const { floatValue } = values;
+                                    setPreMoneyValuation(floatValue);
+                                    setErrors(prev => ({ ...prev, preMoneyValuation: '' }));
+                                }}
+                                disabled={!isEditMode}
+                                thousandSeparator
+                                allowNegative={false}
+                                decimalScale={2}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                error={!!errors.preMoneyValuation}/>
+                                error={!!errors.preMoneyValuation}
+                            />
                             {errors.preMoneyValuation && (
-                                <FormHelperText error sx={{color:'red'}}>{errors.preMoneyValuation}</FormHelperText>
+                                <FormHelperText error>{errors.preMoneyValuation}</FormHelperText>
                             )}
                         </Grid>
 
