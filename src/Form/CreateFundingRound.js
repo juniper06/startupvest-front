@@ -111,7 +111,7 @@ function CreateFundingRound({ onSuccess }) {
             }
         }
 
-        setErrors(newErrors);
+        setErrors(newErrors); 
         return Object.keys(newErrors).length === 0;
     };
 
@@ -168,7 +168,6 @@ function CreateFundingRound({ onSuccess }) {
         }
     };
 
-    
     const handleNumericChange = (values, sourceInfo) => {
         const { formattedValue, floatValue } = values;
         switch (sourceInfo.source) {
