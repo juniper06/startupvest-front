@@ -2,13 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import countries from '../static/countries';
 import industries from '../static/industries';
 import quantityOptions from '../static/quantityOptions';
-import { Box, Typography, TextField, Avatar, Select, MenuItem, Grid, FormControl, Button, Autocomplete} from '@mui/material';
+import { Box, Typography, TextField, Avatar, Select, MenuItem, Grid, FormControl, Button, Autocomplete, FormHelperText } from '@mui/material';
 import axios from 'axios';
 
 function ViewStartupProfile({ profile }) {
     const [avatar, setAvatar] = useState('');
     const fileInputRef = useRef(null);
     const [isEditable, setIsEditable] = useState(false);
+    const [errors, setErrors] = useState({});
 
     let month = '', day = '', year = '';
     if (profile && profile.foundedDate) {
@@ -61,8 +62,33 @@ function ViewStartupProfile({ profile }) {
         }
     };
 
+    const validateFields = () => {
+        const newErrors = {};
+        if (!companyName.trim()) newErrors.companyName = 'Company Name is required';
+        if (!companyDescription.trim()) newErrors.companyDescription = 'Company Description is required';
+        if (!foundedMonth.trim()) newErrors.foundedMonth = 'Founded Month is required';
+        if (!foundedDay.trim()) newErrors.foundedDay = 'Founded Day is required';
+        if (!foundedYear.trim()) newErrors.foundedYear = 'Founded Year is required';
+        if (!typeOfCompany.trim()) newErrors.typeOfCompany = 'Type of Company is required';
+        if (!numberOfEmployees.trim()) newErrors.numberOfEmployees = 'Number of Employees is required';
+        if (!phoneNumber.trim()) newErrors.phoneNumber = 'Contact Information is required';
+        if (!contactEmail.trim()) newErrors.contactEmail = 'Contact Email is required';
+        if (!streetAddress.trim()) newErrors.streetAddress = 'Street Address is required';
+        if (!country) newErrors.country = 'Country is required';
+        if (!city.trim()) newErrors.city = 'City is required';
+        if (!state.trim()) newErrors.state = 'Province/State is required';
+        if (!postalCode.trim()) newErrors.postalCode = 'Postal/Zip Code is required';
+    
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+      };
+
     const handleUpdateProfile = async () => {
         if (isEditable) {
+          if (!validateFields()) {
+            return; // Don't proceed if there are validation errors
+          }
+    
         try {
           const profileData = {
             streetAddress: streetAddress,
@@ -176,25 +202,37 @@ function ViewStartupProfile({ profile }) {
                             <label>Company Name *</label>
                             <TextField fullWidth variant="outlined" value={companyName}
                                 onChange={(e) => setCompanyName(e.target.value)} disabled={!isEditable}
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                error={!!errors.companyName}/>
+                                {errors.companyName && (
+                                <FormHelperText error>{errors.companyName}</FormHelperText>
+                            )}
                         </Grid>
 
                         <Grid item xs={12}>
                             <label>Company Description *</label>
                             <TextField fullWidth variant="outlined" value={companyDescription}
                                 onChange={(e) => setCompanyDescription(e.target.value)} disabled={!isEditable} 
-                                multiline rows={5}/>
+                                multiline rows={5}
+                                error={!!errors.companyDescription}/>
+                                {errors.companyDescription && (
+                                <FormHelperText error>{errors.companyDescription}</FormHelperText>
+                            )}
                         </Grid>
 
                     <Grid item xs={4}>
                         <label><b>Founded Date *</b><br/>Month</label>
                         <FormControl fullWidth variant="outlined">
                             <Select labelId="month-label" value={foundedMonth}
-                                onChange={(e) => setFoundedMonth(e.target.value)} disabled={!isEditable} sx={{ height: '45px'}}>  
+                                onChange={(e) => setFoundedMonth(e.target.value)} disabled={!isEditable} sx={{ height: '45px'}}
+                                error={!!errors.foundedMonth}>  
                                 {months.map((month) => (
                                     <MenuItem key={month} value={month}>{month}</MenuItem>
                                 ))}
                             </Select>
+                            {errors.foundedMonth && (
+                                <FormHelperText error>{errors.foundedMonth}</FormHelperText>
+                            )}
                         </FormControl>
                     </Grid>
 
@@ -202,11 +240,15 @@ function ViewStartupProfile({ profile }) {
                         <label><br/>Day</label>
                         <FormControl fullWidth variant="outlined">
                             <Select labelId="day-label" value={foundedDay}
-                                onChange={(e) => setFoundedDay(e.target.value)} disabled={!isEditable} sx={{ height: '45px'}}>
+                                onChange={(e) => setFoundedDay(e.target.value)} disabled={!isEditable} sx={{ height: '45px'}}
+                                error={!!errors.foundedDay}>
                                 {days.map((day) => (
                                     <MenuItem key={day} value={day}>{day}</MenuItem>
                                 ))}
                             </Select>
+                            {errors.foundedDay && (
+                                <FormHelperText error>{errors.foundedDay}</FormHelperText>
+                            )}
                         </FormControl>
                     </Grid>
 
@@ -214,11 +256,15 @@ function ViewStartupProfile({ profile }) {
                     <label><br/>Year</label>
                     <FormControl fullWidth variant="outlined">
                         <Select labelId="year-label" value={foundedYear}
-                            onChange={(e) => setFoundedYear(e.target.value)} disabled={!isEditable} sx={{ height: '45px'}}>
+                            onChange={(e) => setFoundedYear(e.target.value)} disabled={!isEditable} sx={{ height: '45px'}}
+                            error={!!errors.foundedYear}>
                             {years.map((year) => (
                                 <MenuItem key={year} value={year}>{year}</MenuItem>
                             ))}
                         </Select>
+                        {errors.foundedYear && (
+                            <FormHelperText error>{errors.foundedYear}</FormHelperText>
+                        )}
                     </FormControl>
                 </Grid>
 
@@ -227,10 +273,14 @@ function ViewStartupProfile({ profile }) {
                     <Grid container spacing={2}>
                         <Grid item xs={12}>  
                             <Select fullWidth variant="outlined" value={typeOfCompany}
-                                onChange={(e) => setTypeOfCompany(e.target.value)} disabled={!isEditable} sx={{ height: '45px'}}>
+                                onChange={(e) => setTypeOfCompany(e.target.value)} disabled={!isEditable} sx={{ height: '45px'}}
+                                error={!!errors.typeOfCompany}>
                                 <MenuItem value={'profit'}>Profit</MenuItem>
                                 <MenuItem value={'non-profit'}>Non-Profit</MenuItem>
                             </Select>
+                            {errors.typeOfCompany && (
+                                <FormHelperText error>{errors.typeOfCompany}</FormHelperText>
+                            )}
                         </Grid>
                     </Grid>
                 </Grid>
@@ -240,25 +290,39 @@ function ViewStartupProfile({ profile }) {
                     <Grid container spacing={2}>
                         <Grid item xs={12}>  
                             <Select  fullWidth  variant="outlined" value={numberOfEmployees}
-                                onChange={(e) => setNumberOfEmployees(e.target.value)} disabled={!isEditable} sx={{ height: '45px'}}>
+                                onChange={(e) => setNumberOfEmployees(e.target.value)} disabled={!isEditable} sx={{ height: '45px'}}
+                                error={!!errors.numberOfEmployees}>
                                 {quantityOptions.map((option) => (
                                     <MenuItem key={option.value} value={option.value}>
                                         {option.label}
                                     </MenuItem>
                                 ))}
                             </Select>
+                            {errors.numberOfEmployees && (
+                                <FormHelperText error>{errors.numberOfEmployees}</FormHelperText>
+                            )}
                         </Grid>
                     </Grid>
                 </Grid>
 
                 <Grid item xs={4}>
                     <label>Phone Number *</label>
-                        <TextField fullWidth variant="outlined" type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} inputProps={{ min: 0, step: 1, pattern: "\\d{11}" }} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                        <TextField fullWidth variant="outlined" type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} inputProps={{ min: 0, step: 1, pattern: "\\d{11}" }} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                            error={!!errors.phoneNumber}
+                            />
+                            {errors.phoneNumber && (
+                            <FormHelperText error>{errors.phoneNumber}</FormHelperText>
+                            )}
                 </Grid>
 
                 <Grid item xs={12}>
                     <label>Contact Email *</label>
-                        <TextField fullWidth variant="outlined" type='email' value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                        <TextField fullWidth variant="outlined" type='email' value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                            error={!!errors.contactEmail}
+                            />
+                            {errors.contactEmail && (
+                            <FormHelperText error>{errors.contactEmail}</FormHelperText>
+                            )}
                     </Grid>
                 </Grid>
             </Grid>
@@ -273,7 +337,12 @@ function ViewStartupProfile({ profile }) {
                 <Grid container spacing={2}>
                     <Grid item xs={8}>
                         <label>Street Address *</label>
-                        <TextField fullWidth variant="outlined" value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                        <TextField fullWidth variant="outlined" value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                            error={!!errors.streetAddress}
+                            />
+                            {errors.streetAddress && (
+                            <FormHelperText error>{errors.streetAddress}</FormHelperText>
+                            )}
                     </Grid>
 
                     <Grid item xs={4}>
@@ -299,25 +368,44 @@ function ViewStartupProfile({ profile }) {
                                         ...params.inputProps,
                                         autoComplete: 'new-password',
                                     }}
-                                    disabled={!isEditable}/>
+                                    disabled={!isEditable}
+                                    error={!!errors.country}/>
                             )}
                             sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px'} }}
                         />
+                        {errors.country && (
+                        <FormHelperText error>{errors.country}</FormHelperText>
+                        )}
                     </Grid>
 
                     <Grid item xs={4}>
                         <label>City *</label>
-                        <TextField fullWidth variant="outlined" value={city} onChange={(e) => setCity(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                        <TextField fullWidth variant="outlined" value={city} onChange={(e) => setCity(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                            error={!!errors.city}
+                            />
+                            {errors.city && (
+                            <FormHelperText error>{errors.city}</FormHelperText>
+                            )}
                     </Grid>
 
                     <Grid item xs={4}>
-                        <label>State *</label>
-                        <TextField fullWidth variant="outlined" value={state} onChange={(e) => setState(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                        <label>Province/State *</label>
+                        <TextField fullWidth variant="outlined" value={state} onChange={(e) => setState(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                            error={!!errors.state}
+                            />
+                            {errors.state && (
+                            <FormHelperText error>{errors.state}</FormHelperText>
+                            )}
                     </Grid>
 
                     <Grid item xs={4}>
                         <label>Postal/Zip Code *</label>
-                        <TextField fullWidth variant="outlined" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                        <TextField fullWidth variant="outlined" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                        error={!!errors.postalCode}
+                        />
+                        {errors.postalCode && (
+                        <FormHelperText error>{errors.postalCode}</FormHelperText>
+                        )}
                     </Grid>
                 </Grid>
             </Grid>

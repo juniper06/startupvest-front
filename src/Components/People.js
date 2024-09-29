@@ -94,6 +94,12 @@ function EnhancedTableToolbar({ onRequestSearch }) {
   );
 }
 
+const getInitials = (firstName, lastName) => {
+  const firstInitial = firstName ? firstName.charAt(0).toUpperCase() : '';
+  const lastInitial = lastName ? lastName.charAt(0).toUpperCase() : '';
+  return `${firstInitial}${lastInitial}`;
+};
+
 export default function Companies() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
@@ -107,8 +113,8 @@ export default function Companies() {
 
   const formatAddress = (streetAddress, city, country) => {
     const parts = [streetAddress, city, country].filter(Boolean);
-    return parts.join(', ');
-  };
+    return parts.length > 0 ? parts.join(', ') : 'Address not available';
+  };  
 
   useEffect(() => {
     const fetchInvestors = async () => {
@@ -146,16 +152,21 @@ export default function Companies() {
       }));
     } catch (error) {
       console.error('Failed to fetch profile picture:', error);
+      // Set a null value to indicate the image failed to load
+      setProfilePictures((prevState) => ({
+        ...prevState,
+        [investorId]: null,
+      }));
     }
   };
 
   useEffect(() => {
     investors.forEach((investor) => {
-      if (!profilePictures[investor.id]) {
+      if (profilePictures[investor.id] === undefined) {
         fetchProfilePicture(investor.id);
       }
     });
-  }, [investors]);
+  }, [investors, profilePictures]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -207,8 +218,13 @@ export default function Companies() {
                 <StyledTableRow key={row.id} onClick={() => handleRowClick(row)}>
                   <StyledTableCell>
                     <StyledStack direction='row'>
-                      <StyledAvatar variant="rounded" src={profilePictures[row.id] || ''}>
-                        {!profilePictures[row.id] && row.firstName.charAt(0)}
+                    <StyledAvatar 
+                        variant="rounded" 
+                        src={profilePictures[row.id] || ''}
+                        alt={getInitials(row.firstName, row.lastName)}
+                      >
+                        {(!profilePictures[row.id] || profilePictures[row.id] === null) && 
+                          getInitials(row.firstName, row.lastName)}
                       </StyledAvatar>
                       {row.firstName} {row.lastName}
                     </StyledStack>

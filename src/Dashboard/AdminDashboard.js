@@ -336,7 +336,13 @@ const AdminDashboard = () => {
                         users.slice(-1).map((user) => (
                           <TableRow key={user.id}>
                             <TableCell>{user.firstName} {user.lastName}</TableCell>
-                            <TableCell><Avatar src={user.photo} /></TableCell>
+                            <TableCell>
+                              {user.photo ? (
+                                <Avatar src={user.photo} />
+                              ) : (
+                                <Avatar>{user.firstName[0]}{user.lastName[0]}</Avatar>
+                              )}
+                            </TableCell>
                           </TableRow>
                         ))
                       )}

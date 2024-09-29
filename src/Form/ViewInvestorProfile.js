@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import countries from '../static/countries';
-import { Box, Typography, TextField, Avatar, Select, MenuItem, Grid, Button, Autocomplete } from '@mui/material';
+import { Box, Typography, TextField, Avatar, Select, MenuItem, Grid, 
+  Button, Autocomplete, FormHelperText } from '@mui/material';
 import genderOptions from '../static/genderOptions';
 import axios from 'axios';
 
@@ -9,6 +10,7 @@ function ViewInvestorProfile({ profile }) {
   const fileInputRef = useRef(null);
 
   const [isEditable, setIsEditable] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [firstName, setFirstName] = useState(profile ? profile.firstName : '');
   const [lastName, setLastName] = useState(profile ? profile.lastName : '');
@@ -46,8 +48,30 @@ function ViewInvestorProfile({ profile }) {
     }
   };
 
+  const validateFields = () => {
+    const newErrors = {};
+    if (!firstName.trim()) newErrors.firstName = 'First Name is required';
+    if (!lastName.trim()) newErrors.lastName = 'Last Name is required';
+    if (!emailAddress.trim()) newErrors.emailAddress = 'Email Address is required';
+    if (!contactInformation.trim()) newErrors.contactInformation = 'Contact Information is required';
+    if (!gender) newErrors.gender = 'Gender is required';
+    if (!biography.trim()) newErrors.biography = 'Biography is required';
+    if (!streetAddress.trim()) newErrors.streetAddress = 'Street Address is required';
+    if (!country) newErrors.country = 'Country is required';
+    if (!city.trim()) newErrors.city = 'City is required';
+    if (!state.trim()) newErrors.state = 'Province/State is required';
+    if (!postalCode.trim()) newErrors.postalCode = 'Postal/Zip Code is required';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleUpdateProfile = async () => {
     if (isEditable) {
+      if (!validateFields()) {
+        return; // Don't proceed if there are validation errors
+      }
+
       try {
         const profileData = {
           firstName,
@@ -76,11 +100,13 @@ function ViewInvestorProfile({ profile }) {
           },
         });
 
+        setIsEditable(false);
       } catch (error) {
         console.error('Failed to update profile:', error);
       }
+    } else {
+      setIsEditable(true);
     }
-    setIsEditable(!isEditable);
   };
 
   const handleUploadProfilePicture = async (file) => {
@@ -155,41 +181,108 @@ function ViewInvestorProfile({ profile }) {
                     <Grid container spacing={3} sx={{ ml: 2 }}>
                         <Grid item xs={12} sm={11.4}>
                             <Grid container spacing={2}>
-                                <Grid item xs={6}>
-                                    <label>First Name *</label>
-                                    <TextField fullWidth variant="outlined" value={firstName} onChange={(e) => setFirstName(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
-                                </Grid>
+                              <Grid item xs={6}>
+                                <label>First Name *</label>
+                                <TextField 
+                                  fullWidth 
+                                  variant="outlined" 
+                                  value={firstName} 
+                                  onChange={(e) => setFirstName(e.target.value)} 
+                                  disabled={!isEditable} 
+                                  sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                  error={!!errors.firstName}
+                                />
+                                {errors.firstName && (
+                                  <FormHelperText error>{errors.firstName}</FormHelperText>
+                                )}
+                              </Grid>
 
-                                <Grid item xs={6}>
-                                    <label>Last Name *</label>
-                                    <TextField fullWidth variant="outlined" value={lastName} onChange={(e) => setLastName(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
-                                </Grid>
+                              <Grid item xs={6}>
+                                <label>Last Name *</label>
+                                <TextField 
+                                  fullWidth 
+                                  variant="outlined" 
+                                  value={lastName} 
+                                  onChange={(e) => setLastName(e.target.value)} 
+                                  disabled={!isEditable} 
+                                  sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                  error={!!errors.lastName}
+                                />
+                                {errors.lastName && (
+                                  <FormHelperText error>{errors.lastName}</FormHelperText>
+                                )}
+                              </Grid>
 
-                                <Grid item xs={12}>
-                                    <label>Email Address *</label>
-                                    <TextField fullWidth variant="outlined" value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
-                                </Grid>
+                              <Grid item xs={12}>
+                                <label>Email Address *</label>
+                                <TextField 
+                                  fullWidth 
+                                  variant="outlined" 
+                                  value={emailAddress} 
+                                  onChange={(e) => setEmailAddress(e.target.value)} 
+                                  disabled={!isEditable} 
+                                  sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                  error={!!errors.emailAddress}
+                                />
+                                {errors.emailAddress && (
+                                  <FormHelperText error>{errors.emailAddress}</FormHelperText>
+                                )}
+                              </Grid>
 
-                                <Grid item xs={6}>
-                                    <label>Contact Information *</label>
-                                    <TextField fullWidth variant="outlined" value={contactInformation} onChange={(e) => setContactInformation(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
-                                </Grid>
+                              <Grid item xs={6}>
+                                <label>Contact Information *</label>
+                                <TextField 
+                                  fullWidth 
+                                  variant="outlined" 
+                                  value={contactInformation} 
+                                  onChange={(e) => setContactInformation(e.target.value)} 
+                                  disabled={!isEditable} 
+                                  sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                  error={!!errors.contactInformation}
+                                />
+                                {errors.contactInformation && (
+                                  <FormHelperText error>{errors.contactInformation}</FormHelperText>
+                                )}
+                              </Grid>
 
-                                <Grid item xs={6}>
-                                    <label>Gender *</label>
-                                    <Select fullWidth variant="outlined" value={gender} onChange={(e) => setGender(e.target.value)} disabled={!isEditable} sx={{ height: '45px' }}>
-                                    {genderOptions.map((option) => (
-                                          <MenuItem key={option.value} value={option.value}>
-                                              {option.label}
-                                          </MenuItem>
-                                      ))}
-                                    </Select>
-                                </Grid>
+                              <Grid item xs={6}>
+                                <label>Gender *</label>
+                                <Select 
+                                  fullWidth 
+                                  variant="outlined" 
+                                  value={gender} 
+                                  onChange={(e) => setGender(e.target.value)} 
+                                  disabled={!isEditable} 
+                                  sx={{ height: '45px' }}
+                                  error={!!errors.gender}
+                                >
+                                  {genderOptions.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                      {option.label}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                                {errors.gender && (
+                                  <FormHelperText error>{errors.gender}</FormHelperText>
+                                )}
+                              </Grid>
 
-                                <Grid item xs={12}>
-                                    <label>Biography *</label>
-                                    <TextField fullWidth variant="outlined" multiline rows={5} value={biography} onChange={(e) => setBiography(e.target.value)} disabled={!isEditable}/>
-                                </Grid>
+                              <Grid item xs={12}>
+                                <label>Biography *</label>
+                                <TextField 
+                                  fullWidth 
+                                  variant="outlined" 
+                                  multiline 
+                                  rows={5} 
+                                  value={biography} 
+                                  onChange={(e) => setBiography(e.target.value)} 
+                                  disabled={!isEditable}
+                                  error={!!errors.biography}
+                                />
+                                {errors.biography && (
+                                  <FormHelperText error>{errors.biography}</FormHelperText>
+                                )}
+                              </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -201,53 +294,110 @@ function ViewInvestorProfile({ profile }) {
                     <Grid container spacing={3} sx={{ ml: 2 }}>
                         <Grid item xs={12} sm={11.4}>
                             <Grid container spacing={2}>
-                                <Grid item xs={8}>
-                                    <label>Street Address *</label>
-                                    <TextField fullWidth variant="outlined" value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
-                                </Grid>
+                              <Grid item xs={8}>
+                                <label>Street Address *</label>
+                                <TextField 
+                                  fullWidth 
+                                  variant="outlined" 
+                                  value={streetAddress} 
+                                  onChange={(e) => setStreetAddress(e.target.value)} 
+                                  disabled={!isEditable} 
+                                  sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                  error={!!errors.streetAddress}
+                                />
+                                {errors.streetAddress && (
+                                  <FormHelperText error>{errors.streetAddress}</FormHelperText>
+                                )}
+                              </Grid>
 
-                                <Grid item xs={4}>
-                                    <label>Country *</label>
-                                    <Autocomplete options={countries}
-                                        getOptionLabel={(option) => option.label}
-                                        value={countries.find(c => c.label === country) || null}
-                                        onChange={(event, newValue) => {
-                                            setCountry(newValue ? newValue.label : '');
-                                        }}
-                                        renderOption={(props, option) => (
-                                            <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-                                                <img loading="lazy" width="20"
-                                                    src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                                                    srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                                                    alt="" />
-                                                {option.label} ({option.code}) +{option.phone}
-                                            </Box>
-                                        )}
-                                        renderInput={(params) => (
-                                            <TextField {...params} fullWidth variant="outlined"
-                                                inputProps={{
-                                                    ...params.inputProps,
-                                                    autoComplete: 'new-password',
-                                                }}
-                                                disabled={!isEditable} />
-                                        )}
-                                        sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px'} }} />
-                                </Grid>
+                              <Grid item xs={4}>
+                                <label>Country *</label>
+                                <Autocomplete 
+                                  options={countries}
+                                  getOptionLabel={(option) => option.label}
+                                  value={countries.find(c => c.label === country) || null}
+                                  onChange={(event, newValue) => {
+                                    setCountry(newValue ? newValue.label : '');
+                                  }}
+                                  renderOption={(props, option) => (
+                                    <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                                      <img 
+                                        loading="lazy" 
+                                        width="20"
+                                        src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                                        srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                                        alt="" 
+                                      />
+                                      {option.label} ({option.code}) +{option.phone}
+                                    </Box>
+                                  )}
+                                  renderInput={(params) => (
+                                    <TextField 
+                                      {...params} 
+                                      fullWidth 
+                                      variant="outlined"
+                                      inputProps={{
+                                        ...params.inputProps,
+                                        autoComplete: 'new-password',
+                                      }}
+                                      disabled={!isEditable}
+                                      error={!!errors.country}
+                                    />
+                                  )}
+                                  sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px'} }} 
+                                />
+                                {errors.country && (
+                                  <FormHelperText error>{errors.country}</FormHelperText>
+                                )}
+                              </Grid>
 
-                                <Grid item xs={4}>
-                                    <label>City *</label>
-                                    <TextField fullWidth variant="outlined" value={city} onChange={(e) => setCity(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
-                                </Grid>
+                              <Grid item xs={4}>
+                                <label>City *</label>
+                                <TextField 
+                                  fullWidth 
+                                  variant="outlined" 
+                                  value={city} 
+                                  onChange={(e) => setCity(e.target.value)} 
+                                  disabled={!isEditable} 
+                                  sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                  error={!!errors.city}
+                                />
+                                {errors.city && (
+                                  <FormHelperText error>{errors.city}</FormHelperText>
+                                )}
+                              </Grid>
 
-                                <Grid item xs={4}>
-                                    <label>State *</label>
-                                    <TextField fullWidth variant="outlined" value={state} onChange={(e) => setState(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
-                                </Grid>
+                              <Grid item xs={4}>
+                                <label>Province/State *</label>
+                                <TextField 
+                                  fullWidth 
+                                  variant="outlined" 
+                                  value={state} 
+                                  onChange={(e) => setState(e.target.value)} 
+                                  disabled={!isEditable} 
+                                  sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                  error={!!errors.state}
+                                />
+                                {errors.state && (
+                                  <FormHelperText error>{errors.state}</FormHelperText>
+                                )}
+                              </Grid>
 
-                                <Grid item xs={4}>
-                                    <label>Postal/Zip Code *</label>
-                                    <TextField fullWidth variant="outlined" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
-                                </Grid>
+                              <Grid item xs={4}>
+                                <label>Postal/Zip Code *</label>
+                                <TextField 
+                                  fullWidth 
+                                  variant="outlined" 
+                                  value={postalCode} 
+                                  onChange={(e) => setPostalCode(e.target.value)} 
+                                  disabled={!isEditable} 
+                                  sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                  error={!!errors.postalCode}
+                                />
+                                {errors.postalCode && (
+                                  <FormHelperText error>{errors.postalCode}</FormHelperText>
+                                )}
+                              </Grid>
                             </Grid>
                         </Grid>
                     </Grid>

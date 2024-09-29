@@ -4,7 +4,8 @@ import industries from '../static/industries';
 import genderOptions from '../static/genderOptions';
 import quantityOptions from '../static/quantityOptions';
 import SuccessCreateBusinessProfileDialog from '../Dialogs/SuccessCreateBusinessProfileDialog';
-import { Box, Typography, TextField, Select, MenuItem, Grid, FormControl, CardContent, Button, Autocomplete, FormHelperText, Tooltip } from '@mui/material';
+import { Box, Typography, TextField, Select, MenuItem, Grid, FormControl, CardContent, 
+    Button, Autocomplete, FormHelperText, Tooltip } from '@mui/material';
 import { Business, MonetizationOn } from '@mui/icons-material'; 
 import { StyledCard } from '../styles/CardStyles';
 import axios from 'axios';
@@ -61,35 +62,26 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
     };
 
     const validateFields = () => {
-        const requiredErrorMessage = 'This field cannot be empty.';
         const newErrors = {};
+        const requiredFields = selectedProfileType === 'Startup Company'
+            ? ['companyName', 'companyDescription', 'foundedMonth', 'foundedDay', 'foundedYear', 'typeOfCompany', 'numberOfEmployees', 'phoneNumber', 'contactEmail', 'industry', 'streetAddress', 'country', 'city', 'state', 'postalCode']
+            : ['firstName', 'lastName', 'emailAddress', 'contactInformation', 'gender', 'biography', 'streetAddress', 'country', 'city', 'state', 'postalCode'];
 
-        if (selectedProfileType === 'Startup Company') {
-        if (!companyName) newErrors.companyName = requiredErrorMessage;
-        if (!companyDescription) newErrors.companyDescription = requiredErrorMessage;
-        if (!foundedMonth) newErrors.foundedMonth = requiredErrorMessage;
-        if (!foundedDay) newErrors.foundedDay = requiredErrorMessage;
-        if (!foundedYear) newErrors.foundedYear = requiredErrorMessage;
-        if (!typeOfCompany) newErrors.typeOfCompany = requiredErrorMessage;
-        if (!numberOfEmployees) newErrors.numberOfEmployees = requiredErrorMessage;
-        if (!phoneNumber) newErrors.phoneNumber = requiredErrorMessage;
-        if (!contactEmail) newErrors.contactEmail = requiredErrorMessage;
-        if (!industry) newErrors.industry = requiredErrorMessage;
-        } else if (selectedProfileType === 'Investor') {
-        if (!firstName) newErrors.firstName = requiredErrorMessage;
-        if (!lastName) newErrors.lastName = requiredErrorMessage;
-        if (!emailAddress) newErrors.emailAddress = requiredErrorMessage;
-        if (!contactInformation) newErrors.contactInformation = requiredErrorMessage;
-        if (!gender) newErrors.gender = requiredErrorMessage;
-        if (!biography) newErrors.biography = requiredErrorMessage;
-        }
+        requiredFields.forEach(field => {
+            if (!eval(field)) {
+                newErrors[field] = 'This field is required';
+            }
+        });
 
         setErrors(newErrors);
-        return Object.keys(newErrors).length === 0; 
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleCreateProfile = async () => {
-        if (!validateFields()) return;
+        if (!validateFields()) {
+            console.log('Validation failed');
+            return;
+        }
   
     const profileData = {
       firstName, lastName, emailAddress, contactInformation, gender, biography,
@@ -327,13 +319,15 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                     <Grid item xs={12} sm={11.4}>
                         <Grid container spacing={2}>
                             <Grid item xs={8}>
-                                <label>Street Address</label>
-                                <TextField fullWidth variant="outlined" value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} s/>
+                                <label>Street Address *</label>
+                                <TextField fullWidth required variant="outlined" value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                    error={!!errors.streetAddress} />
+                                    {errors.streetAddress && (<FormHelperText error>{errors.streetAddress}</FormHelperText>)}
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>Country</label>
+                                <label>Country *</label>
                                 <Autocomplete
                                     options={countries}
                                     getOptionLabel={(option) => option.label}
@@ -347,7 +341,8 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                                                 loading="lazy"
                                                 width="20"
                                                 src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                                                srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}/>
+                                                srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                                            />
                                             {option.label} ({option.code}) +{option.phone}
                                         </Box>
                                     )}
@@ -356,31 +351,55 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                                             {...params}
                                             fullWidth
                                             variant="outlined"
+                                            error={!!errors.country}
+                                            helperText={errors.country}
                                             inputProps={{
                                                 ...params.inputProps,
                                                 autoComplete: 'new-password', // disable autocomplete and autofill
-                                            }}/>
+                                            }}
+                                        />
                                     )}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px'} }}
                                 />
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>City</label>
-                                <TextField fullWidth variant="outlined" value={city} onChange={(e) => setCity(e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                                <label>City *</label>
+                                <TextField 
+                                    fullWidth 
+                                    variant="outlined" 
+                                    value={city} 
+                                    onChange={(e) => setCity(e.target.value)}
+                                    error={!!errors.city}
+                                    helperText={errors.city}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                />
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>Province/State</label>
-                                <TextField fullWidth variant="outlined" value={state} onChange={(e) => setState(e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                                <label>Province/State *</label>
+                                <TextField 
+                                    fullWidth 
+                                    variant="outlined" 
+                                    value={state} 
+                                    onChange={(e) => setState(e.target.value)}
+                                    error={!!errors.state}
+                                    helperText={errors.state}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                />
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>Postal/Zip Code</label>
-                                <TextField fullWidth variant="outlined" value={postalCode} onChange={(e) => setPostalCode(e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                                <label>Postal/Zip Code *</label>
+                                <TextField 
+                                    fullWidth 
+                                    variant="outlined" 
+                                    value={postalCode} 
+                                    onChange={(e) => setPostalCode(e.target.value)}
+                                    error={!!errors.postalCode}
+                                    helperText={errors.postalCode}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -499,12 +518,20 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                     <Grid item xs={12} sm={11.4}>
                         <Grid container spacing={2}>
                             <Grid item xs={8}>
-                                <label>Street Address</label>
-                                <TextField fullWidth variant="outlined" value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}/>
+                                <label>Street Address *</label>
+                                <TextField 
+                                    fullWidth 
+                                    variant="outlined" 
+                                    value={streetAddress} 
+                                    onChange={(e) => setStreetAddress(e.target.value)} 
+                                    error={!!errors.streetAddress}
+                                    helperText={errors.streetAddress}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
+                                />
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>Country</label>
+                                <label>Country *</label>
                                 <Autocomplete
                                     options={countries}
                                     getOptionLabel={(option) => option.label}
@@ -518,7 +545,8 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                                                 loading="lazy"
                                                 width="20"
                                                 src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                                                srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`} />
+                                                srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`} 
+                                            />
                                             {option.label} ({option.code}) +{option.phone}
                                         </Box>
                                     )}
@@ -527,6 +555,8 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                                             {...params}
                                             fullWidth
                                             variant="outlined"
+                                            error={!!errors.country}
+                                            helperText={errors.country}
                                             inputProps={{
                                                 ...params.inputProps,
                                                 autoComplete: 'new-password', // disable autocomplete and autofill
@@ -538,18 +568,42 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                             </Grid>
 
                             <Grid item xs={4}>
-                                <label>City</label>
-                                <TextField fullWidth variant="outlined" value={city} onChange={(e) => setCity(e.target.value)} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' },}}/>
+                                <label>City *</label>
+                                <TextField 
+                                    fullWidth 
+                                    variant="outlined" 
+                                    value={city} 
+                                    onChange={(e) => setCity(e.target.value)} 
+                                    error={!!errors.city}
+                                    helperText={errors.city}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' },}}
+                                />
                             </Grid>
-
+    
                             <Grid item xs={4}>
-                                <label>Province/State</label>
-                                <TextField fullWidth variant="outlined" value={state} onChange={(e) => setState(e.target.value)} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }, }}/>
+                                <label>Province/State *</label>
+                                <TextField 
+                                    fullWidth 
+                                    variant="outlined" 
+                                    value={state} 
+                                    onChange={(e) => setState(e.target.value)} 
+                                    error={!!errors.state}
+                                    helperText={errors.state}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }, }}
+                                />
                             </Grid>
-
+     
                             <Grid item xs={4}>
-                                <label>Postal/Zip Code</label>
-                                <TextField fullWidth variant="outlined" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
+                                <label>Postal/Zip Code *</label>
+                                <TextField 
+                                    fullWidth 
+                                    variant="outlined" 
+                                    value={postalCode} 
+                                    onChange={(e) => setPostalCode(e.target.value)} 
+                                    error={!!errors.postalCode}
+                                    helperText={errors.postalCode}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                />
                             </Grid>
                         </Grid>
                     </Grid>

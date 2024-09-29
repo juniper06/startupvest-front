@@ -12,6 +12,12 @@ import Navbar from '../Navbar/Navbar';
 
 const drawerWidth = 240;
 
+const getInitials = (firstName, lastName) => {
+  const firstInitial = firstName ? firstName.charAt(0).toUpperCase() : '';
+  const lastInitial = lastName ? lastName.charAt(0).toUpperCase() : '';
+  return `${firstInitial}${lastInitial}`;
+};
+
 function UserProfileView() {
   const [isFollowed, setIsFollowed] = useState(false);
   const [businessProfiles, setBusinessProfiles] = useState([]);
@@ -40,23 +46,27 @@ function UserProfileView() {
 
     // Function to fetch the profile picture
     const fetchProfilePicture = async () => {
-      if (!profile?.id) return; // Ensure profile exists
-  
+      if (!profile?.id) return;
+    
       try {
         const response = await axios.get(`http://localhost:3000/profile-picture/investor/${profile.id}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
-          responseType: 'blob', // Important for getting the image as a blob
+          responseType: 'blob',
         });
-  
-        // Create a URL for the blob
+    
         const imageUrl = URL.createObjectURL(response.data);
         setAvatarUrl(imageUrl);
       } catch (error) {
         console.error('Failed to fetch profile picture:', error);
+        setAvatarUrl('');
       }
     };
+  
+    useEffect(() => {
+      fetchProfilePicture();
+    }, [profile?.id]);
 
   useEffect(() => {
     fetchBusinessProfiles();
@@ -78,6 +88,9 @@ function UserProfileView() {
   // Construct the location string dynamically
   const locationParts = [streetAddress, city, country].filter(part => part !== "").join(", ");
 
+  // Check if all fields are empty, then show 'Address not available'
+  const locationDisplay = locationParts ? locationParts : "Address not available";
+
   return (
     <>
       <Navbar />
@@ -87,12 +100,24 @@ function UserProfileView() {
         <Box display="flex" alignItems="center">
           <Box mr={4}>
           <Avatar
-              variant="rounded"
-              src={avatarUrl} // Use fetched avatar URL
-              sx={{ width: 150, height: 150, border: '5px solid rgba(0, 116, 144, 1)', borderRadius: 3, ml: 8 }}
-            >
-              {profile.firstName.charAt(0)} {/* Show initial if no avatar is available */}
-            </Avatar>
+            variant="rounded"
+            src={avatarUrl}
+            sx={{ 
+              width: 150, 
+              height: 150, 
+              border: '5px solid rgba(0, 116, 144, 1)', 
+              borderRadius: 3, 
+              ml: 8,
+              fontSize: '3rem',
+              bgcolor: 'rgba(0, 116, 144, 1)',
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            {!profile.photo && `${profile.firstName[0]}${profile.lastName[0]}`}
+          </Avatar>
           </Box>
           <Typography variant="h4" gutterBottom>{`${profile.firstName} ${profile.lastName}`}</Typography>
           <StarsIcon sx={{ cursor: 'pointer', ml: 1, mt: -1, color: isFollowed ? 'rgba(0, 116, 144, 1)' : 'inherit' }} onClick={handleFollowToggle} />
@@ -131,7 +156,7 @@ function UserProfileView() {
 
                       <Grid item xs={12}>
                         <Typography><strong>Location</strong></Typography>
-                        <Typography variant="body1">{locationParts}</Typography>  
+                        <Typography variant="body1">{locationDisplay}</Typography> 
                       </Grid>
                     </Grid>
                   </Grid>
@@ -144,86 +169,110 @@ function UserProfileView() {
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <Box sx={{ p: 4, borderRadius: 2, mr: 5, backgroundColor: 'white' }}>
                   <Stack spacing={2}>
-                    {profile.website && (
-                      <Button
-                        variant="outlined"
-                        fullWidth
-                        href={profile.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        startIcon={<LanguageIcon />}
-                        sx={{
-                          backgroundColor: 'rgba(0, 116, 144, 1)',
-                          color: 'white',
-                          '&:hover': { backgroundColor: '#005f73' }
-                        }}>
-                        Website
-                      </Button>
-                    )}
-                    {profile.linkedIn && (
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        href={profile.linkedIn}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        startIcon={<LinkedInIcon />}
-                        sx={{
-                          backgroundColor: '#0A66C2',
-                          color: 'white',
-                          '&:hover': { backgroundColor: '#004182' }
-                        }}>
-                        LinkedIn
-                      </Button>
-                    )}
-                    {profile.facebook && (
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        href={profile.facebook}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        startIcon={<FacebookIcon />}
-                        sx={{
-                          backgroundColor: '#1877F2',
-                          color: 'white',
-                          '&:hover': { backgroundColor: '#0a52cc' }
-                        }}>
-                        Facebook
-                      </Button>
-                    )}
-                    {profile.twitter && (
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        href={profile.twitter}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        startIcon={<TwitterIcon />}
-                        sx={{
-                          backgroundColor: '#1DA1F2',
-                          color: 'white',
-                          '&:hover': { backgroundColor: '#0a8ddb' }
-                        }}>
-                        Twitter
-                      </Button>
-                    )}
-                    {profile.instagram && (
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        href={profile.instagram}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        startIcon={<InstagramIcon />}
-                        sx={{
-                          backgroundColor: '#E1306C',
-                          color: 'white',
-                          '&:hover': { backgroundColor: '#b02e5a' }
-                        }}>
-                        Instagram
-                      </Button>
-                    )}
+                    {/* Website Button */}
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      href={profile.website || "#"}
+                      target={profile.website ? "_blank" : undefined}
+                      rel="noopener noreferrer"
+                      startIcon={<LanguageIcon />}
+                      sx={{
+                        backgroundColor: profile.website ? 'rgba(0, 116, 144, 1)' : 'rgba(211, 211, 211, 1)', // Gray if no link
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: profile.website ? '#005f73' : 'rgba(211, 211, 211, 1)', // No change on hover if no link
+                        },
+                        cursor: profile.website ? 'pointer' : 'not-allowed', // Not-allowed cursor if no link
+                      }}
+                      disabled={!profile.website} // Disable button if no link
+                    >
+                      Website
+                    </Button>
+
+                    {/* LinkedIn Button */}
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      href={profile.linkedIn || "#"}
+                      target={profile.linkedIn ? "_blank" : undefined}
+                      rel="noopener noreferrer"
+                      startIcon={<LinkedInIcon />}
+                      sx={{
+                        backgroundColor: profile.linkedIn ? '#0A66C2' : 'rgba(211, 211, 211, 1)', // Gray if no link
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: profile.linkedIn ? '#004182' : 'rgba(211, 211, 211, 1)',
+                        },
+                        cursor: profile.linkedIn ? 'pointer' : 'not-allowed',
+                      }}
+                      disabled={!profile.linkedIn}
+                    >
+                      LinkedIn
+                    </Button>
+
+                    {/* Facebook Button */}
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      href={profile.facebook || "#"}
+                      target={profile.facebook ? "_blank" : undefined}
+                      rel="noopener noreferrer"
+                      startIcon={<FacebookIcon />}
+                      sx={{
+                        backgroundColor: profile.facebook ? '#1877F2' : 'rgba(211, 211, 211, 1)',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: profile.facebook ? '#0a52cc' : 'rgba(211, 211, 211, 1)',
+                        },
+                        cursor: profile.facebook ? 'pointer' : 'not-allowed',
+                      }}
+                      disabled={!profile.facebook}
+                    >
+                      Facebook
+                    </Button>
+
+                    {/* Twitter Button */}
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      href={profile.twitter || "#"}
+                      target={profile.twitter ? "_blank" : undefined}
+                      rel="noopener noreferrer"
+                      startIcon={<TwitterIcon />}
+                      sx={{
+                        backgroundColor: profile.twitter ? '#1DA1F2' : 'rgba(211, 211, 211, 1)',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: profile.twitter ? '#0a8ddb' : 'rgba(211, 211, 211, 1)',
+                        },
+                        cursor: profile.twitter ? 'pointer' : 'not-allowed',
+                      }}
+                      disabled={!profile.twitter}
+                    >
+                      Twitter
+                    </Button>
+
+                    {/* Instagram Button */}
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      href={profile.instagram || "#"}
+                      target={profile.instagram ? "_blank" : undefined}
+                      rel="noopener noreferrer"
+                      startIcon={<InstagramIcon />}
+                      sx={{
+                        backgroundColor: profile.instagram ? '#E1306C' : 'rgba(211, 211, 211, 1)',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: profile.instagram ? '#b02e5a' : 'rgba(211, 211, 211, 1)',
+                        },
+                        cursor: profile.instagram ? 'pointer' : 'not-allowed',
+                      }}
+                      disabled={!profile.instagram}
+                    >
+                      Instagram
+                    </Button>
                   </Stack>
                 </Box>
               </Box>

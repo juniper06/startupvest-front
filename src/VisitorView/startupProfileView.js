@@ -159,9 +159,10 @@ function StartUpView() {
                             <strong>Location</strong>
                           </Typography>
                           <Typography variant="body1">
-                            {streetAddress && <>{streetAddress}{city || state ? ", " : ""}</>}
+                            {streetAddress && <>{streetAddress}{(city || state) ? ", " : ""}</>}
                             {city && <>{city}{state ? ", " : ""}</>}
                             {state}
+                            {!streetAddress && !city && !state && <span>No address available</span>}
                           </Typography>
                         </Grid>
                       </Grid>
@@ -175,41 +176,90 @@ function StartUpView() {
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Box sx={{ p: 4, borderRadius: 2, mr: 5 }}>
                     <Stack spacing={2}>
-                      {startup.website && (
-                        <Button variant="outlined" fullWidth href={startup.website} target="_blank" rel="noopener noreferrer"
-                          startIcon={<LanguageIcon />}
-                          sx={{ backgroundColor: 'rgba(0, 116, 144, 1)', color: 'white','&:hover': { backgroundColor: '#005f73' }}}>
-                          Website
-                        </Button>
-                      )}
-                      {startup.linkedIn && (
-                        <Button variant="contained" fullWidth href={startup.linkedIn} target="_blank" rel="noopener noreferrer"
-                          startIcon={<LinkedInIcon />}
-                          sx={{ backgroundColor: '#0A66C2', color: 'white','&:hover': { backgroundColor: '#004182' }}}>
-                          LinkedIn
-                        </Button>
-                      )}
-                      {startup.facebook && (
-                        <Button variant="contained" fullWidth href={startup.facebook} target="_blank" rel="noopener noreferrer"
-                         startIcon={<FacebookIcon />}
-                          sx={{ backgroundColor: '#1877F2', color: 'white', '&:hover': { backgroundColor: '#0a52cc' }}}>
-                          Facebook
-                        </Button>
-                      )}
-                      {startup.twitter && (
-                        <Button variant="contained"fullWidth href={startup.twitter} target="_blank" rel="noopener noreferrer"
-                          startIcon={<TwitterIcon />}
-                          sx={{ backgroundColor: '#1DA1F2', color: 'white', '&:hover': { backgroundColor: '#0a8ddb' }}}>
-                          Twitter
-                        </Button>
-                      )}
-                      {startup.instagram && (
-                        <Button variant="contained" fullWidth href={startup.instagram} target="_blank" rel="noopener noreferrer"
-                          startIcon={<InstagramIcon />}
-                          sx={{ backgroundColor: '#E1306C', color: 'white', '&:hover': { backgroundColor: '#b02e5a' }}}>
-                          Instagram
-                        </Button>
-                      )}
+                      <Button
+                        variant="outlined"
+                        fullWidth
+                        href={startup.website ? startup.website : null}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        startIcon={<LanguageIcon />}
+                        disabled={!startup.website} // Disable button if no website
+                        sx={{
+                          backgroundColor: startup.website ? 'rgba(0, 116, 144, 1)' : '#e0e0e0', 
+                          color: startup.website ? 'white' : '#9e9e9e',
+                          '&:hover': { backgroundColor: startup.website ? '#005f73' : '#e0e0e0' }
+                        }}
+                      >
+                        Website
+                      </Button>
+
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        href={startup.linkedIn ? startup.linkedIn : null}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        startIcon={<LinkedInIcon />}
+                        disabled={!startup.linkedIn} // Disable button if no LinkedIn
+                        sx={{
+                          backgroundColor: startup.linkedIn ? '#0A66C2' : '#e0e0e0',
+                          color: startup.linkedIn ? 'white' : '#9e9e9e',
+                          '&:hover': { backgroundColor: startup.linkedIn ? '#004182' : '#e0e0e0' }
+                        }}
+                      >
+                        LinkedIn
+                      </Button>
+
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        href={startup.facebook ? startup.facebook : null}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        startIcon={<FacebookIcon />}
+                        disabled={!startup.facebook} // Disable button if no Facebook
+                        sx={{
+                          backgroundColor: startup.facebook ? '#1877F2' : '#e0e0e0',
+                          color: startup.facebook ? 'white' : '#9e9e9e',
+                          '&:hover': { backgroundColor: startup.facebook ? '#0a52cc' : '#e0e0e0' }
+                        }}
+                      >
+                        Facebook
+                      </Button>
+
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        href={startup.twitter ? startup.twitter : null}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        startIcon={<TwitterIcon />}
+                        disabled={!startup.twitter} // Disable button if no Twitter
+                        sx={{
+                          backgroundColor: startup.twitter ? '#1DA1F2' : '#e0e0e0',
+                          color: startup.twitter ? 'white' : '#9e9e9e',
+                          '&:hover': { backgroundColor: startup.twitter ? '#0a8ddb' : '#e0e0e0' }
+                        }}
+                      >
+                        Twitter
+                      </Button>
+
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        href={startup.instagram ? startup.instagram : null}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        startIcon={<InstagramIcon />}
+                        disabled={!startup.instagram} // Disable button if no Instagram
+                        sx={{
+                          backgroundColor: startup.instagram ? '#E1306C' : '#e0e0e0',
+                          color: startup.instagram ? 'white' : '#9e9e9e',
+                          '&:hover': { backgroundColor: startup.instagram ? '#b02e5a' : '#e0e0e0' }
+                        }}
+                      >
+                        Instagram
+                      </Button>
                     </Stack>
                   </Box>
                 </Box>

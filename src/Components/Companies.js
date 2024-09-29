@@ -106,9 +106,9 @@ export default function Companies() {
   const [profilePictures, setProfilePictures] = useState({});
 
   const formatAddress = (streetAddress, city, country) => {
-    const parts = [streetAddress, city, country].filter(Boolean); 
-    return parts.join(', ');
-  };
+    const parts = [streetAddress, city, country].filter(Boolean); // Filter out empty or undefined values
+    return parts.length ? parts.join(', ') : 'Location not available'; // If no parts, return placeholder
+  };  
 
   useEffect(() => {
     axios.get('http://localhost:3000/startups/all')
