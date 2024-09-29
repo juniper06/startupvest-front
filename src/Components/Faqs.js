@@ -103,6 +103,42 @@ function Faqs() {
 
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6">What is Target Funding?</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                            Target funding refers to the amount of capital a company or startup aims to raise during a specific fundraising round. It is the goal set by the company to bring in new investment to help grow the business. The target funding is typically part of a structured funding round (such as seed funding, Series A, B, etc.). <br /><br />
+
+                            <strong>Key Points:</strong>
+                            <ul>
+                                <li>It represents the desired amount of money the company wants to raise from investors.</li>
+                                <li>It is used to finance business operations, growth, product development, or other business objectives.</li>
+                                <li>The investors who provide the funding will typically receive equity (ownership) in the company in exchange for their investment.</li>
+                            </ul>
+                        </Typography>
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6">What is Pre-money Valuation?</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                        Pre-money valuation is the valuation of a company before it receives any new funding. It reflects how much the company is worth based on its assets, revenues, growth potential, and other factors before any new investment is made. The pre-money valuation is important because it helps determine how much equity the investors will receive in exchange for their investment. <br /><br />
+
+                            <strong>Key Points:</strong>
+                            <ul>
+                                <li>It is the value of the company before the new investment or funding.</li>
+                                <li>It determines how much of the company an investor will own after making an investment.</li>
+                                <li>A higher pre-money valuation means the company is considered to be worth more before new capital is raised.</li>
+                            </ul>
+                        </Typography>
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography variant="h6">What types of funding can I offer on StartUpVest?</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
