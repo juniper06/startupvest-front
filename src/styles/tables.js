@@ -25,7 +25,7 @@ export const tableStyles = {
       },
     },
     deleteButton: {
-      marginLeft: '20px',
+      width: 'calc(50% - 5px)',
       color: 'rgba(0, 116, 144, 1)',
       borderColor: 'rgba(0, 116, 144, 1)',
     },
