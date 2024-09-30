@@ -8,21 +8,32 @@ import { CircularProgress, Box, Typography } from '@mui/material';
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const MonthlyFundingChart = ({ userId, companyId }) => {
+  const currentYear = new Date().getFullYear();
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
   const [loading, setLoading] = useState(true);
+  const [year, setYear] = useState(currentYear);
+
+  // Years for the dropdown from current year to 4 years back
+  const availableYears = Array.from({ length: 5 }, (val, index) => currentYear - index);
+
+  // Function to convert "YYYY-MM" to month name
+  const getMonthName = (monthString) => {
+    const date = new Date(monthString + '-01'); // Add a day to create a valid date
+    return date.toLocaleString('default', { month: 'long' }); // Get the full month name
+  };
 
   useEffect(() => {
     const fetchMonthlyFunding = async () => {
       try {
         let url = '';
         if (userId) {
-          url = `http://localhost:3000/funding-rounds/monthly-funding/${userId}`;
+          url = `http://localhost:3000/funding-rounds/monthly-funding/${userId}?year=${year}`;
         } else if (companyId) {
-          url = `http://localhost:3000/funding-rounds/company-monthly-funding/${companyId}`;
+          url = `http://localhost:3000/funding-rounds/company-monthly-funding/${companyId}?year=${year}`;
         } else {
           const storedUserId = localStorage.getItem('userId');
           if (storedUserId) {
-            url = `http://localhost:3000/funding-rounds/monthly-funding/${storedUserId}`;
+            url = `http://localhost:3000/funding-rounds/monthly-funding/${storedUserId}?year=${year}`;
           } else {
             throw new Error('User ID or Company ID must be provided');
           }
@@ -45,7 +56,7 @@ const MonthlyFundingChart = ({ userId, companyId }) => {
           labels,
           datasets: [
             {
-              label: 'Total Funding',
+              label: `Monthly Funding for ${year}`,
               data: totals,
               borderColor: 'rgba(75, 192, 192, 1)',
               backgroundColor: (ctx) => {

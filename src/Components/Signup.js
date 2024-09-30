@@ -17,6 +17,7 @@ function Signup() {
     const [genderError, setGenderError] = useState('');
     const [contactNumberError, setContactNumberError] = useState('');
     const [openDialog, setOpenDialog] = useState(false);
+    const [role, setRole] = useState('user');
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -29,6 +30,7 @@ function Signup() {
             contactNumber: e.target.elements.contactNumber.value,
             gender: e.target.elements.gender.value,
             password: e.target.elements.password.value,
+            role: role,
         };
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

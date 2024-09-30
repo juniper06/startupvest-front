@@ -22,6 +22,7 @@ import Faqs from './Components/Faqs';
 import InvestorOverview from './Dashboard/InvestorOverview';
 import UserDashboard from './Dashboard/UserDashboard';
 import AdminDashboard from './Dashboard/AdminDashboard';
+import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
   return (
@@ -50,7 +51,10 @@ function App() {
         <Route path="/fundingprofile" element={<ViewFundingRound />} />
 
         {/* Dashboard */}
-        <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/admindashboard" element={<ProtectedRoute allowedRoles={['admin']}>
+                            <AdminDashboard />
+                        </ProtectedRoute>
+} />
         <Route path="/asCompanyOwnerOverview" element={<UserDashboard />} />
         <Route path="/asInvestorOverview" element={<InvestorOverview />} />
 

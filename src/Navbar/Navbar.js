@@ -91,6 +91,8 @@ export default function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
+    localStorage.removeItem('role');
+    
     window.location = '/';
   };
 

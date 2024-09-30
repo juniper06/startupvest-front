@@ -172,7 +172,7 @@ function StartUpView() {
               </Grid>
 
               {/* Right Box with Dynamic Links */}
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={2.5}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Box sx={{ p: 4, borderRadius: 2, mr: 5 }}>
                     <Stack spacing={2}>
