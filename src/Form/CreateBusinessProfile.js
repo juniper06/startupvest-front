@@ -8,7 +8,6 @@ import { Box, Typography, TextField, Select, MenuItem, Grid, FormControl, CardCo
     Button, Autocomplete, FormHelperText, Tooltip } from '@mui/material';
 import { Business, MonetizationOn } from '@mui/icons-material'; 
 import { StyledCard } from '../styles/CardStyles';
-import { NumericFormat } from 'react-number-format';
 import axios from 'axios';
 
 import { logActivity } from '../utils/activityUtils';
@@ -129,7 +128,6 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
 const handleInputChange = (e, type) => {
     const value = e.target.value;
   
-    // Regular expression to match allowed characters
     const isValid = /^[A-Za-z0-9 ]*$/.test(value); // Adjust pattern for postal codes
   
     if (isValid) {
@@ -313,7 +311,6 @@ const handleInputChange = (e, type) => {
                                 value={phoneNumber}
                                 onChange={(e) => handleInputChange(e, 'phoneNumber')}
                                 error={!!errors.phoneNumber}
-                                helperText={errors.phoneNumber}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                 />
                                 {errors.typeOfCompany && (<FormHelperText error>{errors.typeOfCompany}</FormHelperText>)}
@@ -392,17 +389,21 @@ const handleInputChange = (e, type) => {
                                         </Box>
                                     )}
                                     renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            fullWidth
-                                            variant="outlined"
-                                            error={!!errors.country}
-                                            helperText={errors.country}
-                                            inputProps={{
-                                                ...params.inputProps,
-                                                autoComplete: 'new-password', // disable autocomplete and autofill
-                                            }}
-                                        />
+                                        <>
+                                            <TextField
+                                                {...params}
+                                                fullWidth
+                                                variant="outlined"
+                                                error={!!errors.country}
+                                                inputProps={{
+                                                    ...params.inputProps,
+                                                    autoComplete: 'new-password', // disable autocomplete and autofill
+                                                }}
+                                            />
+                                            {errors.country && (
+                                                <FormHelperText error>{errors.country}</FormHelperText>
+                                            )}
+                                        </>
                                     )}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px'} }}
                                 />
@@ -416,9 +417,9 @@ const handleInputChange = (e, type) => {
                                     value={city} 
                                     onChange={(e) => setCity(e.target.value)}
                                     error={!!errors.city}
-                                    helperText={errors.city}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                 />
+                                {errors.city && (<FormHelperText error>{errors.city}</FormHelperText>)}
                             </Grid>
 
                             <Grid item xs={4}>
@@ -429,9 +430,9 @@ const handleInputChange = (e, type) => {
                                     value={state} 
                                     onChange={(e) => setState(e.target.value)}
                                     error={!!errors.state}
-                                    helperText={errors.state}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                 />
+                                {errors.state && (<FormHelperText error>{errors.state}</FormHelperText>)}
                             </Grid>
 
                             <Grid item xs={4}>
@@ -442,9 +443,9 @@ const handleInputChange = (e, type) => {
                                     value={postalCode}
                                     onChange={(e) => handleInputChange(e, 'postalCode')}
                                     error={!!errors.postalCode}
-                                    helperText={errors.postalCode}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                     />
+                                    {errors.postalCode && (<FormHelperText error>{errors.postalCode}</FormHelperText>)}
                             </Grid>
                         </Grid>
                     </Grid>
@@ -532,7 +533,6 @@ const handleInputChange = (e, type) => {
                                     value={contactInformation}
                                     onChange={(e) => handleInputChange(e, 'contactInformation')}
                                     error={!!errors.contactInformation}
-                                    helperText={errors.contactInformation}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                     />
                                 {errors.contactInformation && (<FormHelperText error>{errors.contactInformation}</FormHelperText>)}
@@ -576,9 +576,9 @@ const handleInputChange = (e, type) => {
                                     value={streetAddress} 
                                     onChange={(e) => setStreetAddress(e.target.value)} 
                                     error={!!errors.streetAddress}
-                                    helperText={errors.streetAddress}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                 />
+                                {errors.streetAddress && (<FormHelperText error>{errors.streetAddress}</FormHelperText>)}
                             </Grid>
 
                             <Grid item xs={4}>
@@ -607,7 +607,6 @@ const handleInputChange = (e, type) => {
                                             fullWidth
                                             variant="outlined"
                                             error={!!errors.country}
-                                            helperText={errors.country}
                                             inputProps={{
                                                 ...params.inputProps,
                                                 autoComplete: 'new-password', // disable autocomplete and autofill
@@ -616,6 +615,7 @@ const handleInputChange = (e, type) => {
                                     )}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px'}, }}
                                 />
+                                {errors.country && (<FormHelperText error>{errors.country}</FormHelperText>)}
                             </Grid>
 
                             <Grid item xs={4}>
@@ -626,9 +626,9 @@ const handleInputChange = (e, type) => {
                                     value={city} 
                                     onChange={(e) => setCity(e.target.value)} 
                                     error={!!errors.city}
-                                    helperText={errors.city}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' },}}
                                 />
+                                {errors.city && (<FormHelperText error>{errors.city}</FormHelperText>)}
                             </Grid>
     
                             <Grid item xs={4}>
@@ -639,9 +639,9 @@ const handleInputChange = (e, type) => {
                                     value={state} 
                                     onChange={(e) => setState(e.target.value)} 
                                     error={!!errors.state}
-                                    helperText={errors.state}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }, }}
                                 />
+                                {errors.state && (<FormHelperText error>{errors.state}</FormHelperText>)}
                             </Grid>
      
                             <Grid item xs={4}>
@@ -652,9 +652,9 @@ const handleInputChange = (e, type) => {
                                     value={postalCode}
                                     onChange={(e) => handleInputChange(e, 'postalCode')}
                                     error={!!errors.postalCode}
-                                    helperText={errors.postalCode}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                     />
+                                    {errors.postalCode && (<FormHelperText error>{errors.postalCode}</FormHelperText>)}
                             </Grid>
                         </Grid>
                     </Grid>
