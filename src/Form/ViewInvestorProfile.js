@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import countries from '../static/countries';
-import { Box, Typography, TextField, Avatar, Select, MenuItem, Grid, 
-  Button, Autocomplete, FormHelperText } from '@mui/material';
+import { Box, Typography, TextField, Avatar, Select, MenuItem, Grid, Button, Autocomplete, FormHelperText } from '@mui/material';
 import genderOptions from '../static/genderOptions';
 import axios from 'axios';
 
@@ -30,6 +29,9 @@ function ViewInvestorProfile({ profile }) {
   const [instagram, setInstagram] = useState(profile ? profile.instagram : '');
   const [linkedIn, setLinkedIn] = useState(profile ? profile.linkedIn : '');
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const contactInfoRegex = /^[0-9]{10,15}$/;
+
   const handleAvatarClick = (event) => {
     event.preventDefault(); 
     event.stopPropagation(); 
@@ -54,7 +56,9 @@ function ViewInvestorProfile({ profile }) {
     if (!firstName.trim()) newErrors.firstName = 'First Name is required';
     if (!lastName.trim()) newErrors.lastName = 'Last Name is required';
     if (!emailAddress.trim()) newErrors.emailAddress = 'Email Address is required';
+    else if (!emailRegex.test(emailAddress)) newErrors.emailAddress = 'Invalid email address format'; // Check if email is valid
     if (!contactInformation.trim()) newErrors.contactInformation = 'Contact Information is required';
+    else if (!contactInfoRegex.test(contactInformation)) newErrors.contactInformation = 'Enter a valid contact number (10-15 digits).'; // Check if contact information is valid
     if (!gender) newErrors.gender = 'Gender is required';
     if (!biography.trim()) newErrors.biography = 'Biography is required';
     if (!streetAddress.trim()) newErrors.streetAddress = 'Street Address is required';
@@ -232,21 +236,26 @@ function ViewInvestorProfile({ profile }) {
                                   sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                   error={!!errors.emailAddress}
                                 />
-                                {errors.emailAddress && (
+                                {errors.emailAddress && ( 
                                   <FormHelperText error>{errors.emailAddress}</FormHelperText>
                                 )}
                               </Grid>
 
                               <Grid item xs={6}>
                                 <label>Contact Information {RequiredAsterisk}</label>
-                                <TextField 
-                                  fullWidth 
-                                  variant="outlined" 
-                                  value={contactInformation} 
-                                  onChange={(e) => setContactInformation(e.target.value)} 
-                                  disabled={!isEditable} 
+                                <TextField
+                                  fullWidth
+                                  variant="outlined"
+                                  value={contactInformation}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (/^\d*$/.test(value) && (value.length <= 15)) { // Ensure only numbers and max length is 15
+                                      setContactInformation(value);
+                                    }
+                                  }}
+                                  disabled={!isEditable}
+                                  error={!!errors.contactInformation} // Show error if validation fails
                                   sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                  error={!!errors.contactInformation}
                                 />
                                 {errors.contactInformation && (
                                   <FormHelperText error>{errors.contactInformation}</FormHelperText>
@@ -320,39 +329,44 @@ function ViewInvestorProfile({ profile }) {
 
                               <Grid item xs={4}>
                                 <label>Country {RequiredAsterisk}</label>
-                                <Autocomplete 
+                                <Autocomplete
                                   options={countries}
                                   getOptionLabel={(option) => option.label}
                                   value={countries.find(c => c.label === country) || null}
                                   onChange={(event, newValue) => {
-                                    setCountry(newValue ? newValue.label : '');
+                                    if (isEditable) { // Only allow changes if it's editable
+                                      setCountry(newValue ? newValue.label : '');
+                                    }
                                   }}
                                   renderOption={(props, option) => (
                                     <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-                                      <img 
-                                        loading="lazy" 
+                                      <img
+                                        loading="lazy"
                                         width="20"
                                         src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
                                         srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                                        alt="" 
+                                        alt=""
                                       />
                                       {option.label} ({option.code}) +{option.phone}
                                     </Box>
                                   )}
                                   renderInput={(params) => (
-                                    <TextField 
-                                      {...params} 
-                                      fullWidth 
+                                    <TextField
+                                      {...params}
+                                      fullWidth
                                       variant="outlined"
                                       inputProps={{
                                         ...params.inputProps,
                                         autoComplete: 'new-password',
                                       }}
-                                      disabled={!isEditable}
+                                      disabled={!isEditable} // Disable input if not in edit mode
                                       error={!!errors.country}
                                     />
                                   )}
-                                  sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px'} }} 
+                                  disabled={!isEditable} // Disable the entire dropdown if not in edit mode
+                                  clearIcon={isEditable ? undefined : null} // Show clear icon only if editable
+                                  disableClearable={!isEditable} // Disable clearing when not in edit mode
+                                  sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                 />
                                 {errors.country && (
                                   <FormHelperText error>{errors.country}</FormHelperText>

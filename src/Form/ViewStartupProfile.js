@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import countries from '../static/countries';
 import industries from '../static/industries';
 import quantityOptions from '../static/quantityOptions';
-import { Box, Typography, TextField, Avatar, Select, MenuItem, Grid, FormControl, Button, Autocomplete, FormHelperText } from '@mui/material';
+import { Box, Typography, TextField, Avatar, Select, MenuItem, Grid, FormControl, FormHelperText, Button, Autocomplete} from '@mui/material';
 import axios from 'axios';
 
 function ViewStartupProfile({ profile }) {
@@ -45,6 +45,9 @@ function ViewStartupProfile({ profile }) {
     });
     const years = [...Array(51).keys()].map(i => new Date().getFullYear() - i);
 
+    const contactEmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneNumberRegex = /^[0-9]{10,15}$/;
+
     const handleAvatarClick = (event) => {
         event.preventDefault(); 
         event.stopPropagation();
@@ -73,8 +76,18 @@ function ViewStartupProfile({ profile }) {
         if (!foundedYear.trim()) newErrors.foundedYear = 'Founded Year is required';
         if (!typeOfCompany.trim()) newErrors.typeOfCompany = 'Type of Company is required';
         if (!numberOfEmployees.trim()) newErrors.numberOfEmployees = 'Number of Employees is required';
-        if (!phoneNumber.trim()) newErrors.phoneNumber = 'Contact Information is required';
-        if (!contactEmail.trim()) newErrors.contactEmail = 'Contact Email is required';
+        
+        if (!phoneNumber.trim()) 
+            newErrors.phoneNumber = 'Phone Number is required';
+        else if (!phoneNumberRegex.test(phoneNumber)) 
+            newErrors.phoneNumber = 'Enter a valid phone number (10-15 digits).';
+        
+        if (!contactEmail.trim()) {
+                newErrors.contactEmail = 'Contact Email is required';
+        } else if (!contactEmailRegex.test(contactEmail)) {
+                newErrors.contactEmail = 'Contact Email is invalid';
+        }
+
         if (!streetAddress.trim()) newErrors.streetAddress = 'Street Address is required';
         if (!country) newErrors.country = 'Country is required';
         if (!city.trim()) newErrors.city = 'City is required';
@@ -85,12 +98,12 @@ function ViewStartupProfile({ profile }) {
         return Object.keys(newErrors).length === 0;
       };
 
-      const handleUpdateProfile = async () => {
+    const handleUpdateProfile = async () => {
         if (isEditable) {
             if (!validateFields()) {
-                return; // Don't proceed if there are validation errors
+                return;
             }
-    
+
             setIsLoading(true);
     
             try {
@@ -323,23 +336,42 @@ function ViewStartupProfile({ profile }) {
 
                 <Grid item xs={4}>
                     <label>Phone Number {RequiredAsterisk}</label>
-                        <TextField fullWidth variant="outlined" type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} inputProps={{ min: 0, step: 1, pattern: "\\d{11}" }} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                            error={!!errors.phoneNumber}
-                            />
-                            {errors.phoneNumber && (
-                            <FormHelperText error>{errors.phoneNumber}</FormHelperText>
-                            )}
+                    <TextField 
+                        fullWidth 
+                        variant="outlined" 
+                        value={phoneNumber} 
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^\d*$/.test(value) && value.length <= 15) { 
+                                setPhoneNumber(value); 
+                                validateFields(); 
+                            }
+                        }} 
+                        disabled={!isEditable} 
+                        sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                        error={!!errors.phoneNumber}
+                    />
+                    {errors.phoneNumber && (
+                        <FormHelperText error>{errors.phoneNumber}</FormHelperText>
+                    )}
                 </Grid>
 
                 <Grid item xs={12}>
                     <label>Contact Email {RequiredAsterisk}</label>
-                        <TextField fullWidth variant="outlined" type='email' value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} disabled={!isEditable} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                            error={!!errors.contactEmail}
-                            />
-                            {errors.contactEmail && (
-                            <FormHelperText error>{errors.contactEmail}</FormHelperText>
-                            )}
-                    </Grid>
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        type='email'
+                        value={contactEmail}
+                        onChange={(e) => setContactEmail(e.target.value)} // Update value without validation on change
+                        error={!!errors.contactEmail}
+                        disabled={!isEditable}
+                        sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                    />
+                    {errors.contactEmail && (
+                        <FormHelperText error>{errors.contactEmail}</FormHelperText>
+                    )}
+                </Grid>
                 </Grid>
             </Grid>
         </Grid>
@@ -385,8 +417,11 @@ function ViewStartupProfile({ profile }) {
                                         autoComplete: 'new-password',
                                     }}
                                     disabled={!isEditable}
-                                    error={!!errors.country}/>
+                                    error={!!errors.country}
+                                />
                             )}
+                            clearIcon={isEditable ? undefined : null}
+                            disabled={!isEditable}
                             sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px'} }}
                         />
                         {errors.country && (
