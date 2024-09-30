@@ -64,16 +64,39 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
 
     const validateFields = () => {
         const newErrors = {};
-        const requiredFields = selectedProfileType === 'Startup Company'
-            ? ['companyName', 'companyDescription', 'foundedMonth', 'foundedDay', 'foundedYear', 'typeOfCompany', 'numberOfEmployees', 'phoneNumber', 'contactEmail', 'industry', 'streetAddress', 'country', 'city', 'state', 'postalCode']
-            : ['firstName', 'lastName', 'emailAddress', 'contactInformation', 'gender', 'biography', 'streetAddress', 'country', 'city', 'state', 'postalCode'];
-
-        requiredFields.forEach(field => {
-            if (!eval(field)) {
-                newErrors[field] = 'This field is required';
-            }
-        });
-
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const contactInfoRegex = /^[0-9]{10,15}$/;
+      
+        if (selectedProfileType === 'Startup Company') {
+          if (!companyName.trim()) newErrors.companyName = 'Company Name is required';
+          if (!companyDescription.trim()) newErrors.companyDescription = 'Company Description is required';
+          if (!foundedMonth) newErrors.foundedMonth = 'Founded Month is required';
+          if (!foundedDay) newErrors.foundedDay = 'Founded Day is required';
+          if (!foundedYear) newErrors.foundedYear = 'Founded Year is required';
+          if (!typeOfCompany) newErrors.typeOfCompany = 'Type of Company is required';
+          if (!numberOfEmployees) newErrors.numberOfEmployees = 'Number of Employees is required';
+          if (!phoneNumber.trim()) newErrors.phoneNumber = 'Phone Number is required';
+          else if (!contactInfoRegex.test(phoneNumber)) newErrors.phoneNumber = 'Enter a valid phone number (10-15 digits).';
+          if (!contactEmail.trim()) newErrors.contactEmail = 'Contact Email is required';
+          else if (!emailRegex.test(contactEmail)) newErrors.contactEmail = 'Invalid email address format';
+          if (!industry) newErrors.industry = 'Industry is required';
+        } else {
+          if (!firstName.trim()) newErrors.firstName = 'First Name is required';
+          if (!lastName.trim()) newErrors.lastName = 'Last Name is required';
+          if (!emailAddress.trim()) newErrors.emailAddress = 'Email Address is required';
+          else if (!emailRegex.test(emailAddress)) newErrors.emailAddress = 'Invalid email address format';
+          if (!contactInformation.trim()) newErrors.contactInformation = 'Contact Information is required';
+          else if (!contactInfoRegex.test(contactInformation)) newErrors.contactInformation = 'Enter a valid contact number (10-15 digits).';
+          if (!gender) newErrors.gender = 'Gender is required';
+          if (!biography.trim()) newErrors.biography = 'Biography is required';
+        }
+      
+        if (!streetAddress.trim()) newErrors.streetAddress = 'Street Address is required';
+        if (!country) newErrors.country = 'Country is required';
+        if (!city.trim()) newErrors.city = 'City is required';
+        if (!state.trim()) newErrors.state = 'Province/State is required';
+        if (!postalCode.trim()) newErrors.postalCode = 'Postal/Zip Code is required';
+      
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -84,82 +107,84 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
             return;
         }
   
-    const profileData = {
-      firstName, lastName, emailAddress, contactInformation, gender, biography,
-      streetAddress, country, city, state, postalCode, website, facebook, twitter, 
-      instagram, linkedIn, companyName, companyDescription, 
-      foundedDate: `${foundedMonth} ${foundedDay}, ${foundedYear}`,
-      typeOfCompany, numberOfEmployees, phoneNumber, contactEmail, industry,
-    };
-  
-    let endpoint;
-    let logMessage;
-    if (selectedProfileType === 'Startup Company') {
-      endpoint = 'http://localhost:3000/startups/create';
-      logMessage = `${companyName} profile created successfully.`;
-    } else if (selectedProfileType === 'Investor') {
-      endpoint = 'http://localhost:3000/investors/create';
-      logMessage = `${firstName} ${lastName} profile created successfully.`;
-    } else {
-      console.error('Invalid profile type:', selectedProfileType);
-      return;
-    }
-  
-    try {
-      await axios.post(endpoint, profileData, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-  
-      setSuccessDialogOpen(true);
-  
-      await logActivity(logMessage, `${selectedProfileType} profile`);
-  
-      setTimeout(() => {
-        setSuccessDialogOpen(false);
-        onSuccess();
-      }, 1500);
-    } catch (error) {
-      console.error('Failed to create profile:', error);
-    }
-};
+        const profileData = {
+            firstName, lastName, emailAddress, contactInformation, gender, biography,
+            streetAddress, country, city, state, postalCode, website, facebook, twitter, 
+            instagram, linkedIn, companyName, companyDescription, 
+            foundedDate: `${foundedMonth} ${foundedDay}, ${foundedYear}`,
+            typeOfCompany, numberOfEmployees, phoneNumber, contactEmail, industry,
+          };
+    
+          let endpoint;
+          let logMessage;
+          if (selectedProfileType === 'Startup Company') {
+            endpoint = 'http://localhost:3000/startups/create';
+            logMessage = `${companyName} profile created successfully.`;
+          } else if (selectedProfileType === 'Investor') {
+            endpoint = 'http://localhost:3000/investors/create';
+            logMessage = `${firstName} ${lastName} profile created successfully.`;
+          } else {
+            console.error('Invalid profile type:', selectedProfileType);
+            return;
+          }
+    
+          try {
+            await axios.post(endpoint, profileData, {
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              },
+            });
+    
+            setSuccessDialogOpen(true);
+    
+            await logActivity(logMessage, `${selectedProfileType} profile`);
+    
+            setTimeout(() => {
+              setSuccessDialogOpen(false);
+              onSuccess();
+            }, 1500);
+          } catch (error) {
+            console.error('Failed to create profile:', error);
+          }
+      };
 
-const handleInputChange = (e, type) => {
-    const value = e.target.value;
-  
-    const isValid = /^[A-Za-z0-9 ]*$/.test(value); // Adjust pattern for postal codes
-  
-    if (isValid) {
-      if (type === 'phoneNumber') {
-        setPhoneNumber(value);
-        setErrors((prevErrors) => ({ ...prevErrors, phoneNumber: '' })); // Clear error if valid
-      } else if (type === 'contactInformation') {
-        setContactInformation(value);
-        setErrors((prevErrors) => ({ ...prevErrors, contactInformation: '' })); // Clear error if valid
-      } else if (type === 'postalCode') {
-        setPostalCode(value);
-        setErrors((prevErrors) => ({ ...prevErrors, postalCode: '' })); // Clear error if valid
-      }
-    } else {
-      if (type === 'phoneNumber') {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          phoneNumber: 'Please enter a valid phone number.',
-        }));
-      } else if (type === 'contactInformation') {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          contactInformation: 'Please enter valid contact information.',
-        }));
-      } else if (type === 'postalCode') {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          postalCode: 'Please enter a valid postal code.',
-        }));
-      }
-    }
-  };
+      const handleInputChange = (e, type) => {
+        const value = e.target.value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const contactInfoRegex = /^[0-9]{0,15}$/;
+      
+        switch (type) {
+          case 'phoneNumber':
+          case 'contactInformation':
+            if (contactInfoRegex.test(value)) {
+              type === 'phoneNumber' ? setPhoneNumber(value) : setContactInformation(value);
+              setErrors(prev => ({ ...prev, [type]: '' }));
+            } else {
+              setErrors(prev => ({ ...prev, [type]: 'Enter numbers only (max 15 digits).' }));
+            }
+            break;
+          case 'emailAddress':
+          case 'contactEmail':
+            if (emailRegex.test(value) || value === '') {
+              type === 'emailAddress' ? setEmailAddress(value) : setContactEmail(value);
+              setErrors(prev => ({ ...prev, [type]: '' }));
+            } else {
+              setErrors(prev => ({ ...prev, [type]: 'Invalid email address format' }));
+            }
+            break;
+          case 'postalCode':
+            if (/^[A-Za-z0-9 ]*$/.test(value) || value === '') {
+              setPostalCode(value);
+              setErrors(prev => ({ ...prev, postalCode: '' }));
+            } else {
+              setErrors(prev => ({ ...prev, postalCode: 'Please enter a valid postal code.' }));
+            }
+            break;
+          default:
+            // Handle other input types if needed
+            break;
+        }
+    };
 
     return (
         <>
@@ -313,7 +338,7 @@ const handleInputChange = (e, type) => {
                                 error={!!errors.phoneNumber}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                 />
-                                {errors.typeOfCompany && (<FormHelperText error>{errors.typeOfCompany}</FormHelperText>)}
+                                {errors.phoneNumber && (<FormHelperText error>{errors.phoneNumber}</FormHelperText>)}
                         </Grid>
 
                         <Grid item xs={12}>
