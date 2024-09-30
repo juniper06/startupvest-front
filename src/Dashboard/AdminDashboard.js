@@ -333,7 +333,7 @@ const AdminDashboard = () => {
                           <TableCell colSpan={2}>Loading...</TableCell>
                         </TableRow>
                       ) : (
-                        users.slice(-1).map((user) => (
+                        users.slice(-5).map((user) => (
                           <TableRow key={user.id}>
                             <TableCell>{user.firstName} {user.lastName}</TableCell>
                             <TableCell>

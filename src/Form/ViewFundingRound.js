@@ -4,7 +4,6 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import fundingOptions from '../static/fundingOptions';
 import currencyOptions from '../static/currencyOptions';
-import { NumericFormat } from 'react-number-format';
 import axios from 'axios';
 
 function ViewFundingRound({ fundingRoundDetails }) {
@@ -26,7 +25,6 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const [formattedTargetFunding, setFormattedTargetFunding] = useState('');
     const [formattedPreMoneyValuation, setFormattedPreMoneyValuation] = useState('');
     const [formattedMinimumShare, setFormattedMinimumShare] = useState('');
-    const RequiredAsterisk = <span style={{ color: 'red' }}>*</span>;
 
     //CAP TABLE
     const [allInvestors, setAllInvestors] = useState([]);
@@ -77,7 +75,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
         console.log(allInvestors);
     }, []);
 
-    const validateFields = () => {
+    const validateYears = () => {
         const newErrors = {};
 
         // Check if closedYear is earlier than announcedYear
@@ -95,25 +93,13 @@ function ViewFundingRound({ fundingRoundDetails }) {
         }
 
         // Check if targetFunding and preMoneyValuation are empty
-        if (!targetFunding && targetFunding !== 0) {
-            newErrors.targetFunding = 'This field cannot be empty.';
-        }
-        
-        if (!preMoneyValuation && preMoneyValuation !== 0) {
-            newErrors.preMoneyValuation = 'This field cannot be empty.';
+        if (!targetFunding) {
+            newErrors.targetFunding = 'Target funding cannot be empty.';
         }
 
-        investors.forEach((investor, index) => {
-            if (!investor.name) {
-                newErrors[`investor${index}Name`] = 'Shareholder name cannot be empty.';
-            }
-            if (!investor.title) {
-                newErrors[`investor${index}Title`] = 'Title cannot be empty.';
-            }
-            if (!investor.shares) {
-                newErrors[`investor${index}Shares`] = 'Shares cannot be empty.';
-            }
-        });
+        if (!preMoneyValuation) {
+            newErrors.preMoneyValuation = 'Pre-money valuation cannot be empty.';
+        }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -134,9 +120,8 @@ function ViewFundingRound({ fundingRoundDetails }) {
     };
 
     const unformatNumber = (str) => {
-        if (str == null) return '';
-        return String(str).replace(/,/g, '');
-      };      
+        return str.replace(/,/g, '');
+    };
 
     const handleSharesChange = (index, value) => {
         const unformattedValue = unformatNumber(value);
@@ -151,12 +136,13 @@ function ViewFundingRound({ fundingRoundDetails }) {
         }
     };
 
-    const handleNumberChange = (setter) => (values) => {
-        const { floatValue } = values;
-        if (!isNaN(floatValue) || floatValue === '') {
-          setter(floatValue);
+    const handleNumberChange = (setter) => (e) => {
+        const value = e.target.value;
+        const unformattedValue = unformatNumber(value);
+        if (!isNaN(unformattedValue) || unformattedValue === '') {
+            setter(formatNumber(unformattedValue));
         }
-      };  
+    };
 
     // Initialize the investors state with existing investors
     useEffect(() => {
@@ -199,7 +185,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
     }, [fundingRoundDetails]);
 
     const handleUpdateFundingRound = async () => {
-        if (!validateFields()) {
+        if (!validateYears()) {
             return; 
         }
 
@@ -216,11 +202,11 @@ function ViewFundingRound({ fundingRoundDetails }) {
                     fundingType,
                     announcedDate: `${announcedYear}-${String(announcedMonth).padStart(2, '0')}-${String(announcedDay).padStart(2, '0')}`,
                     closedDate: `${closedYear}-${String(closedMonth).padStart(2, '0')}-${String(closedDay).padStart(2, '0')}`,
-                    moneyRaised: parseInt(formattedMoneyRaised), // Already unformatted
+                    moneyRaised: parseInt(unformatNumber(formattedMoneyRaised)),
                     moneyRaisedCurrency: currency,
-                    targetFunding: parseInt(targetFunding), // Raw value from state
-                    preMoneyValuation: parseInt(preMoneyValuation), // Raw value from state
-                    minimumShare: parseFloat(formattedMinimumShare),
+                    targetFunding: parseInt(unformatNumber(formattedTargetFunding)),
+                    preMoneyValuation: parseInt(unformatNumber(formattedPreMoneyValuation)),
+                    minimumShare: parseFloat(unformatNumber(formattedMinimumShare)),
                 },
                 investors: updatedInvestors
             };
@@ -271,7 +257,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                 <Grid item xs={12} sm={11}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                        <label>StartUp Name {RequiredAsterisk}</label>    
+                        <label>StartUp Name</label>    
                         <FormControl fullWidth variant="outlined">
                             <Select fullWidth variant="outlined"
                                 value={fundingRoundDetails ? fundingRoundDetails.startup.id : selectedStartupId}
@@ -296,7 +282,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                 <Grid item xs={12} sm={11}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                        <label>Funding Type {RequiredAsterisk}</label> 
+                        <label>Funding Type</label> 
                             <FormControl fullWidth variant="outlined">
                                 <Select fullWidth variant="outlined" value={fundingType} onChange={(e) => setFundingType(e.target.value)} disabled={!!fundingRoundDetails} sx={{ height: '45px' }}>
                                 {fundingOptions.map((option) => (
@@ -309,7 +295,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><b>Announced Date {RequiredAsterisk}</b><br />Month</label>
+                            <label><b>Announced Date</b><br />Month</label>
                             <FormControl fullWidth variant="outlined">
                                 <Select labelId="month-label" value={announcedMonth} onChange={(e) => setAnnouncedMonth(e.target.value)} sx={{ height: '45px' }} disabled>
                                     {months.map((month, index) => (
@@ -343,7 +329,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label><b>Closed on Date {RequiredAsterisk}</b><br />Month</label>
+                            <label><b>Closed on Date</b><br />Month</label>
                             <FormControl fullWidth variant="outlined" error={!!errors.closedMonth}>
                                 <Select labelId="month-label" value={closedMonth} onChange={(e) => setClosedMonth(e.target.value)} disabled={!isEditMode} sx={{ height: '45px' }}>
                                     {months.map((month, index) => (
@@ -399,31 +385,18 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         </Grid>
 
                         <Grid item xs={8}>
-                            <label>Target Funding Amount {RequiredAsterisk}</label>
-                            <NumericFormat
-                                customInput={TextField}
-                                fullWidth
-                                variant="outlined"
-                                value={targetFunding}
-                                onValueChange={(values) => {
-                                    const { floatValue } = values;
-                                    setTargetFunding(floatValue);
-                                    setErrors(prev => ({ ...prev, targetFunding: '' }));
-                                }}
-                                disabled={!isEditMode}
-                                thousandSeparator
-                                allowNegative={false}
-                                decimalScale={2}
+                            <label>Target Funding Amount</label>
+                            <TextField fullWidth variant="outlined" value={formattedTargetFunding}
+                                onChange={handleNumberChange(setFormattedTargetFunding)} disabled={!isEditMode}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                error={!!errors.targetFunding}
-                            />
+                                error={!!errors.targetFunding} />
                             {errors.targetFunding && (
-                                <FormHelperText error>{errors.targetFunding}</FormHelperText>
+                                <FormHelperText error sx={{color:'red'}}>{errors.targetFunding}</FormHelperText>
                             )}
                         </Grid>
 
                         <Grid item xs={4}>
-                            <label>Currency {RequiredAsterisk}</label>
+                            <label>Currency</label>
                             <Select fullWidth variant="outlined" value={currency}
                                 onChange={(e) => setCurrency(e.target.value)} disabled={!isEditMode}
                                 sx={{ height: '45px' }}>
@@ -436,26 +409,13 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <label>Pre-Money Valuation {RequiredAsterisk}</label>
-                            <NumericFormat
-                                customInput={TextField}
-                                fullWidth
-                                variant="outlined"
-                                value={preMoneyValuation}
-                                onValueChange={(values) => {
-                                    const { floatValue } = values;
-                                    setPreMoneyValuation(floatValue);
-                                    setErrors(prev => ({ ...prev, preMoneyValuation: '' }));
-                                }}
-                                disabled={!isEditMode}
-                                thousandSeparator
-                                allowNegative={false}
-                                decimalScale={2}
+                            <label>Pre-Money Valuation</label>
+                            <TextField fullWidth variant="outlined" value={formattedPreMoneyValuation}
+                                onChange={handleNumberChange(setFormattedPreMoneyValuation)} disabled={!isEditMode}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                error={!!errors.preMoneyValuation}
-                            />
+                                error={!!errors.preMoneyValuation}/>
                             {errors.preMoneyValuation && (
-                                <FormHelperText error>{errors.preMoneyValuation}</FormHelperText>
+                                <FormHelperText error sx={{color:'red'}}>{errors.preMoneyValuation}</FormHelperText>
                             )}
                         </Grid>
 
@@ -466,7 +426,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         </Grid>
                         
                         <Grid item xs={8}>
-                            <label>Price per Share {RequiredAsterisk}</label>
+                            <label>Price per Share</label>
                             <TextField fullWidth variant="outlined" value={formattedMinimumShare}
                                 onChange={handleNumberChange(setFormattedMinimumShare)} disabled
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}/>
@@ -496,61 +456,35 @@ function ViewFundingRound({ fundingRoundDetails }) {
                 {investors.map((investor, index) => (
                     <Grid item xs={12} sm={11} key={index}>
                         <Grid container spacing={2}>
-                        <Grid item xs={4}>
-                                <label>Shareholder Name {RequiredAsterisk}</label>
-                                <FormControl fullWidth variant="outlined" error={!!errors[`investor${index}Name`]}>
-                                    <Autocomplete
-                                        disablePortal
-                                        options={allInvestors}
+                            <Grid item xs={4}>
+                                <label>Shareholder Name</label>
+                                <FormControl fullWidth variant="outlined">
+                                    <Autocomplete disablePortal options={allInvestors}
                                         sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                         getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
                                         value={allInvestors.find(inv => inv.id === investor.name) || null}
-                                        onChange={(event, newValue) => {
-                                            handleInvestorChange(index, 'name', newValue ? newValue.id : '');
-                                            setErrors(prev => ({ ...prev, [`investor${index}Name`]: '' }));
-                                        }}
+                                        onChange={(event, newValue) => handleInvestorChange(index, 'name', newValue ? newValue.id : '')}
                                         disabled={!isEditMode}
                                         renderInput={(params) => (
-                                            <TextField {...params} variant="outlined" error={!!errors[`investor${index}Name`]} />
+                                        <TextField  {...params} variant="outlined" />
                                         )}
-                                        isOptionEqualToValue={(option, value) => option.id === value.id}
-                                    />
+                                        isOptionEqualToValue={(option, value) => option.id === value.id}/>
                                 </FormControl>
-                                {errors[`investor${index}Name`] && <FormHelperText error>{errors[`investor${index}Name`]}</FormHelperText>}
                             </Grid>
                             
                             <Grid item xs={4}>
-                                <label>Title {RequiredAsterisk}</label>
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    value={investor.title}
-                                    onChange={(e) => {
-                                        handleInvestorChange(index, 'title', e.target.value);
-                                        setErrors(prev => ({ ...prev, [`investor${index}Title`]: '' }));
-                                    }}
+                                <label>Title</label>
+                                <TextField fullWidth variant="outlined" value={investor.title}
+                                    onChange={(e) => handleInvestorChange(index, 'title', e.target.value)}
                                     disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                    error={!!errors[`investor${index}Title`]}
-                                />
-                                {errors[`investor${index}Title`] && <FormHelperText error>{errors[`investor${index}Title`]}</FormHelperText>}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                             </Grid>
                             
                             <Grid item xs={3.5}>
-                                <label>Shares {RequiredAsterisk}</label>
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    value={investor.formattedShares}
-                                    onChange={(e) => {
-                                        handleSharesChange(index, e.target.value);
-                                        setErrors(prev => ({ ...prev, [`investor${index}Shares`]: '' }));
-                                    }}
-                                    disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                    error={!!errors[`investor${index}Shares`]}
-                                />
-                                {errors[`investor${index}Shares`] && <FormHelperText error>{errors[`investor${index}Shares`]}</FormHelperText>}
+                                <label>Shares</label>
+                                <TextField fullWidth variant="outlined" value={investor.formattedShares}
+                                    onChange={(e) => handleSharesChange(index, e.target.value)} disabled={!isEditMode}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                             </Grid>
 
                             <Grid item xs={.5}>

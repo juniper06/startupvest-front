@@ -133,10 +133,6 @@ function Login() {
                   ),
                 }}/>
 
-              <Typography variant="body2" sx={styles.forgotPassword}>
-                Forgot password?
-              </Typography>
-
               <Button type="submit" variant="contained" color="primary" sx={styles.signInButton}>
                 Sign In
               </Button>
