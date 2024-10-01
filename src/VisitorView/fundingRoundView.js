@@ -120,7 +120,7 @@ function FundingRoundView() {
 
                       <Grid item xs={3}>
                         <Typography><strong>Announced Date</strong></Typography>
-                        <Typography variant="body1">{fundinground.announcedDate}</Typography>
+                        <Typography variant="body1">{formatDate(fundinground.announcedDate)}</Typography>
                       </Grid>
 
                       <Grid item xs={6}>
