@@ -28,38 +28,34 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/faqs" element={<Faqs />} />
 
-        {/* Components */}
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/companies" element={<Companies />} />
-        <Route path="/fundinground" element={<FundingRound />} />
-        <Route path="/people" element={<People />} />
+        {/* Protected routes for all authenticated users */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/companies" element={<Companies />} />
+          <Route path="/fundinground" element={<FundingRound />} />
+          <Route path="/people" element={<People />} />
+          <Route path="/startupprofile" element={<ViewStartupProfile />} />
+          <Route path="/investorprofile" element={<ViewInvestorProfile />} />
+          <Route path="/fundingprofile" element={<ViewFundingRound />} />
+          <Route path="/asCompanyOwnerOverview" element={<UserDashboard />} />
+          <Route path="/asInvestorOverview" element={<InvestorOverview />} />
+        </Route>
 
-        {/* Business Profile */}
-        <Route path="/startupprofile" element={<ViewStartupProfile />} />
-        <Route path="/investorprofile" element={<ViewInvestorProfile />} />
+        {/* Admin-only route */}
+        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+          <Route path="/admindashboard" element={<AdminDashboard />} />
+        </Route>
 
-        {/* Visitor View */}
+        {/* Visitor views - these remain unprotected */}
         <Route path="/startupview" element={<StartUpView />} />
         <Route path="/fundingroundview" element={<FundingRoundView />} />
         <Route path="/userview" element={<UserView />} />
-        <Route path="/startupprofile" element={<ViewStartupProfile />} />
-        <Route path="/investorprofile" element={<ViewInvestorProfile />} />
-        <Route path="/fundingprofile" element={<ViewFundingRound />} />
-
-        {/* Dashboard */}
-        <Route path="/admindashboard" element={<ProtectedRoute allowedRoles={['admin']}>
-                            <AdminDashboard />
-                        </ProtectedRoute>
-} />
-        <Route path="/asCompanyOwnerOverview" element={<UserDashboard />} />
-        <Route path="/asInvestorOverview" element={<InvestorOverview />} />
-
-        {/* Static */}
-        <Route path="/faqs" element={<Faqs />} />
       </Routes>
     </Router>
   );
