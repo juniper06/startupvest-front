@@ -138,31 +138,54 @@ function UserDashboard() {
 
     const fetchBusinessProfiles = async () => {
         try {
-            const responseStartups = await axios.get(`http://localhost:3000/startups`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
+            const [responseStartups, responseInvestors] = await Promise.all([
+                axios.get(`http://localhost:3000/startups`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                }),
+                axios.get(`http://localhost:3000/investors`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                })
+            ]);
     
-            const responseInvestors = await axios.get(`http://localhost:3000/investors`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
+            const fetchProfilePicture = async (id, type) => {
+                try {
+                    const response = await axios.get(`http://localhost:3000/profile-picture/${type}/${id}`, {
+                        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                        responseType: 'blob',
+                    });
+                    return URL.createObjectURL(response.data);
+                } catch (error) {
+                    console.error(`Failed to fetch profile picture for ${type} ID ${id}:`, error);
+                    return null;
+                }
+            };
     
-            const startups = responseStartups.data
+            const startups = await Promise.all(responseStartups.data
                 .filter((profile) => !profile.isDeleted)
-                .map((profile) => ({ ...profile, type: "Startup" }));
-            const investors = responseInvestors.data
-                .filter((profile) => !profile.isDeleted)
-                .map((profile) => ({ ...profile, type: "Investor" }));
+                .map(async (profile) => ({
+                    ...profile,
+                    type: "Startup",
+                    photo: await fetchProfilePicture(profile.id, 'startup')
+                })));
     
-            setBusinessProfiles([...investors, ...startups]);
-        
+            const investors = await Promise.all(responseInvestors.data
+                .filter((profile) => !profile.isDeleted)
+                .map(async (profile) => ({
+                    ...profile,
+                    type: "Investor",
+                    photo: await fetchProfilePicture(profile.id, 'investor')
+                })));
+    
+            const allProfiles = [...investors, ...startups];
+            setBusinessProfiles(allProfiles);
             setCompanyCount(startups.length);
-            return [...investors, ...startups]; 
+            return allProfiles;
         } catch (error) {
-             console.error('Failed to fetch business profiles:', error);
+            console.error('Failed to fetch business profiles:', error);
         }
     };
 

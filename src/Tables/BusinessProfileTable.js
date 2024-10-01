@@ -35,10 +35,10 @@ function BusinessProfileTable({
         <Table>
           <TableHead sx={tableStyles.head}>
             <TableRow>
-            <TableCell sx={{...tableStyles.cell, width: '10%' }}>
+            <TableCell sx={{...tableStyles.cell, width: '15%' }}>
             <Typography sx={tableStyles.typography}>Type</Typography>
               </TableCell>
-              <TableCell sx={{ width: '20%' }}>
+              <TableCell sx={{ width: '15%' }}>
                 <Typography sx={tableStyles.typography}>Company Name</Typography>
               </TableCell>
               <TableCell sx={{...tableStyles.cell, width: '30%' }}>
@@ -71,12 +71,27 @@ function BusinessProfileTable({
                     sx={tableStyles.row(profile.type)}>
                     <TableCell sx={tableStyles.cell}>{profile.type}</TableCell>
                     <TableCell sx={{ ...tableStyles.cell, display: 'flex', alignItems: 'center'}}>
-                      <Avatar sx={{ border: '2px rgba(0, 116, 144, 1) solid', borderRadius: 1, mr: 2, justifyContent: 'center' }} variant="square" />
+                      <Avatar 
+                        src={profile.photo} 
+                        alt={profile.type === 'Investor' ? `${profile.firstName} ${profile.lastName}` : profile.companyName}
+                        sx={{ 
+                          border: '2px rgba(0, 116, 144, 1) solid', 
+                          borderRadius: 1, 
+                          mr: 2, 
+                          width: 40, 
+                          height: 40 
+                        }} 
+                        variant="square"
+                      >
+                        {profile.type === 'Investor' 
+                          ? `${profile.firstName?.charAt(0) || ''}${profile.lastName?.charAt(0) || ''}`
+                          : profile.companyName?.charAt(0) || ''}
+                      </Avatar>
                       {profile && profile.type === 'Investor'
                         ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || '---'
                         : profile?.companyName || '---'}
                     </TableCell>
-                    <TableCell sx={tableStyles.cell}>811 Ucma Village, Cebu City, Philippines, 6000</TableCell>
+                    <TableCell sx={tableStyles.cell}>{profile.streetAddress}, {profile.city}, {profile.state}</TableCell>
                     <TableCell sx={tableStyles.cell}>{profile.industry}</TableCell>
                     <TableCell sx={tableStyles.cell}>
                       {profile.type === 'Investor' ? (
