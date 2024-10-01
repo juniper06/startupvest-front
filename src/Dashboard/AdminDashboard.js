@@ -35,8 +35,11 @@ const AdminDashboard = () => {
           })
         ]);
 
+        // Filter out admin users
+        const nonAdminUsers = usersResponse.data.filter(user => user.role !== 'admin');
+
         const usersWithPhotos = await Promise.all(
-          usersResponse.data.map(async (user) => {
+          nonAdminUsers.map(async (user) => {
             try {
               const profilePicResponse = await axios.get(`http://localhost:3000/profile-picture/${user.id}`, {
                 responseType: 'blob',
