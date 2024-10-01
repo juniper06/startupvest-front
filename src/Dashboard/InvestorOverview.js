@@ -4,9 +4,9 @@ import Navbar from "../Navbar/Navbar";
 import { tableStyles } from '../styles/tables';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { StatsBox, TopInfoText, TopInfoTitle } from '../styles/UserDashboard';
+import { TopInfoBox, TopInfoText, TopInfoTitle } from '../styles/UserDashboard';
 
-const drawerWidth = 310;
+const drawerWidth = 285;
 
 function createData(id, transactionName, startupName, fundingType, moneyRaised, moneyRaisedCurrency,
   announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, minimumShare, startupId, totalShares) {
@@ -60,6 +60,14 @@ function InvestorOverview() {
   const handleChangePage = (event, value) => {
     setPage(value);
   };
+
+  useEffect(() => {
+    document.body.style.backgroundColor = "#f5f5f5";
+  
+    return () => {
+      document.body.style.backgroundColor = "";
+    };
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -200,70 +208,74 @@ function InvestorOverview() {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%'}}>
       <Navbar />
       <Toolbar />
 
-      <Grid container spacing={3} sx={{ paddingLeft: `${drawerWidth}px`, pt: '50px', pr: '50px' }}>
+      <Grid container spacing={2} sx={{ paddingLeft: `${drawerWidth}px`, pt: 8, pr: 6,}}>
         <Grid item xs={12}>
-          <Typography variant="h5" sx={{ mb: 2, ml: -3 }}>
+          <Typography variant="h5" color='#232023'>
             Investor Dashboard
           </Typography>
         </Grid>
 
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={3}>
-            <StatsBox>
-              <TopInfoText>Top Company Invested</TopInfoText>
-              <TopInfoTitle>{topInvestedCompany}</TopInfoTitle>
-            </StatsBox>
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <StatsBox>
-              <TopInfoText>Investment Count</TopInfoText>
-              <TopInfoTitle>{rows.length}</TopInfoTitle>
-            </StatsBox>
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <StatsBox>
-              <TopInfoText>Average Investment Size</TopInfoText>
-              <TopInfoTitle>₱{averageInvestmentSize.toLocaleString('en-PH', { maximumFractionDigits: 2 })}</TopInfoTitle>
-            </StatsBox>
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <StatsBox>
-              <TopInfoText>Total Investment Amount</TopInfoText>
-              <TopInfoTitle>₱{totalInvestmentAmount.toLocaleString('en-PH', { maximumFractionDigits: 2 })}</TopInfoTitle>
-            </StatsBox>
-          </Grid>
+        <Grid item xs={12} sm={3}>
+          <TopInfoBox>
+            <TopInfoText>Top Company Invested</TopInfoText>
+            <TopInfoTitle>{topInvestedCompany}</TopInfoTitle>
+          </TopInfoBox>
+        </Grid>
+
+        <Grid item xs={12} sm={3}>
+          <TopInfoBox>
+            <TopInfoText>Investment Count</TopInfoText>
+            <TopInfoTitle>{rows.length}</TopInfoTitle>
+          </TopInfoBox>
+        </Grid>
+
+        <Grid item xs={12} sm={3}>
+          <TopInfoBox>
+            <TopInfoText>Average Investment Size</TopInfoText>
+            <TopInfoTitle>₱{averageInvestmentSize.toLocaleString('en-PH', { maximumFractionDigits: 2 })}</TopInfoTitle>
+          </TopInfoBox>
+        </Grid>
+
+        <Grid item xs={12} sm={3}>
+          <TopInfoBox>
+            <TopInfoText>Total Investment Amount</TopInfoText>
+            <TopInfoTitle>₱{totalInvestmentAmount.toLocaleString('en-PH', { maximumFractionDigits: 2 })}</TopInfoTitle>
+          </TopInfoBox>
         </Grid>
       </Grid>
 
       {/* Tabs Section */}
-      <Box sx={{ width: '100%', pl: '285px', pr: '50px', pt: 3, mb: 5 }}>
+      <Box sx={{ width: '100%', pl: '285px', pr: '50px', pt: 3}}>
         <Tabs value={tabIndex} onChange={handleChangeTab} aria-label="Investor Profile Tabs">
           <Tab label="My Investments" />
         </Tabs>
 
         {tabIndex === 0 && (
-          <Box sx={{ mt: 3 }}>
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} sx={{ mt: 3 }}>
               <Table sx={tableStyles} aria-label="investments table">
                 <TableHead sx={tableStyles.head}>
                   <TableRow>
                     <TableCell>
                       <Typography sx={{ fontWeight: 'bold', color: 'white', ml: 10 }}>Company Name</Typography>
                     </TableCell>
-                    <TableCell sx={tableStyles.cell}>
+
+                    <TableCell sx={tableStyles.head}>
                       <Typography sx={tableStyles.typography}>Type</Typography>
                     </TableCell>
-                    <TableCell sx={tableStyles.cell}>
+
+                    <TableCell sx={tableStyles.head}>
                       <Typography sx={tableStyles.typography}>Shares</Typography>
                     </TableCell>
-                    <TableCell sx={tableStyles.cell}>
+
+                    <TableCell sx={tableStyles.head}>
                       <Typography sx={tableStyles.typography}>Total Share</Typography>
                     </TableCell>
-                    <TableCell sx={tableStyles.cell}>
+
+                    <TableCell sx={tableStyles.head}>
                       <Typography sx={tableStyles.typography}>Percentage</Typography>
                     </TableCell>
                   </TableRow>
@@ -272,7 +284,8 @@ function InvestorOverview() {
                 <TableBody>
                   {filteredRows.length > 0 ? (
                     filteredRows.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((row) => (
-                      <TableRow key={row.id} hover onClick={() => handleRowClick(row)}>
+                      <TableRow key={row.id} hover onClick={() => handleRowClick(row)}
+                        sx={{ cursor: 'pointer'}}>
                           <TableCell sx={{ ...tableStyles.cell, width: '30%'}}>
                           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', ml: 5 }}>
                             <Avatar src={profilePictures[row.startupId]} sx={{ mr: 2, border: '2px rgba(0, 116, 144, 1) solid', borderRadius: 1 }} variant='square' />
@@ -330,7 +343,6 @@ function InvestorOverview() {
                 </Stack>
               )}
             </TableContainer>
-          </Box>
         )}
       </Box>
     </Box>

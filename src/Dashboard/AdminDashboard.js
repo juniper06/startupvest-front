@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Paper, Typography, Toolbar, CssBaseline, AppBar, Box, IconButton, Avatar, Table,
-  TableBody, TableCell, TableContainer, TableHead, TableRow, Select, MenuItem } from '@mui/material';
+  TableBody, TableCell, TableContainer, TableHead, TableRow, Select, MenuItem, 
+  TextField} from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import axios from 'axios';
 
-import { StatsBox, TopInfoText, TopInfoTitle, } from '../styles/UserDashboard';
+import { TopInfoBox, TopInfoText, TopInfoTitle, } from '../styles/UserDashboard';
 
 const AdminDashboard = () => {
   const [filter, setFilter] = useState('all');
@@ -259,7 +260,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div style={{ marginTop: '78px' }}>
+    <div style={{ marginTop: '78px', background: '#f5f5f5' }}>
       <CssBaseline />
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, background: 'rgba(0, 116, 144, 1)' }}>
         <Toolbar>
@@ -274,35 +275,41 @@ const AdminDashboard = () => {
         </Toolbar>
       </AppBar>
 
-      <Grid container spacing={2} sx={{ padding: 2 }}>
+      <Grid container spacing={3} sx={{ padding: 6 }}>
         <Grid item xs={12}>
-          <Grid container spacing={2} sx={{ textAlign: 'center' }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12}>
+              <Typography variant="h5" color='#232023'>
+                Admin Dashboard
+              </Typography>
+            </Grid>
+
             <Grid item xs={12} sm={3}>
-              <StatsBox>
+              <TopInfoBox>
                 <TopInfoText>Total Users</TopInfoText>
                 <TopInfoTitle>{loading ? 'Loading...' : users.length}</TopInfoTitle>
-              </StatsBox>
+              </TopInfoBox>
             </Grid>
 
             <Grid item xs={12} sm={3}>
-              <StatsBox>
+              <TopInfoBox>
                 <TopInfoText>Total Startups</TopInfoText>
                 <TopInfoTitle>{loading ? 'Loading...' : startups.length}</TopInfoTitle>
-              </StatsBox>
+              </TopInfoBox>
             </Grid>
 
             <Grid item xs={12} sm={3}>
-              <StatsBox>
+              <TopInfoBox>
                 <TopInfoText>Total Investors</TopInfoText>
                 <TopInfoTitle>{loading ? 'Loading...' : investors.length}</TopInfoTitle>
-              </StatsBox>
+              </TopInfoBox>
             </Grid>
 
             <Grid item xs={12} sm={3}>
-              <StatsBox>
+              <TopInfoBox>
                 <TopInfoText>Total Funding Rounds</TopInfoText>
                 <TopInfoTitle>{loading ? 'Loading...' : fundingRounds.length}</TopInfoTitle>
-              </StatsBox>
+              </TopInfoBox>
             </Grid>
           </Grid>
         </Grid>
@@ -311,15 +318,15 @@ const AdminDashboard = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} md={8}>
               <Paper elevation={3} style={{ padding: '20px', height: '100%' }}>
-                <Typography variant="h5">User Growth Graph</Typography>
+                <Typography variant="h6" color="#007490">User Growth Graph</Typography>
                 {/* Add your graph component here */}
               </Paper>
             </Grid>
 
             <Grid item xs={12} md={4}>
               <Paper elevation={3} style={{ padding: '20px', height: '100%' }}>
-                <Typography variant="h5">Latest User</Typography>
-                <TableContainer component={Paper} sx={{ mt: 3 }}>
+                <Typography variant="h6" color="#007490">Latest User</Typography>
+                <TableContainer component={Paper} sx={{ mt: 1 }}>
                   <Table>
                     <TableHead>
                       <TableRow sx={{ backgroundColor: '#005b6e'}}>
@@ -333,7 +340,10 @@ const AdminDashboard = () => {
                           <TableCell colSpan={2}>Loading...</TableCell>
                         </TableRow>
                       ) : (
-                        users.slice(-5).map((user) => (
+                      users
+                        .sort((a, b) => b.id - a.id)
+                        .slice(0, 5)
+                        .map((user) => (
                           <TableRow key={user.id}>
                             <TableCell>{user.firstName} {user.lastName}</TableCell>
                             <TableCell>
@@ -355,7 +365,7 @@ const AdminDashboard = () => {
             <Grid item xs={12}>
               <Paper elevation={3} style={{ padding: '20px', textAlign: 'center' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-                <Typography variant="h5">
+                <Typography variant="h6">
                     {filter === 'all' ? 'User' : filter === 'startup' ? 'Startup' : filter === 'investor' ? 'Investor' : 'Funding Round'} Information
                   </Typography>
                   <Select value={filter} onChange={(e) => setFilter(e.target.value)} sx={{ minWidth: 150 }}>

@@ -172,9 +172,9 @@ function StartUpView() {
               </Grid>
 
               {/* Right Box with Dynamic Links */}
-              <Grid item xs={12} md={2.5}>
+              <Grid item xs={12} md={4}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <Box sx={{ p: 4, borderRadius: 2, mr: 5 }}>
+                  <Box sx={{ borderRadius: 2, pt: 2, pr: 5, pl: 6.3 }}>
                     <Stack spacing={2}>
                       <Button
                         variant="outlined"

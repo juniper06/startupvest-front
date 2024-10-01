@@ -9,7 +9,6 @@ function CapTable({
   businessProfiles = [],
   selectedStartupCapTable,
   handleStartupChangeCapTable,
-  // fundingRounds = []
 }) {
   // Local state for pagination
   const [localCapPage, setLocalCapPage] = useState(capPage);
@@ -37,16 +36,12 @@ function CapTable({
   const startIndex = localCapPage * localCapRowsPerPage;
   const endIndex = startIndex + localCapRowsPerPage;
 
-  // Slice the filtered data to display only the rows for the current page
+  // Pagination
   const paginatedCapTables = filteredCapTables.slice(startIndex, endIndex);
-
-  // Calculate total pages for pagination
   const totalPageCount = Math.ceil(filteredCapTables.length / localCapRowsPerPage);
 
   // Calculate totals
   const totalShares = paginatedCapTables.reduce((sum, table) => sum + (table.totalShares || 0), 0);
-  const totalPercentage = paginatedCapTables.reduce((sum, table) => sum + (table.percentage || 0), 0);
-  const averagePercentage = paginatedCapTables.length > 0 ? (totalPercentage / paginatedCapTables.length).toFixed(2) : 'N/A';
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -71,16 +66,16 @@ function CapTable({
         <Table>
           <TableHead sx={tableStyles.head}>
             <TableRow>
-              <TableCell sx={tableStyles.cell}>
+              <TableCell sx={tableStyles.head}>
                 <Typography sx={tableStyles.typography}>Shareholder's Name</Typography>
               </TableCell>
-              <TableCell sx={tableStyles.cell}>
+              <TableCell sx={tableStyles.head}>
                 <Typography sx={tableStyles.typography}>Title</Typography>
               </TableCell>
-              <TableCell sx={tableStyles.cell}>
+              <TableCell sx={tableStyles.head}>
               <Typography sx={tableStyles.typography}>Total Share</Typography>
               </TableCell>
-              <TableCell sx={tableStyles.cell}>
+              <TableCell sx={tableStyles.head}>
                 <Typography sx={tableStyles.typography}>Percentage</Typography>
               </TableCell>
             </TableRow>
@@ -89,11 +84,10 @@ function CapTable({
           <TableBody>
             {paginatedCapTables.length > 0 ? (
               paginatedCapTables.map((table) => (
-                <TableRow key={table.id}>
+                <TableRow key={table.id} sx={{ background: 'white' }}>
                   <TableCell sx={tableStyles.cell}>{table.name}</TableCell>
                   <TableCell sx={tableStyles.cell}>{table.title}</TableCell>
                   <TableCell sx={tableStyles.cell}>
-                    {/* {fundingCurrency}  */}
                     {Number(table.totalShares).toLocaleString()}
                   </TableCell>
                   <TableCell sx={tableStyles.cell}>
@@ -102,7 +96,7 @@ function CapTable({
                 </TableRow>
               ))
             ) : (
-              <TableRow>
+              <TableRow sx={{ background: 'white' }}>
                 <TableCell colSpan={4} sx={tableStyles.cell}>
                   <Typography variant="body2" color="textSecondary">No investors found in this company.</Typography>
                 </TableCell>
@@ -113,7 +107,7 @@ function CapTable({
           {/* Total Row */}
           {paginatedCapTables.length > 0 && (
             <TableBody>
-              <TableRow>
+              <TableRow sx={{ background: 'white' }}>
                 <TableCell sx={tableStyles.cell}></TableCell>
                 <TableCell sx={tableStyles.cell}><Typography sx={{ fontWeight: 'bold' }}>Total</Typography></TableCell>
                 <TableCell sx={{...tableStyles.cell, fontWeight: 'bold'}}>{Number(totalShares).toLocaleString()}</TableCell>
@@ -124,7 +118,7 @@ function CapTable({
           )}
         </Table>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2, background: 'white' }}>
           <Pagination count={totalPageCount} page={localCapPage + 1} onChange={handleCapPageChange} size="medium"/>
         </Box>
       </TableContainer>

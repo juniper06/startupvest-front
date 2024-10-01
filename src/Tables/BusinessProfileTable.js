@@ -35,19 +35,20 @@ function BusinessProfileTable({
         <Table>
           <TableHead sx={tableStyles.head}>
             <TableRow>
-            <TableCell sx={{...tableStyles.cell, width: '15%' }}>
-            <Typography sx={tableStyles.typography}>Type</Typography>
+              <TableCell sx={{...tableStyles.cell, width: '5%' }}>
+                <Typography sx={tableStyles.typography}>Type</Typography>
               </TableCell>
-              <TableCell sx={{ width: '15%' }}>
-                <Typography sx={tableStyles.typography}>Company Name</Typography>
-              </TableCell>
-              <TableCell sx={{...tableStyles.cell, width: '30%' }}>
-              <Typography sx={tableStyles.typography}>Location</Typography>
-              </TableCell>
-              <TableCell sx={tableStyles.cell}>
+              <TableCell sx={{ ...tableStyles.cell, width: '10%'}}>
                 <Typography sx={tableStyles.typography}>Industry</Typography>
               </TableCell>
-              <TableCell sx={{...tableStyles.cell, width: '18%' }}>
+              <TableCell sx={{ width: '20%' }}>
+                <Typography sx={tableStyles.typography}>Investor/Company Name</Typography>
+              </TableCell>
+              <TableCell sx={{ width: '20%' }}>
+              <Typography sx={tableStyles.typography}>Location</Typography>
+              </TableCell>
+
+              <TableCell sx={{...tableStyles.cell, width: '12%' }}>
               <Typography sx={tableStyles.typography}>Action</Typography>
               </TableCell>
             </TableRow>
@@ -55,7 +56,7 @@ function BusinessProfileTable({
 
           <TableBody>
             {businessProfiles.length === 0 ? (
-              <TableRow>
+              <TableRow sx={{ background: 'white' }}>
                 <TableCell colSpan={5} sx={{ textAlign: 'center' }}>
                   <Typography variant="body2" color="textSecondary">
                     No profiles available in this user.
@@ -68,8 +69,9 @@ function BusinessProfileTable({
                 .map((profile) => (
                   <TableRow
                     key={`${profile.type}-${profile.id}`}
-                    sx={tableStyles.row(profile.type)}>
+                    sx={{ backgroundColor: profile.type === 'Investor' ? 'rgba(0, 116, 144, 0.1)' : 'white', }}>
                     <TableCell sx={tableStyles.cell}>{profile.type}</TableCell>
+                    <TableCell sx={tableStyles.cell}>{profile.industry}</TableCell>
                     <TableCell sx={{ ...tableStyles.cell, display: 'flex', alignItems: 'center'}}>
                       <Avatar 
                         src={profile.photo} 
@@ -81,8 +83,7 @@ function BusinessProfileTable({
                           width: 40, 
                           height: 40 
                         }} 
-                        variant="square"
-                      >
+                        variant="square">
                         {profile.type === 'Investor' 
                           ? `${profile.firstName?.charAt(0) || ''}${profile.lastName?.charAt(0) || ''}`
                           : profile.companyName?.charAt(0) || ''}
@@ -91,8 +92,7 @@ function BusinessProfileTable({
                         ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || '---'
                         : profile?.companyName || '---'}
                     </TableCell>
-                    <TableCell sx={tableStyles.cell}>{profile.streetAddress}, {profile.city}, {profile.state}</TableCell>
-                    <TableCell sx={tableStyles.cell}>{profile.industry}</TableCell>
+                    <TableCell>{profile.streetAddress}, {profile.city}, {profile.state}</TableCell>
                     <TableCell sx={tableStyles.cell}>
                       {profile.type === 'Investor' ? (
                         <Button variant="contained" sx={{ width: 'calc(100% - 10px)', ...tableStyles.actionButton }}
@@ -118,7 +118,7 @@ function BusinessProfileTable({
           </TableBody>
         </Table>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2, background: 'white'  }}>
           <Pagination count={totalPageCount} page={page} onChange={handleChangePage} size="medium" />
         </Box>
       </TableContainer>
