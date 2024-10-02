@@ -3,12 +3,13 @@ import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
 import { tableStyles } from '../styles/tables';
 
 function CapTable({
-  filteredCapTables = [],
+  filteredCapTables,
   capRowsPerPage = 5,
   capPage = 0,
   businessProfiles = [],
   selectedStartupCapTable,
   handleStartupChangeCapTable,
+  fundingRound,
 }) {
   // Local state for pagination
   const [localCapPage, setLocalCapPage] = useState(capPage);
@@ -32,13 +33,16 @@ function CapTable({
     setLocalCapPage(newPage - 1);
   };
 
+  // Safely access investors array
+  const investors = filteredCapTables?.investors || [];
+
   // Calculate the index of the first and last row to display
   const startIndex = localCapPage * localCapRowsPerPage;
   const endIndex = startIndex + localCapRowsPerPage;
 
   // Pagination
-  const paginatedCapTables = filteredCapTables.slice(startIndex, endIndex);
-  const totalPageCount = Math.ceil(filteredCapTables.length / localCapRowsPerPage);
+  const paginatedCapTables = investors.slice(startIndex, endIndex);
+  const totalPageCount = Math.ceil(investors.length / localCapRowsPerPage);
 
   // Calculate totals
   const totalShares = paginatedCapTables.reduce((sum, table) => sum + (table.shares || 0), 0);
@@ -46,21 +50,21 @@ function CapTable({
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', mb: 2 }}>
-        <Typography variant="subtitle1" sx={{ pr: 1 }}>By Company:</Typography>
-        <FormControl sx={{ minWidth: 200 }}>
-          <Select
-            value={filterValue}
-            onChange={handleFilterChange}
-            variant="outlined"
-            sx={{ minWidth: 150, height: '45px', background: 'white' }}>
-            <MenuItem value="Select Company" disabled>Select Company</MenuItem>
-            {businessProfiles.filter(profile => profile.type === 'Startup').map((startup) => (
-              <MenuItem key={startup.id} value={startup.id}>{startup.companyName}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
+    <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', mb: 2 }}>
+      <Typography variant="subtitle1" sx={{ pr: 1 }}>By Company:</Typography>
+      <FormControl sx={{ minWidth: 200 }}>
+        <Select
+          value={filterValue}
+          onChange={handleFilterChange}
+          variant="outlined"
+          sx={{ minWidth: 150, height: '45px', background: 'white' }}>
+          <MenuItem value="Select Company" disabled>Select Company</MenuItem>
+          {businessProfiles.filter(profile => profile.type === 'Startup').map((startup) => (
+            <MenuItem key={startup.id} value={startup.id}>{startup.companyName}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Box>
 
       {/* Table */}
       <TableContainer sx={tableStyles.container}>
@@ -93,7 +97,7 @@ function CapTable({
                   <TableCell sx={tableStyles.cell}>{table.title}</TableCell>
                   <TableCell sx={tableStyles.cell}>{table.shares}</TableCell>
                   <TableCell sx={tableStyles.cell}>
-                    {Number(table.totalShares).toLocaleString()}
+                    {fundingRound.moneyRaisedCurrency} {Number(table.totalShares).toLocaleString()}
                   </TableCell>
                   <TableCell sx={tableStyles.cell}>
                    {table.percentage !== undefined ? table.percentage.toFixed(2) : 'N/A'}%
@@ -102,7 +106,7 @@ function CapTable({
               ))
             ) : (
               <TableRow sx={{ background: 'white' }}>
-                <TableCell colSpan={4} sx={tableStyles.cell}>
+                <TableCell colSpan={5} sx={tableStyles.cell}>
                   <Typography variant="body2" color="textSecondary">No investors found in this company.</Typography>
                 </TableCell>
               </TableRow>
@@ -116,9 +120,8 @@ function CapTable({
                 <TableCell sx={tableStyles.cell}></TableCell>
                 <TableCell sx={tableStyles.cell}><Typography sx={{ fontWeight: 'bold' }}>Total</Typography></TableCell>
                 <TableCell sx={{...tableStyles.cell, fontWeight: 'bold'}}>{Number(totalShares).toLocaleString()}</TableCell>
-                <TableCell sx={{...tableStyles.cell, fontWeight: 'bold'}}>{Number(totalTotalShares).toLocaleString()}</TableCell>
+                <TableCell sx={{...tableStyles.cell, fontWeight: 'bold'}}>{fundingRound.moneyRaisedCurrency} {Number(totalTotalShares).toLocaleString()}</TableCell>
                 <TableCell sx={tableStyles.cell}></TableCell>
-
               </TableRow>
             </TableBody>
           )}
