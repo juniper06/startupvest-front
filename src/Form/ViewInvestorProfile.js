@@ -53,19 +53,21 @@ function ViewInvestorProfile({ profile }) {
 
   const validateFields = () => {
     const newErrors = {};
-    if (!firstName.trim()) newErrors.firstName = 'First Name is required';
-    if (!lastName.trim()) newErrors.lastName = 'Last Name is required';
-    if (!emailAddress.trim()) newErrors.emailAddress = 'Email Address is required';
+    const emptyFieldError = 'This field cannot be empty';
+
+    if (!firstName.trim()) newErrors.firstName = emptyFieldError;
+    if (!lastName.trim()) newErrors.lastName = emptyFieldError;
+    if (!emailAddress.trim()) newErrors.emailAddress = emptyFieldError;
     else if (!emailRegex.test(emailAddress)) newErrors.emailAddress = 'Invalid email address format'; // Check if email is valid
-    if (!contactInformation.trim()) newErrors.contactInformation = 'Contact Information is required';
+    if (!contactInformation.trim()) newErrors.contactInformation = emptyFieldError;
     else if (!contactInfoRegex.test(contactInformation)) newErrors.contactInformation = 'Enter a valid contact number (10-15 digits).'; // Check if contact information is valid
-    if (!gender) newErrors.gender = 'Gender is required';
-    if (!biography.trim()) newErrors.biography = 'Biography is required';
-    if (!streetAddress.trim()) newErrors.streetAddress = 'Street Address is required';
-    if (!country) newErrors.country = 'Country is required';
-    if (!city.trim()) newErrors.city = 'City is required';
-    if (!state.trim()) newErrors.state = 'Province/State is required';
-    if (!postalCode.trim()) newErrors.postalCode = 'Postal/Zip Code is required';
+    if (!gender) newErrors.gender = emptyFieldError;
+    if (!biography.trim()) newErrors.biography = emptyFieldError;
+    if (!streetAddress.trim()) newErrors.streetAddress = emptyFieldError;
+    if (!country) newErrors.country = emptyFieldError;
+    if (!city.trim()) newErrors.city = emptyFieldError;
+    if (!state.trim()) newErrors.state = emptyFieldError;
+    if (!postalCode.trim()) newErrors.postalCode = emptyFieldError;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;

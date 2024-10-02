@@ -69,31 +69,34 @@ function ViewStartupProfile({ profile }) {
 
     const validateFields = () => {
         const newErrors = {};
-        if (!companyName.trim()) newErrors.companyName = 'Company Name is required';
-        if (!companyDescription.trim()) newErrors.companyDescription = 'Company Description is required';
-        if (!foundedMonth.trim()) newErrors.foundedMonth = 'Founded Month is required';
-        if (!foundedDay.trim()) newErrors.foundedDay = 'Founded Day is required';
-        if (!foundedYear.trim()) newErrors.foundedYear = 'Founded Year is required';
-        if (!typeOfCompany.trim()) newErrors.typeOfCompany = 'Type of Company is required';
-        if (!numberOfEmployees.trim()) newErrors.numberOfEmployees = 'Number of Employees is required';
+        const emptyFieldError = 'This field cannot be empty';
+
+        if (!companyName.trim()) newErrors.companyName = emptyFieldError;
+        if (!companyDescription.trim()) newErrors.companyDescription = emptyFieldError;
+        if (!foundedMonth.trim()) newErrors.foundedMonth = emptyFieldError;
+        if (!foundedDay.trim()) newErrors.foundedDay = emptyFieldError;
+        if (!foundedYear.trim()) newErrors.foundedYear = emptyFieldError;
+        if (!typeOfCompany.trim()) newErrors.typeOfCompany = emptyFieldError;
+        if (!numberOfEmployees.trim()) newErrors.numberOfEmployees = emptyFieldError;
+        
         
         if (!phoneNumber.trim()) 
-            newErrors.phoneNumber = 'Phone Number is required';
+            newErrors.phoneNumber = emptyFieldError;
         else if (!phoneNumberRegex.test(phoneNumber)) 
             newErrors.phoneNumber = 'Enter a valid phone number (10-15 digits).';
         
         if (!contactEmail.trim()) {
-                newErrors.contactEmail = 'Contact Email is required';
+                newErrors.contactEmail = emptyFieldError;
         } else if (!contactEmailRegex.test(contactEmail)) {
                 newErrors.contactEmail = 'Contact Email is invalid';
         }
 
-        if (!streetAddress.trim()) newErrors.streetAddress = 'Street Address is required';
-        if (!country) newErrors.country = 'Country is required';
-        if (!city.trim()) newErrors.city = 'City is required';
-        if (!state.trim()) newErrors.state = 'Province/State is required';
-        if (!postalCode.trim()) newErrors.postalCode = 'Postal/Zip Code is required';
-    
+        if (!streetAddress.trim()) newErrors.streetAddress = emptyFieldError;
+        if (!country) newErrors.country = emptyFieldError;
+        if (!city.trim()) newErrors.city = emptyFieldError;
+        if (!state.trim()) newErrors.state = emptyFieldError;
+        if (!postalCode.trim()) newErrors.postalCode = emptyFieldError;
+        
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
       };
@@ -473,8 +476,8 @@ function ViewStartupProfile({ profile }) {
                 <FormControl fullWidth variant="outlined">
                     <Autocomplete
                         freeSolo
-                        options={industries} 
-                        value={industry} 
+                        options={industries}
+                        value={industry}
                         onChange={(event, newValue) => setIndustry(newValue)} // Updates when an item is selected
                         onInputChange={(event, newInputValue) => setIndustry(newInputValue)} // Updates on typing for custom values
                         renderInput={(params) => (
@@ -482,8 +485,11 @@ function ViewStartupProfile({ profile }) {
                                 {...params}
                                 variant="outlined"
                                 disabled={!isEditable} // Controls whether the input is editable
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
-                        )}/>
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} 
+                            />
+                        )}
+                    />
+                    
                 </FormControl>
             </Grid>
         </Grid>

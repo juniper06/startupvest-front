@@ -5,6 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import fundingOptions from '../static/fundingOptions';
 import currencyOptions from '../static/currencyOptions';
 import axios from 'axios';
+import { Form } from 'react-router-dom';
 
 function ViewFundingRound({ fundingRoundDetails }) {
     const [startups, setStartups] = useState([]);
@@ -90,9 +91,10 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
     const validateForm = () => {
         const newErrors = {};
+        const emptyFieldError = 'This field cannot be empty';
 
         // Validate closed date
-        if (!closedMonth) newErrors.closedMonth = 'Closed month is required.';
+        if (!closedMonth) newErrors.closedMonth = "Closed month is required.";
         if (!closedDay) newErrors.closedDay = 'Closed day is required.';
         if (!closedYear) newErrors.closedYear = 'Closed year is required.';
 
@@ -111,14 +113,14 @@ function ViewFundingRound({ fundingRoundDetails }) {
         }
 
         // Validate target funding and pre-money valuation
-        if (!formattedTargetFunding) newErrors.targetFunding = 'Target funding is required.';
-        if (!formattedPreMoneyValuation) newErrors.preMoneyValuation = 'Pre-money valuation is required.';
+        if (!formattedTargetFunding) newErrors.targetFunding = emptyFieldError;
+        if (!formattedPreMoneyValuation) newErrors.preMoneyValuation = emptyFieldError;
 
         // Validate investors
         const investorErrors = investors.map(investor => ({
-            name: !investor.name ? 'Shareholder name is required.' : '',
-            title: !investor.title ? 'Title is required.' : '',
-            shares: !investor.shares ? 'Shares is required.' : ''
+            name: !investor.name ? emptyFieldError : '',
+            title: !investor.title ? emptyFieldError : '',
+            shares: !investor.shares ? emptyFieldError : ''
         }));
 
         if (investorErrors.some(error => error.name || error.title || error.shares)) {
@@ -319,8 +321,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         <Grid item xs={4}>
                         <label>Funding Type</label> 
                             <FormControl fullWidth variant="outlined">
-                                <Select fullWidth variant="outlined" value={fundingType} disabled={!isEditMode}
-                                onChange={(e) => setFundingType(e.target.value)} sx={{ height: '45px' }}>
+                                <Select fullWidth variant="outlined" value={fundingType} disabled={!isEditMode} onChange={(e) => setFundingType(e.target.value)} sx={{ height: '45px' }} >
                                 {fundingOptions.map((option) => (
                                     <MenuItem key={option.value} value={option.value}>
                                         {option.label}
@@ -430,12 +431,15 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         </Grid>
 
                         <Grid item xs={8}>
+                            <FormControl fullWidth variant="outlined">
                             <label>Target Funding Amount</label>
                             <TextField fullWidth variant="outlined" value={formattedTargetFunding}
                                 onChange={handleNumberChange(setFormattedTargetFunding, 'targetFunding')} disabled={!isEditMode}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                 error={!!errors.targetFunding}
-                                helperText={errors.targetFunding} />
+                            />
+                            </FormControl>
+                            {errors.targetFunding && <FormHelperText sx={{ color: 'red' }}>{errors.targetFunding}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
@@ -452,12 +456,15 @@ function ViewFundingRound({ fundingRoundDetails }) {
                         </Grid>
 
                         <Grid item xs={12}>
+                            <FormControl fullWidth variant="outlined">
                             <label>Pre-Money Valuation</label>
                             <TextField fullWidth variant="outlined" value={formattedPreMoneyValuation}
                                 onChange={handleNumberChange(setFormattedPreMoneyValuation, 'preMoneyValuation')} disabled={!isEditMode}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                 error={!!errors.preMoneyValuation}
-                                helperText={errors.preMoneyValuation} />
+                            />
+                            </FormControl>
+                            {errors.preMoneyValuation && <FormHelperText sx={{ color: 'red' }}>{errors.preMoneyValuation}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={12}>
@@ -507,35 +514,42 @@ function ViewFundingRound({ fundingRoundDetails }) {
                                         onChange={(event, newValue) => handleInvestorChange(index, 'name', newValue ? newValue.id : '')}
                                         disabled={!isEditMode}
                                         renderInput={(params) => (
-                                        <TextField {...params} variant="outlined" error={!!(errors.investors && errors.investors[index] && errors.investors[index].name)}
-                                            helperText={errors.investors && errors.investors[index] && errors.investors[index].name} />
+                                        <TextField {...params} variant="outlined" error={!!(errors.investors && errors.investors[index] && errors.investors[index].name)} />
                                         )}
-                                        isOptionEqualToValue={(option, value) => option.id === value.id}/>
+                                        isOptionEqualToValue={(option, value) => option.id === value.id}
+                                    />
                                 </FormControl>
+                                {errors.investors && errors.investors[index] && errors.investors[index].name && <FormHelperText sx={{ color: 'red' }}>{errors.investors[index].name}</FormHelperText>}
                             </Grid>
                             
                             <Grid item xs={4}>
+                                <formControl fullWidth variant="outlined">
                                 <label>Title</label>
                                 <TextField fullWidth variant="outlined" value={investor.title}
                                     onChange={(e) => handleInvestorChange(index, 'title', e.target.value)}
                                     disabled={!isEditMode}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                     error={!!(errors.investors && errors.investors[index] && errors.investors[index].title)}
-                                    helperText={errors.investors && errors.investors[index] && errors.investors[index].title} />
+                                />
+                                </formControl>
+                                {errors.investors && errors.investors[index] && errors.investors[index].title && <FormHelperText sx={{ color: 'red' }}>{errors.investors[index].title}</FormHelperText>}
                             </Grid>
 
                             <Grid item xs={3.5}>
+                                <formControl fullWidth variant="outlined">
                                 <label>Shares</label>
                                 <TextField fullWidth variant="outlined" value={investor.formattedShares}
                                     onChange={(e) => handleSharesChange(index, e.target.value)} disabled={!isEditMode}
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                     error={!!(errors.investors && errors.investors[index] && errors.investors[index].shares)}
-                                    helperText={errors.investors && errors.investors[index] && errors.investors[index].shares} />
+                                />
+                                </formControl>
+                                {errors.investors && errors.investors[index] && errors.investors[index].shares && <FormHelperText sx={{ color: 'red' }}>{errors.investors[index].shares}</FormHelperText>}
                             </Grid>
 
                             <Grid item xs={.5}>
                             {investors.length > 0 && (
-                                <IconButton sx={{ mt: 3 }} color="error" aria-label="remove"
+                                <IconButton sx={{ mt: 3}} color="error" aria-label="remove"
                                     disabled={!isEditMode} value={investor.id}
                                     onClick={() => handleRemoveInvestor(index)}>
                                     <CloseIcon />
