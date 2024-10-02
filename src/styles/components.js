@@ -12,7 +12,7 @@ export const StyledAvatar = styled(Avatar)(({ theme }) => ({
   width: 40,
   height: 40,
   marginRight: theme.spacing(2),
-  border: `2px solid ${theme.palette.primary.main}`,
+  border: `2px solid #007490`,
 }));
 
 export const StyledTableRow = styled(TableRow)(({ theme }) => ({
