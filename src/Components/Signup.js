@@ -15,6 +15,7 @@ function Signup() {
     const [passwordError, setPasswordError] = useState('');
     const [email, setEmail] = useState('');
     const [genderError, setGenderError] = useState('');
+    const [contactNumber, setContactNumber] = useState('');
     const [contactNumberError, setContactNumberError] = useState('');
     const [openDialog, setOpenDialog] = useState(false);
     const [role, setRole] = useState('user');
@@ -157,8 +158,22 @@ function Signup() {
                                     placeholder="09362632344"
                                     type="tel"
                                     required
+                                    value={contactNumber}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (/^\d*$/.test(value) && value.length <= 15) {
+                                            setContactNumber(value);
+                                        }
+                                        // Error handling for validation
+                                        if (!/^\d{10,15}$/.test(value)) {
+                                            setContactNumberError('Enter a valid number (10-15 digits).');
+                                        } else {
+                                            setContactNumberError('');
+                                        }
+                                    }}
                                     sx={styles.textField}
-                                    error={!!contactNumberError} />
+                                    error={!!contactNumberError}
+                                />
                                 {contactNumberError && (
                                     <Typography sx={styles.errorText}>{contactNumberError}</Typography>
                                 )}
