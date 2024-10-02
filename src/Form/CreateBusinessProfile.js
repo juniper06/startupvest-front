@@ -358,20 +358,21 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                 <Grid container spacing={3} sx={{ ml: 2 }}>
                     <Grid item xs={12} sm={11.4}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12}>  
-                            <FormControl fullWidth variant="outlined">
-                                <Select
-                                    error={!!errors.industry}
-                                    labelId="industry-label"
-                                    value={industry}
-                                    onChange={(e) => setIndustry(e.target.value)}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} >
-                                    {industries.map(industry => (
-                                        <MenuItem key={industry} value={industry}>{industry}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                            {errors.industry && (<FormHelperText error>{errors.industry}</FormHelperText>)}
+                            <Grid item xs={12}>
+                                <FormControl fullWidth variant="outlined">
+                                    <Autocomplete
+                                        freeSolo // Enables users to input custom values
+                                        options={industries} // Use the predefined list of industries
+                                        value={industry} // Current value
+                                        onChange={(event, newValue) => setIndustry(newValue)} // Updates when an item is selected
+                                        onInputChange={(event, newInputValue) => setIndustry(newInputValue)} 
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                variant="outlined"
+                                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                                        )} />
+                                </FormControl>
                             </Grid>
                         </Grid>
                     </Grid>
