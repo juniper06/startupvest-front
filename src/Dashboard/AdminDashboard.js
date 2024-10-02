@@ -4,6 +4,7 @@ import { Grid, Paper, Typography, Toolbar, CssBaseline, AppBar, Box, IconButton,
   TextField} from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import axios from 'axios';
+import UserRegistrationsChart from '../Components/ChartAdmin';
 
 import { TopInfoBox, TopInfoText, TopInfoTitle, } from '../styles/UserDashboard';
 
@@ -322,7 +323,7 @@ const AdminDashboard = () => {
             <Grid item xs={12} md={8}>
               <Paper elevation={3} style={{ padding: '20px', height: '100%' }}>
                 <Typography variant="h6" color="#007490">User Growth Graph</Typography>
-                {/* Add your graph component here */}
+                <UserRegistrationsChart/>
               </Paper>
             </Grid>
 

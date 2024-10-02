@@ -13,6 +13,7 @@ function CreateFundingRound({ onSuccess }) {
     const [startups, setStartups] = useState([]);
     const [selectedStartupId, setSelectedStartupId] = useState('');
     const [fundingType, setFundingType] = useState('');
+    const [fundingName, setFundingName] = useState('');
     const [announcedMonth, setAnnouncedMonth] = useState('');
     const [announcedDay, setAnnouncedDay] = useState('');
     const [announcedYear, setAnnouncedYear] = useState('');
@@ -87,6 +88,7 @@ function CreateFundingRound({ onSuccess }) {
         const newErrors = {};
 
         if (!selectedStartupId) newErrors.selectedStartupId = requiredErrorMessage;
+        if (!fundingName) newErrors.fundingName = requiredErrorMessage;
         if (!fundingType) newErrors.fundingType = requiredErrorMessage;
         if (!announcedMonth) newErrors.announcedMonth = requiredErrorMessage;
         if (!announcedDay) newErrors.announcedDay = requiredErrorMessage;
@@ -134,6 +136,7 @@ function CreateFundingRound({ onSuccess }) {
             const formData = {
                 startup: { id: selectedStartupId },
                 fundingType,
+                fundingName,
                 announcedDate: `${announcedYear}-${announcedMonth}-${announcedDay}`,
                 closedDate: `${closedYear}-${closedMonth}-${closedDay}`,
                 moneyRaised,
@@ -246,7 +249,7 @@ function CreateFundingRound({ onSuccess }) {
                     <Grid container spacing={2}>
                         <Grid item xs={8}>
                             <label>Funding Name</label>
-                            <TextField fullWidth variant="outlined" 
+                            <TextField fullWidth variant="outlined" value={fundingName} onChange={(e) => setFundingName(e.target.value)}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                         </Grid>
 

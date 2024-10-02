@@ -9,6 +9,7 @@ import axios from 'axios';
 function ViewFundingRound({ fundingRoundDetails }) {
     const [startups, setStartups] = useState([]);
     const [selectedStartupId, setSelectedStartupId] = useState('');
+    const [fundingName, setFundingName] = useState('');
     const [fundingType, setFundingType] = useState('');
     const [announcedMonth, setAnnouncedMonth] = useState('');
     const [announcedDay, setAnnouncedDay] = useState('');
@@ -174,6 +175,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
     useEffect(() => {
         if (fundingRoundDetails) {
             setSelectedStartupId(fundingRoundDetails.startup.id);
+            setFundingName(fundingRoundDetails.fundingName);
             setFundingType(fundingRoundDetails.fundingType);
             setTargetFunding(fundingRoundDetails.targetFunding);
             setPreMoneyValuation(fundingRoundDetails.preMoneyValuation);
@@ -225,6 +227,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
             const updatePayload = {
                 updateData: {
                     startup: { id: selectedStartupId },
+                    fundingName,
                     fundingType,
                     announcedDate: `${announcedYear}-${String(announcedMonth).padStart(2, '0')}-${String(announcedDay).padStart(2, '0')}`,
                     closedDate: `${closedYear}-${String(closedMonth).padStart(2, '0')}-${String(closedDay).padStart(2, '0')}`,
@@ -309,14 +312,15 @@ function ViewFundingRound({ fundingRoundDetails }) {
                     <Grid container spacing={2}>
                         <Grid item xs={8}>
                             <label>Funding Name</label>
-                            <TextField fullWidth variant="outlined" 
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                            <TextField fullWidth variant="outlined" value={fundingName} onChange={(e) => setFundingName(e.target.value)} 
+                                disabled={!!fundingRoundDetails} sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                         </Grid>
 
                         <Grid item xs={4}>
                         <label>Funding Type</label> 
                             <FormControl fullWidth variant="outlined">
-                                <Select fullWidth variant="outlined" value={fundingType} onChange={(e) => setFundingType(e.target.value)} sx={{ height: '45px' }}>
+                                <Select fullWidth variant="outlined" value={fundingType} disabled={!isEditMode}
+                                onChange={(e) => setFundingType(e.target.value)} sx={{ height: '45px' }}>
                                 {fundingOptions.map((option) => (
                                     <MenuItem key={option.value} value={option.value}>
                                         {option.label}
