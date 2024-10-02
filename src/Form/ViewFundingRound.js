@@ -38,12 +38,6 @@ function ViewFundingRound({ fundingRoundDetails }) {
     });
     const years = [...Array(51).keys()].map(i => new Date().getFullYear() + i);
 
-    const isClosedDatePassed = () => {
-        const today = new Date();
-        const closedDate = new Date(closedYear, closedMonth - 1, closedDay); 
-        return closedDate < today;
-    };
-
     useEffect(() => {
         console.log('Received Funding Round Details:', fundingRoundDetails); 
     }, [fundingRoundDetails]);
@@ -313,10 +307,16 @@ function ViewFundingRound({ fundingRoundDetails }) {
             <Grid container spacing={3} sx={{ ml: 2 }}>
                 <Grid item xs={12} sm={11}>
                     <Grid container spacing={2}>
-                        <Grid item xs={12}>
+                        <Grid item xs={8}>
+                            <label>Funding Name</label>
+                            <TextField fullWidth variant="outlined" 
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                        </Grid>
+
+                        <Grid item xs={4}>
                         <label>Funding Type</label> 
                             <FormControl fullWidth variant="outlined">
-                                <Select fullWidth variant="outlined" value={fundingType} onChange={(e) => setFundingType(e.target.value)} disabled={!!fundingRoundDetails} sx={{ height: '45px' }}>
+                                <Select fullWidth variant="outlined" value={fundingType} onChange={(e) => setFundingType(e.target.value)} sx={{ height: '45px' }}>
                                 {fundingOptions.map((option) => (
                                     <MenuItem key={option.value} value={option.value}>
                                         {option.label}
@@ -548,16 +548,13 @@ function ViewFundingRound({ fundingRoundDetails }) {
                 </Grid>
             </Grid>
 
-            {!isClosedDatePassed() && (
-                <Button variant="contained"
-                    sx={{ width: 150, background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }} style={{ marginLeft: '80%' }}
-                    onClick={() => {
-                        const action = isEditMode ? handleUpdateFundingRound : toggleEditMode;
-                        action(); action();
-                    }}>
+            <Button variant="contained"
+                sx={{ width: 150, background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)',backgroundColor: 'rgba(0, 116, 144, 1)' } }} style={{ marginLeft: '80%' }}
+                onClick={() => {
+                    const action = isEditMode ? handleUpdateFundingRound : toggleEditMode;
+                    action(); action();}}>
                     {isEditMode ? 'Save Changes' : 'Edit Funding'}
                 </Button>
-            )}
         </Box>
     );
 }
