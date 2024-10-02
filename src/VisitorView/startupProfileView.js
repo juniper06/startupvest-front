@@ -68,7 +68,7 @@ function StartUpView() {
   const state = startup.state === "N/A" ? "" : startup.state || "";
 
   return (
-    <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px`, mt: 5, }}>
+    <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px`, mt: 5 }}>
       <Navbar />
       <Toolbar />
 
@@ -113,7 +113,7 @@ function StartUpView() {
           <Box component="main" sx={{ display: 'flex', flexGrow: 1, width: '100%', overflowX: 'hidden' }}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={8}>
-                <Box sx={{ background: 'white', display: 'flex', flexDirection: 'column', borderRadius: 2, pl: 5,}}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, pl: 5,}}>
                   <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'rgba(0, 116, 144, 1)', mb: 1 }}>
                     Overview
                   </Typography>
@@ -257,51 +257,99 @@ function StartUpView() {
           </Box>
         )}
 
-{selectedPage === 'financial' && (
-  <Box component="main" sx={{ display: 'flex', flexGrow: 1, width: '100%', overflowX: 'hidden', p: 2 }}>
-    <Grid container spacing={4}>
-      <Grid item xs={12} md={4}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2}}>
-          {/* Total Investment Card */}
-          <Card sx={{ p: 3, boxShadow: 2, borderRadius: 2 }}>
-            <Typography sx={{ mb: 1 }}><strong>Total Investment</strong></Typography>
-            <Divider sx={{ mb: 2 }} />
-              <Typography>Total Funds Raised: P50,000</Typography>
-          </Card>
+        {selectedPage === 'financial' && (
+          <Box  component="main" 
+            sx={{  display: 'flex',  flexGrow: 1,  width: '100%',  overflowX: 'hidden',  pl: 3,  pr: 5, pb: 4 }}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={4}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  {/* Total Investment Card */}
+                  <Card  sx={{  p: 3,  boxShadow: 3,  borderRadius: 2,  transition: '0.3s', border: '1px solid #007490',
+                      '&:hover': { 
+                        boxShadow: 6, 
+                        transform: 'translateY(-5px)',
+                        border: '1px solid #005f73',
+                      } }}>
+                    <Typography sx={{  mb: 1, fontSize: '1.25rem',  fontWeight: 'bold',  color: 'rgba(0, 116, 144, 1)' }}>
+                      Total Investment
+                    </Typography>
 
-          {/* Number of Funding Rounds Card */}
-          <Card sx={{ p: 3, boxShadow: 2, borderRadius: 2 }}>
-            <Typography sx={{ mb: 1 }}><strong>Funding Rounds</strong></Typography>
-            <Divider sx={{ mb: 2 }} />
-              <Typography>Total Number of Rounds: 2</Typography>
-          </Card>
+                    <Divider sx={{ mb: 2 }} />
 
-          {/* Investors */}
-          <Card sx={{ p: 3, boxShadow: 2, borderRadius: 2 }}>
-            <Typography sx={{ mb: 1 }}><strong>Investors</strong></Typography>
-            <Divider sx={{ mb: 2 }} />
-              <Typography>Total Number of Investors: 10</Typography>
-              <Typography variant="body1">Lead Investor: XYZ Capital</Typography>
-              <Typography variant="body1">Repeat Investor: Rob Borinaga</Typography>
-          </Card>
-        </Box>
-      </Grid>
+                    <Typography sx={{ fontSize: '1.1rem', color: '#333' }}>
+                      Total Funds Raised: <strong>P50,000</strong>
+                    </Typography>
 
-      {/* Graph Section */}
-      <Grid item xs={12} md={8}>
-        <Card sx={{ p: 3, boxShadow: 2, borderRadius: 2, height: '100%' }}>
-          <Typography variant="h6" sx={{ mb: 2 }}><strong>Funding Progress Chart</strong></Typography>
-          <Divider sx={{ mb: 2 }} />
-          <Box sx={{ width: '100%' }}>
-            {companyId && <MonthlyFundingChart companyId={companyId} />}
+                    <Typography variant="body2" sx={{ color: 'gray', mt: 1 }}>
+                      *Funds raised through various funding rounds.
+                    </Typography>
+                  </Card>
+
+                  {/* Number of Funding Rounds Card */}
+                  <Card  sx={{  p: 3,  boxShadow: 3,  borderRadius: 2,  transition: '0.3s', border: '1px solid #007490',
+                      '&:hover': { 
+                        boxShadow: 6, 
+                        transform: 'translateY(-5px)' // Slight lift on hover
+                      } }}>
+                    <Typography sx={{  mb: 1, fontSize: '1.25rem',  fontWeight: 'bold',  color: 'rgba(0, 116, 144, 1)' }}>
+                      Funding Rounds
+                    </Typography>
+
+                    <Divider sx={{ mb: 2 }} />
+
+                    <Typography sx={{ fontSize: '1.1rem', color: '#333' }}>
+                      Total Number of Rounds: <strong>2</strong>
+                    </Typography>
+
+                    <Typography variant="body2" sx={{ color: 'gray', mt: 1 }}>
+                      *Includes all rounds since inception.
+                    </Typography>
+                  </Card>
+
+                  {/* Investors Card */}
+                  <Card  sx={{  p: 3,  boxShadow: 3,  borderRadius: 2,  transition: '0.3s', border: '1px solid #007490',
+                      '&:hover': { 
+                        boxShadow: 6, 
+                        transform: 'translateY(-5px)'
+                      } }}>
+                    <Typography sx={{  mb: 1, fontSize: '1.25rem',  fontWeight: 'bold',  color: 'rgba(0, 116, 144, 1)' }}>
+                      Investors
+                    </Typography>
+
+                    <Divider sx={{ mb: 2 }} />
+
+                    <Typography sx={{ fontSize: '1.1rem', color: '#333' }}>
+                      Total Number of Investors: <strong>10</strong>
+                    </Typography>
+
+                    <Typography variant="body2" sx={{ color: 'gray', mt: 1 }}>
+                      Lead Investor: <strong>XYZ Capital</strong>
+                    </Typography>
+
+                    <Typography variant="body2" sx={{ color: 'gray' }}>
+                      Repeat Investor: <strong>Rob Borinaga</strong>
+                    </Typography>
+                  </Card>
+                </Box>
+              </Grid>
+
+              {/* Graph Section */}
+              <Grid item xs={12} md={8}>
+                <Card  sx={{  boxShadow: 3, borderRadius: 2, height: '100%', p: 3, border: '1px solid #007490' }}>
+                  <Typography sx={{ ml: 3, fontSize: '1.2rem', fontWeight: 'bold', color: 'rgba(0, 116, 144, 1)' }}>
+                    Funding Progress Chart
+                  </Typography>
+
+                  <Divider sx={{ mb: 2, mt: 1 }} />
+
+                  <Box sx={{ width: '100%' }}>
+                    {companyId && <MonthlyFundingChart companyId={companyId} />}
+                  </Box>
+                </Card>
+              </Grid>
+            </Grid>
           </Box>
-        </Card>
-      </Grid>
-      
-    </Grid>
-  </Box>
-)}
-
+        )}
       </Box>
     </Box>
   );
