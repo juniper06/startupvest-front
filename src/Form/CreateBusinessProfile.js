@@ -350,33 +350,6 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                         </Grid>
                     </Grid>
                 </Grid>
-
-                <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
-                    Industry {RequiredAsterisk}
-                </Typography>
-
-                <Grid container spacing={3} sx={{ ml: 2 }}>
-                    <Grid item xs={12} sm={11.4}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <FormControl fullWidth variant="outlined">
-                                    <Autocomplete
-                                        freeSolo // Enables users to input custom values
-                                        options={industries} // Use the predefined list of industries
-                                        value={industry} // Current value
-                                        onChange={(event, newValue) => setIndustry(newValue)} // Updates when an item is selected
-                                        onInputChange={(event, newInputValue) => setIndustry(newInputValue)} 
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                variant="outlined"
-                                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
-                                        )} />
-                                </FormControl>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
                 
                 <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
                     Location
@@ -471,6 +444,35 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                                     sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' }}}
                                     />
                                     {errors.postalCode && (<FormHelperText error>{errors.postalCode}</FormHelperText>)}
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+                <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
+                    Industry {RequiredAsterisk}
+                </Typography>
+
+                <Grid container spacing={3} sx={{ ml: 2 }}>
+                    <Grid item xs={12} sm={11.4}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth variant="outlined">
+                                    <Autocomplete
+                                        freeSolo 
+                                        options={industries} 
+                                        value={industry}
+                                        onChange={(event, newValue) => setIndustry(newValue)}
+                                        onInputChange={(event, newInputValue) => setIndustry(newInputValue)} 
+                                        error={!!errors.industry}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                variant="outlined"
+                                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                                        )} />
+                                </FormControl>
+                                {errors.industry && (<FormHelperText error>{errors.industry}</FormHelperText>)}
                             </Grid>
                         </Grid>
                     </Grid>
