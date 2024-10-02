@@ -218,7 +218,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
         if (!validateForm()) {
             return; 
         }
-
+    
         try {
             const updatedInvestors = investors.map(investor => ({
                 id: investor.name, 
@@ -249,10 +249,15 @@ function ViewFundingRound({ fundingRoundDetails }) {
             });
     
             console.log('Funding round updated successfully:', response.data);
+            setIsEditMode(false);
+    
+            // Add a small delay before refreshing to ensure the server has processed the update
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
         } catch (error) {
             console.error('Failed to update funding round:', error);
         }
-        setIsEditMode(false);
     };
 
     const handleRemoveInvestor = async (index) => {

@@ -25,7 +25,7 @@ function ViewStartupProfile({ profile }) {
     const [numberOfEmployees, setNumberOfEmployees] = useState(profile ? profile.numberOfEmployees : '');
     const [phoneNumber, setPhoneNumber] = useState(profile ? profile.phoneNumber : '');
     const [contactEmail, setContactEmail] = useState(profile ? profile.contactEmail : '');
-    const [industry, setIndustry] = useState(profile ? profile.industry : '');
+    const [industry, setIndustry] = useState(profile && profile.industry ? profile.industry : '');
     const [companyName, setCompanyName] = useState(profile ? profile.companyName : '');
     const [companyDescription, setCompanyDescription] = useState(profile ? profile.companyDescription : '');
     const [streetAddress, setStreetAddress] = useState(profile ? profile.streetAddress : '');
@@ -96,6 +96,10 @@ function ViewStartupProfile({ profile }) {
         if (!city.trim()) newErrors.city = emptyFieldError;
         if (!state.trim()) newErrors.state = emptyFieldError;
         if (!postalCode.trim()) newErrors.postalCode = emptyFieldError;
+
+        if (!industry || industry.trim() === '') {
+            newErrors.industry = emptyFieldError;
+        }
         
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -468,34 +472,44 @@ function ViewStartupProfile({ profile }) {
         <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
             Industry
         </Typography>
-
         <Grid container spacing={3} sx={{ ml: 2 }}>
-    <Grid item xs={12} sm={11.4}>
-        <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <FormControl fullWidth variant="outlined">
-                    <Autocomplete
-                        freeSolo
-                        options={industries}
-                        value={industry}
-                        onChange={(event, newValue) => setIndustry(newValue)} // Updates when an item is selected
-                        onInputChange={(event, newInputValue) => setIndustry(newInputValue)} // Updates on typing for custom values
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                variant="outlined"
-                                disabled={!isEditable} // Controls whether the input is editable
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} 
+            <Grid item xs={12} sm={11.4}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <FormControl fullWidth variant="outlined">
+                            <Autocomplete
+                                freeSolo
+                                options={industries}
+                                value={industry || ''}
+                                onChange={(event, newValue) => {
+                                    if (isEditable) {
+                                        setIndustry(newValue || '');
+                                    }
+                                }}
+                                onInputChange={(event, newInputValue) => {
+                                    if (isEditable) {
+                                        setIndustry(newInputValue || '');
+                                    }
+                                }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        variant="outlined"
+                                        disabled={!isEditable}
+                                        error={!!errors.industry}
+                                        sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                    />
+                                )}
+                                readOnly={!isEditable}
                             />
-                        )}
-                    />
-                    
-                </FormControl>
+                        </FormControl>
+                        {errors.industry && (
+                                <FormHelperText error>{errors.industry}</FormHelperText>
+                            )}
+                    </Grid>
+                </Grid>
             </Grid>
         </Grid>
-    </Grid>
-</Grid>
-
         <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
             Links
         </Typography>

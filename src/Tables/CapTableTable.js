@@ -41,7 +41,8 @@ function CapTable({
   const totalPageCount = Math.ceil(filteredCapTables.length / localCapRowsPerPage);
 
   // Calculate totals
-  const totalShares = paginatedCapTables.reduce((sum, table) => sum + (table.totalShares || 0), 0);
+  const totalShares = paginatedCapTables.reduce((sum, table) => sum + (table.shares || 0), 0);
+  const totalTotalShares = paginatedCapTables.reduce((sum, table) => sum + (table.totalShares || 0), 0);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -73,6 +74,9 @@ function CapTable({
                 <Typography sx={tableStyles.typography}>Title</Typography>
               </TableCell>
               <TableCell sx={tableStyles.head}>
+                <Typography sx={tableStyles.typography}>Shares</Typography>
+              </TableCell>
+              <TableCell sx={tableStyles.head}>
               <Typography sx={tableStyles.typography}>Total Share</Typography>
               </TableCell>
               <TableCell sx={tableStyles.head}>
@@ -87,6 +91,7 @@ function CapTable({
                 <TableRow key={table.id} sx={{ background: 'white' }}>
                   <TableCell sx={tableStyles.cell}>{table.name}</TableCell>
                   <TableCell sx={tableStyles.cell}>{table.title}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{table.shares}</TableCell>
                   <TableCell sx={tableStyles.cell}>
                     {Number(table.totalShares).toLocaleString()}
                   </TableCell>
@@ -111,6 +116,7 @@ function CapTable({
                 <TableCell sx={tableStyles.cell}></TableCell>
                 <TableCell sx={tableStyles.cell}><Typography sx={{ fontWeight: 'bold' }}>Total</Typography></TableCell>
                 <TableCell sx={{...tableStyles.cell, fontWeight: 'bold'}}>{Number(totalShares).toLocaleString()}</TableCell>
+                <TableCell sx={{...tableStyles.cell, fontWeight: 'bold'}}>{Number(totalTotalShares).toLocaleString()}</TableCell>
                 <TableCell sx={tableStyles.cell}></TableCell>
 
               </TableRow>
