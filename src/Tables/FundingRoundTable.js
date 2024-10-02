@@ -214,6 +214,7 @@ function FundingRoundTable({
             <TableBody>
               <TableRow sx={{ background: 'white' }}>
                 <TableCell sx={tableStyles.cell}></TableCell>
+                <TableCell sx={tableStyles.cell}></TableCell>
                 <TableCell sx={tableStyles.cell}><Typography sx={{ fontWeight: 'bold' }}>Total</Typography></TableCell>
                 <TableCell sx={{ ...tableStyles.cell, fontWeight: 'bold' }}>{formatCurrency(totalMoneyRaised)}</TableCell>
                 <TableCell sx={{ ...tableStyles.cell, fontWeight: 'bold' }}>{formatCurrency(totalTargetFunding)}</TableCell>

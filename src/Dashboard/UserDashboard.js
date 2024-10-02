@@ -40,6 +40,7 @@ function UserDashboard() {
     const [selectedStartupCapTable, setSelectedStartupCapTable] = useState("Select Company");
     const [capTables, setCapTables] = useState([]);
     const [filteredCapTables, setFilteredCapTables] = useState([]);
+    const fundingRound = fundingRounds.length > 0 ? fundingRounds[0] : null;
 
     // COUNTS
     const [companyCount, setCompanyCount] = useState(0);
@@ -561,7 +562,8 @@ return (
                             filteredCapTables={filteredCapTables}
                             businessProfiles={businessProfiles} 
                             selectedStartupCapTable={selectedStartupCapTable} 
-                            handleStartupChangeCapTable={handleStartupChangeCapTable} />
+                            handleStartupChangeCapTable={handleStartupChangeCapTable}
+                            fundingRound={fundingRound} />
                         )}
                     </Box>
                 </Grid>  
