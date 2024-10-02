@@ -114,7 +114,7 @@ function StartUpView() {
           <Box component="main" sx={{ display: 'flex', flexGrow: 1, width: '100%', overflowX: 'hidden' }}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={8}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, pl: 5,}}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, pl: 5, mt: 5}}>
                   <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'rgba(0, 116, 144, 1)', mb: 1 }}>
                     Overview
                   </Typography>
@@ -168,7 +168,7 @@ function StartUpView() {
 
               {/* Right Box with Dynamic Links */}
               <Grid item xs={12} md={4}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 5 }}>
                   <Box sx={{ borderRadius: 2, pt: 2, pr: 5, pl: 6.3 }}>
                     <Stack spacing={2}>
                       <Button
