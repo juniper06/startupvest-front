@@ -248,9 +248,13 @@ function CreateFundingRound({ onSuccess }) {
                 <Grid item xs={12} sm={11}>
                     <Grid container spacing={2}>
                         <Grid item xs={8}>
-                            <label>Funding Name</label>
-                            <TextField fullWidth variant="outlined" value={fundingName} onChange={(e) => setFundingName(e.target.value)}
+                            <label>Funding Name {RequiredAsterisk}</label>
+                            <FormControl fullWidth variant="outlined" error={!!errors.fundingName}>
+                            <TextField fullWidth variant="outlined"
+                                value={fundingName} onChange={(e) => setFundingName(e.target.value)}
                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                            </FormControl>
+                            {errors.fundingName && <FormHelperText sx={{color:'red'}}>{errors.fundingName}</FormHelperText>}
                         </Grid>
 
                         <Grid item xs={4}>
