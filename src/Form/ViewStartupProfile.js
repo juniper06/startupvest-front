@@ -467,18 +467,28 @@ function ViewStartupProfile({ profile }) {
         </Typography>
 
         <Grid container spacing={3} sx={{ ml: 2 }}>
-        <Grid item xs={12} sm={11.4}>
-            <Grid container spacing={2}>
-            <Grid item xs={12}>  
-                <Select fullWidth variant="outlined" value={industry} onChange={(e) => setIndustry(e.target.value)} disabled={!isEditable} sx={{ height: '45px' }}>
-                {industries.map(industry => (
-                    <MenuItem key={industry} value={industry}>{industry}</MenuItem>
-                ))}
-                </Select>
-            </Grid>
+    <Grid item xs={12} sm={11.4}>
+        <Grid container spacing={2}>
+            <Grid item xs={12}>
+                <FormControl fullWidth variant="outlined">
+                    <Autocomplete
+                        freeSolo
+                        options={industries} 
+                        value={industry} 
+                        onChange={(event, newValue) => setIndustry(newValue)} // Updates when an item is selected
+                        onInputChange={(event, newInputValue) => setIndustry(newInputValue)} // Updates on typing for custom values
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                variant="outlined"
+                                disabled={!isEditable} // Controls whether the input is editable
+                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                        )}/>
+                </FormControl>
             </Grid>
         </Grid>
-        </Grid>
+    </Grid>
+</Grid>
 
         <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
             Links

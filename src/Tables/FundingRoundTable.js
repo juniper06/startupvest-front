@@ -133,11 +133,6 @@ function FundingRoundTable({
     setLocalFundingPage(newPage - 1);
   };
 
-  const isFundingRoundFinished = (closedDate) => {
-    const today = new Date();
-    return new Date(closedDate) < today;
-  };
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
@@ -180,12 +175,10 @@ function FundingRoundTable({
           
           <TableBody>
             {paginatedFundingRounds.length > 0 ? (
-              paginatedFundingRounds.map((round) => {
-                const isFinished = isFundingRoundFinished(round.closedDate);
-                
+              paginatedFundingRounds.map((round) => {                
                 return (
                   <TableRow key={round.id}
-                  sx={{ backgroundColor: isFinished ? '#e0f7e0' : 'white' }}>
+                  sx={{ backgroundColor: 'white' }}>
                     <TableCell sx={tableStyles.cell}>{formatDate(round.closedDate)}</TableCell>
                     <TableCell sx={tableStyles.cell}>{round.fundingType}</TableCell>
                     <TableCell sx={tableStyles.cell}>{formatCurrency(round.moneyRaised)}</TableCell>
@@ -195,8 +188,7 @@ function FundingRoundTable({
                         View
                       </Button>
                       <Button variant="text" sx={tableStyles.deleteButton} 
-                        onClick={() => handleOpenDeleteFundingRoundDialog(round)} 
-                        disabled={isFinished}>
+                        onClick={() => handleOpenDeleteFundingRoundDialog(round)}>
                         Delete
                       </Button>
                     </TableCell>

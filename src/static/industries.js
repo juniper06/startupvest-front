@@ -1,14 +1,19 @@
 const industries = [
-    "Technology", "Healthcare", "Finance", "Education", "Hospitality",
-    "Retail", "Automotive", "Entertainment", "Manufacturing", "Real Estate",
-    "Food and Beverage", "Travel", "Fashion", "Telecommunications", "Energy",
-    "Media", "Construction", "Agriculture", "Transportation", "Pharmaceuticals",
-    "Environmental", "Fitness", "Consulting", "Government", "Non-profit",
-    "Insurance", "Legal", "Marketing", "E-commerce", "Sports", "Beauty",
-    "Design", "Software", "Hardware", "Biotechnology", "Artificial Intelligence",
-    "Space", "Renewable Energy", "Cybersecurity", "Blockchain", "Gaming"
-  ];
+  // Technology-focused industries
+  "Artificial Intelligence", "Software", "Hardware", "Cybersecurity", "Blockchain", 
+  "Gaming", "Biotechnology", "Space", "Renewable Energy", "Technology",
 
-const sortedIndustries = industries.sort(); // Sort the industries alphabetically
+  // Technology-adjacent industries
+  "Telecommunications", "E-commerce", "Media", "Entertainment", "Finance", "Healthcare",
+
+  // Other industries
+  "Retail", "Automotive", "Education", "Hospitality", "Manufacturing", 
+  "Real Estate", "Food and Beverage", "Travel", "Fashion", "Energy", 
+  "Construction", "Agriculture", "Transportation", "Pharmaceuticals", 
+  "Environmental", "Fitness", "Consulting", "Government", "Non-profit", 
+  "Insurance", "Legal", "Marketing", "Sports", "Beauty", "Design"
+];
+
+const sortedIndustries = industries.sort();
 
 export default industries;
