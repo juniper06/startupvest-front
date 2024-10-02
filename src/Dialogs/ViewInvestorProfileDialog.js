@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box, Button, DialogActions } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import ViewInvestorProfile from '../Form/ViewInvestorProfile';
+import CloseIcon from '@mui/icons-material/Close'; // Import the Close icon
 
 function ViewInvestorProfileDialog({ open, profile, onClose }) {
     return (
@@ -18,23 +19,33 @@ function ViewInvestorProfileDialog({ open, profile, onClose }) {
                     justifyContent: 'center',
                     alignItems: 'center',
                 }}>
-                    
                 <Box
                     sx={{
                         background: '#F2F2F2',
                         maxWidth: '100%',
                         maxHeight: '90%',
-                        overflowY: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflow: 'hidden',
                         boxShadow: '0 0 20px rgba(0, 0, 0, 0.5)',
+                        position: 'relative',
                     }}>
-                    <ViewInvestorProfile profile={profile} />
-                    <DialogActions>
-                        <Box sx={{ display: 'flex', mt: 1, mb: 1, mr: 5 }}>
-                            <Button variant="text" sx={{ mr: 2, color: 'rgba(0, 116, 144, 1)' }} onClick={onClose}>
-                                Cancel
-                            </Button>
-                        </Box>
-                    </DialogActions>
+                    <Box
+                        sx={{
+                            pt: 1,
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            width: '100%',
+                        }}>
+                        <IconButton onClick={onClose} sx={{ color: '#007490' }}>
+                            <CloseIcon sx={{ fontSize: '24px' }} />
+                        </IconButton>
+                    </Box>
+
+                    {/* Profile content with scrolling */}
+                    <Box sx={{ pb: 5, overflowY: 'auto' }}>
+                        <ViewInvestorProfile profile={profile} />
+                    </Box>
                 </Box>
             </Box>
         )

@@ -4,8 +4,7 @@ import industries from '../static/industries';
 import genderOptions from '../static/genderOptions';
 import quantityOptions from '../static/quantityOptions';
 import SuccessCreateBusinessProfileDialog from '../Dialogs/SuccessCreateBusinessProfileDialog';
-import { Box, Typography, TextField, Select, MenuItem, Grid, FormControl, CardContent, 
-    Button, Autocomplete, FormHelperText, Tooltip } from '@mui/material';
+import { Box, Typography, TextField, Select, MenuItem, Grid, FormControl, CardContent, Button, Autocomplete, FormHelperText, Tooltip } from '@mui/material';
 import { Business, MonetizationOn } from '@mui/icons-material'; 
 import { StyledCard } from '../styles/CardStyles';
 import axios from 'axios';
@@ -47,7 +46,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
 
     const cardTypes = [
         { label: 'Startup Company', icon: <Business />, color: '#007490' },
-        { label: 'Investor', icon: <MonetizationOn />, color: '#4CAF50' },
+        { label: 'Investor', icon: <MonetizationOn />, color: '#007490' },
     ];
     
     // Error State Variables
@@ -66,36 +65,36 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
         const newErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const contactInfoRegex = /^[0-9]{10,15}$/;
+        const emptyFieldError = 'This field cannot be empty';
       
         if (selectedProfileType === 'Startup Company') {
-          if (!companyName.trim()) newErrors.companyName = 'Company Name is required';
-          if (!companyDescription.trim()) newErrors.companyDescription = 'Company Description is required';
-          if (!foundedMonth) newErrors.foundedMonth = 'Founded Month is required';
-          if (!foundedDay) newErrors.foundedDay = 'Founded Day is required';
-          if (!foundedYear) newErrors.foundedYear = 'Founded Year is required';
-          if (!typeOfCompany) newErrors.typeOfCompany = 'Type of Company is required';
-          if (!numberOfEmployees) newErrors.numberOfEmployees = 'Number of Employees is required';
-          if (!phoneNumber.trim()) newErrors.phoneNumber = 'Phone Number is required';
+          if (!companyName.trim()) newErrors.companyName = emptyFieldError;
+          if (!companyDescription.trim()) newErrors.companyDescription = emptyFieldError;
+          if (!foundedMonth) newErrors.foundedMonth = emptyFieldError;
+          if (!foundedDay) newErrors.foundedDay = emptyFieldError;
+          if (!foundedYear) newErrors.foundedYear = emptyFieldError;
+          if (!typeOfCompany) newErrors.typeOfCompany = emptyFieldError;
+          if (!numberOfEmployees) newErrors.numberOfEmployees = emptyFieldError;
+          if (!phoneNumber.trim()) newErrors.phoneNumber = emptyFieldError;
           else if (!contactInfoRegex.test(phoneNumber)) newErrors.phoneNumber = 'Enter a valid phone number (10-15 digits).';
-          if (!contactEmail.trim()) newErrors.contactEmail = 'Contact Email is required';
+          if (!contactEmail.trim()) newErrors.contactEmail = emptyFieldError;
           else if (!emailRegex.test(contactEmail)) newErrors.contactEmail = 'Invalid email address format';
-          if (!industry) newErrors.industry = 'Industry is required';
+          if (!industry) newErrors.industry = emptyFieldError;
         } else {
-          if (!firstName.trim()) newErrors.firstName = 'First Name is required';
-          if (!lastName.trim()) newErrors.lastName = 'Last Name is required';
-          if (!emailAddress.trim()) newErrors.emailAddress = 'Email Address is required';
+          if (!firstName.trim()) newErrors.firstName = emptyFieldError;
+          if (!lastName.trim()) newErrors.lastName = emptyFieldError;
+          if (!emailAddress.trim()) newErrors.emailAddress = emptyFieldError;
           else if (!emailRegex.test(emailAddress)) newErrors.emailAddress = 'Invalid email address format';
-          if (!contactInformation.trim()) newErrors.contactInformation = 'Contact Information is required';
+          if (!contactInformation.trim()) newErrors.contactInformation = emptyFieldError;
           else if (!contactInfoRegex.test(contactInformation)) newErrors.contactInformation = 'Enter a valid contact number (10-15 digits).';
-          if (!gender) newErrors.gender = 'Gender is required';
-          if (!biography.trim()) newErrors.biography = 'Biography is required';
+          if (!gender) newErrors.gender = emptyFieldError;
+          if (!biography.trim()) newErrors.biography = emptyFieldError;
         }
-      
-        if (!streetAddress.trim()) newErrors.streetAddress = 'Street Address is required';
-        if (!country) newErrors.country = 'Country is required';
-        if (!city.trim()) newErrors.city = 'City is required';
-        if (!state.trim()) newErrors.state = 'Province/State is required';
-        if (!postalCode.trim()) newErrors.postalCode = 'Postal/Zip Code is required';
+        if (!streetAddress.trim()) newErrors.streetAddress = emptyFieldError;
+        if (!country) newErrors.country = emptyFieldError;
+        if (!city.trim()) newErrors.city = emptyFieldError;
+        if (!state.trim()) newErrors.state = emptyFieldError;
+        if (!postalCode.trim()) newErrors.postalCode = emptyFieldError;
       
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -190,14 +189,14 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
         <>
         <Box component="main" sx={{ flexGrow: 1, width: '100%', overflowX: 'hidden', maxWidth: '1000px',  background: '#F2F2F2'}}>
             <Box component="main" sx={{mr: 5, borderRadius: 2 }}>
-                <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
+                <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pb: 3 }}>
                     Profile Type 
                 </Typography>
 
                 <Box sx={{ display: 'flex', gap: 2, pl: 5, pb: 2, textAlign: 'center', flexDirection: { xs: 'column', sm: 'row' }, backgroundColor: '#f5f5f5', borderRadius: 2, }}>
                 {cardTypes.map(({ label, icon, color }) => (
                     <Tooltip key={label} arrow
-                        title={hasInvestorProfile && label === 'Investor' ? "You can only create one profile for Investor." : ""}
+                        title={hasInvestorProfile && label === 'Investor' ? "Only one Investor profile can be created." : ""}
                          disableHoverListener={!hasInvestorProfile || label !== 'Investor'}>
                         
                         <StyledCard key={label} color={color}

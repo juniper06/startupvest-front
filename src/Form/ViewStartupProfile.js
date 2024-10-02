@@ -205,8 +205,8 @@ function ViewStartupProfile({ profile }) {
         <>
         <Box component="main" sx={{ flexGrow: 1, width: '100%', overflowX: 'hidden', maxWidth: '1000px',  background: '#F2F2F2'}}>
 
-            <Typography variant="h5" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
-                Upload Business Profile
+            <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pb: 3 }}>
+                Upload Profile
             </Typography>
 
             <Grid item xs={12} sm={3}>
@@ -220,7 +220,7 @@ function ViewStartupProfile({ profile }) {
             </Grid>
 
             <Box component="main" sx={{mr: 5, borderRadius: 2 }}>
-            <Typography variant="h5" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
+            <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
                 Overview
             </Typography>
 
@@ -376,7 +376,7 @@ function ViewStartupProfile({ profile }) {
             </Grid>
         </Grid>
 
-        <Typography variant="h5" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
+        <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
             Location
         </Typography>
 
@@ -462,7 +462,7 @@ function ViewStartupProfile({ profile }) {
             </Grid>
         </Grid>
 
-        <Typography variant="h5" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
+        <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
             Industry
         </Typography>
 
@@ -480,7 +480,7 @@ function ViewStartupProfile({ profile }) {
         </Grid>
         </Grid>
 
-        <Typography variant="h5" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
+        <Typography variant="h6" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
             Links
         </Typography>
 

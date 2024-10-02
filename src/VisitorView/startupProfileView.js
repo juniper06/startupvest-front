@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Avatar, Box, Divider, List, ListItem, ListItemIcon, ListItemText,
-  Toolbar, Typography, Grid, Button, Stack, Table, TableBody, TableCell,
-  TableContainer, TableHead, TableRow
-} from '@mui/material';
+import { Avatar, Box, Divider, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, Grid, Button, Stack, Card} from '@mui/material';
 import axios from 'axios';
 import PaidIcon from '@mui/icons-material/Paid';
 import StoreIcon from '@mui/icons-material/Store';
@@ -16,8 +12,6 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 import MonthlyFundingChart from "../Components/Chart";
-
-import { tableStyles } from '../styles/tables';
 
 const drawerWidth = 240;
 
@@ -188,8 +182,7 @@ function StartUpView() {
                           backgroundColor: startup.website ? 'rgba(0, 116, 144, 1)' : '#e0e0e0', 
                           color: startup.website ? 'white' : '#9e9e9e',
                           '&:hover': { backgroundColor: startup.website ? '#005f73' : '#e0e0e0' }
-                        }}
-                      >
+                        }}>
                         Website
                       </Button>
 
@@ -200,13 +193,12 @@ function StartUpView() {
                         target="_blank"
                         rel="noopener noreferrer"
                         startIcon={<LinkedInIcon />}
-                        disabled={!startup.linkedIn} // Disable button if no LinkedIn
+                        disabled={!startup.linkedIn}
                         sx={{
                           backgroundColor: startup.linkedIn ? '#0A66C2' : '#e0e0e0',
                           color: startup.linkedIn ? 'white' : '#9e9e9e',
                           '&:hover': { backgroundColor: startup.linkedIn ? '#004182' : '#e0e0e0' }
-                        }}
-                      >
+                        }}>
                         LinkedIn
                       </Button>
 
@@ -217,13 +209,12 @@ function StartUpView() {
                         target="_blank"
                         rel="noopener noreferrer"
                         startIcon={<FacebookIcon />}
-                        disabled={!startup.facebook} // Disable button if no Facebook
+                        disabled={!startup.facebook} 
                         sx={{
                           backgroundColor: startup.facebook ? '#1877F2' : '#e0e0e0',
                           color: startup.facebook ? 'white' : '#9e9e9e',
                           '&:hover': { backgroundColor: startup.facebook ? '#0a52cc' : '#e0e0e0' }
-                        }}
-                      >
+                        }}>
                         Facebook
                       </Button>
 
@@ -234,13 +225,12 @@ function StartUpView() {
                         target="_blank"
                         rel="noopener noreferrer"
                         startIcon={<TwitterIcon />}
-                        disabled={!startup.twitter} // Disable button if no Twitter
+                        disabled={!startup.twitter} 
                         sx={{
                           backgroundColor: startup.twitter ? '#1DA1F2' : '#e0e0e0',
                           color: startup.twitter ? 'white' : '#9e9e9e',
                           '&:hover': { backgroundColor: startup.twitter ? '#0a8ddb' : '#e0e0e0' }
-                        }}
-                      >
+                        }}>
                         Twitter
                       </Button>
 
@@ -251,13 +241,12 @@ function StartUpView() {
                         target="_blank"
                         rel="noopener noreferrer"
                         startIcon={<InstagramIcon />}
-                        disabled={!startup.instagram} // Disable button if no Instagram
+                        disabled={!startup.instagram} 
                         sx={{
                           backgroundColor: startup.instagram ? '#E1306C' : '#e0e0e0',
                           color: startup.instagram ? 'white' : '#9e9e9e',
                           '&:hover': { backgroundColor: startup.instagram ? '#b02e5a' : '#e0e0e0' }
-                        }}
-                      >
+                        }}>
                         Instagram
                       </Button>
                     </Stack>
@@ -268,53 +257,51 @@ function StartUpView() {
           </Box>
         )}
 
-        {selectedPage === 'financial' && (
-          <Box component="main" sx={{ display: 'flex', flexGrow: 1, width: '100%', overflowX: 'hidden' }}>
-            <Grid container spacing={2}>
-              {/* Table Section */}
-              <Grid item xs={12} md={5}>
-                <TableContainer sx={{ ...tableStyles.container, mr: 5 }}>
-                  <Table>
-                    <TableHead sx={tableStyles.head}>
-                      <TableRow>
-                        <TableCell sx={tableStyles.cell}>
-                          <Typography sx={tableStyles.typography}>Date</Typography>
-                        </TableCell>
-                        <TableCell sx={tableStyles.cell}>
-                          <Typography sx={tableStyles.typography}>Investments</Typography>
-                        </TableCell>
-                        <TableCell sx={tableStyles.cell}>
-                          <Typography sx={tableStyles.typography}>Rounds</Typography>
-                        </TableCell>
-                        <TableCell sx={tableStyles.cell}>
-                          <Typography sx={tableStyles.typography}>Investors</Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {/* Example row, replace with actual data */}
-                      <TableRow>
-                        <TableCell sx={tableStyles.cell}>September 2024</TableCell>
-                        <TableCell sx={tableStyles.cell}>P2500</TableCell>
-                        <TableCell sx={tableStyles.cell}>5</TableCell>
-                        <TableCell sx={tableStyles.cell}>4</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Grid>
+{selectedPage === 'financial' && (
+  <Box component="main" sx={{ display: 'flex', flexGrow: 1, width: '100%', overflowX: 'hidden', p: 2 }}>
+    <Grid container spacing={4}>
+      <Grid item xs={12} md={4}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2}}>
+          {/* Total Investment Card */}
+          <Card sx={{ p: 3, boxShadow: 2, borderRadius: 2 }}>
+            <Typography sx={{ mb: 1 }}><strong>Total Investment</strong></Typography>
+            <Divider sx={{ mb: 2 }} />
+              <Typography>Total Funds Raised: P50,000</Typography>
+          </Card>
 
-              {/* Graph Section */}
-              <Grid item xs={12} md={7}>
-                <Box sx={{ pr: 5, borderRadius: 2, backgroundColor: 'white', height: '100%', }}>
-                  <Box sx={{ width: '100%', height: '350px', backgroundColor: '#f0f0f0', borderRadius: 1,}}>
-                  {companyId && <MonthlyFundingChart companyId={companyId} />}
-                  </Box>
-                </Box>
-              </Grid>
-            </Grid>
+          {/* Number of Funding Rounds Card */}
+          <Card sx={{ p: 3, boxShadow: 2, borderRadius: 2 }}>
+            <Typography sx={{ mb: 1 }}><strong>Funding Rounds</strong></Typography>
+            <Divider sx={{ mb: 2 }} />
+              <Typography>Total Number of Rounds: 2</Typography>
+          </Card>
+
+          {/* Investors */}
+          <Card sx={{ p: 3, boxShadow: 2, borderRadius: 2 }}>
+            <Typography sx={{ mb: 1 }}><strong>Investors</strong></Typography>
+            <Divider sx={{ mb: 2 }} />
+              <Typography>Total Number of Investors: 10</Typography>
+              <Typography variant="body1">Lead Investor: XYZ Capital</Typography>
+              <Typography variant="body1">Repeat Investor: Rob Borinaga</Typography>
+          </Card>
+        </Box>
+      </Grid>
+
+      {/* Graph Section */}
+      <Grid item xs={12} md={8}>
+        <Card sx={{ p: 3, boxShadow: 2, borderRadius: 2, height: '100%' }}>
+          <Typography variant="h6" sx={{ mb: 2 }}><strong>Funding Progress Chart</strong></Typography>
+          <Divider sx={{ mb: 2 }} />
+          <Box sx={{ width: '100%' }}>
+            {companyId && <MonthlyFundingChart companyId={companyId} />}
           </Box>
-        )}
+        </Card>
+      </Grid>
+      
+    </Grid>
+  </Box>
+)}
+
       </Box>
     </Box>
   );

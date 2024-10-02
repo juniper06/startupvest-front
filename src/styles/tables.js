@@ -5,6 +5,7 @@ export const tableStyles = {
     },
     head: {
       backgroundColor: '#007490',
+      textAlign: 'center',
     },
     headerCell: {
       textAlign: 'center',
@@ -13,10 +14,8 @@ export const tableStyles = {
     },
     cell: {
       textAlign: 'center',
+      color: '#333333',
     },
-    row: (type) => ({
-      backgroundColor: type === 'Investor' ? 'rgba(0, 116, 144, .1)' : 'inherit',
-    }),
     actionButton: {
       background: 'rgba(0, 116, 144, 1)',
       '&:hover': {

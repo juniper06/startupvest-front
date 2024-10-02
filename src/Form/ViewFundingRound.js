@@ -25,6 +25,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const [formattedTargetFunding, setFormattedTargetFunding] = useState('');
     const [formattedPreMoneyValuation, setFormattedPreMoneyValuation] = useState('');
     const [formattedMinimumShare, setFormattedMinimumShare] = useState('');
+    const [isEditMode, setIsEditMode] = useState(false);
 
     //CAP TABLE
     const [allInvestors, setAllInvestors] = useState([]);
@@ -37,7 +38,11 @@ function ViewFundingRound({ fundingRoundDetails }) {
     });
     const years = [...Array(51).keys()].map(i => new Date().getFullYear() + i);
 
-    const [isEditMode, setIsEditMode] = useState(false);
+    const isClosedDatePassed = () => {
+        const today = new Date();
+        const closedDate = new Date(closedYear, closedMonth - 1, closedDay); 
+        return closedDate < today;
+    };
 
     useEffect(() => {
         console.log('Received Funding Round Details:', fundingRoundDetails); 
@@ -276,7 +281,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
     return (
         <Box component="main" sx={{ flexGrow: 1, width: '100%', overflowX: 'hidden', maxWidth: '1000px', background: '#F2F2F2' }}>
-            <Typography variant="h5" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pt: 3, pb: 3 }}>
+            <Typography variant="h5" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pb: 3 }}>
                 Organization
             </Typography>
 
@@ -543,15 +548,16 @@ function ViewFundingRound({ fundingRoundDetails }) {
                 </Grid>
             </Grid>
 
-            <Button variant="contained"
-                sx={{ width: 150, background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }} style={{marginLeft: '80%'}}
-                onClick={() => { 
-                    const action = isEditMode ? handleUpdateFundingRound : toggleEditMode;
-                        action(); 
-                        action(); 
-                  }}>
-                {isEditMode ? 'Save Changes' : 'Edit Funding'}
-            </Button>
+            {!isClosedDatePassed() && (
+                <Button variant="contained"
+                    sx={{ width: 150, background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }} style={{ marginLeft: '80%' }}
+                    onClick={() => {
+                        const action = isEditMode ? handleUpdateFundingRound : toggleEditMode;
+                        action(); action();
+                    }}>
+                    {isEditMode ? 'Save Changes' : 'Edit Funding'}
+                </Button>
+            )}
         </Box>
     );
 }

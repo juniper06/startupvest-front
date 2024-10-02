@@ -14,7 +14,7 @@ import ActivitiesDialog from "../Dialogs/AcitivtiesDialog";
 
 import { logActivity } from '../utils/activityUtils';
 import MonthlyFundingChart from "../Components/Chart";
-import { Container, HeaderBox, StatsBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle,   CreateButton, GraphTitle, RecentActivityTitle } from "../styles/UserDashboard";
+import { Container, HeaderBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle,   CreateButton, GraphTitle, RecentActivityTitle } from "../styles/UserDashboard";
 
 function UserDashboard() {
     const [tabValue, setTabValue] = useState(1);
@@ -408,7 +408,7 @@ return (
             {/* Top Row - 5 Boxes */}
             <Grid item xs={12} sm={6}>
                 <TopInfoBox>
-                    <TopInfoIcon><Business sx={{ color: '#005b6e' }} /></TopInfoIcon>
+                    <TopInfoIcon><Business sx={{ color: '#f5f5f5' }} /></TopInfoIcon>
                     <TopInfoText>Highest-Funded Company</TopInfoText>
                     <TopInfoTitle>{highestMoneyRaisedCompany.companyName || 'None'}</TopInfoTitle>
                 </TopInfoBox>
@@ -416,45 +416,45 @@ return (
 
             <Grid item xs={12} sm={6}>
                 <TopInfoBox>
-                    <TopInfoIcon><Person2 sx={{ color: '#005b6e' }} /></TopInfoIcon>
+                    <TopInfoIcon><Person2 sx={{ color: '#f5f5f5' }} /></TopInfoIcon>
                     <TopInfoText>Top Investment Contributor</TopInfoText>
                     <TopInfoTitle>{topInvestor.topInvestorName || 'None'}</TopInfoTitle>
                 </TopInfoBox>
             </Grid>
 
             <Grid item xs={12} sm={3}>
-                <StatsBox>
+                <TopInfoBox>
                     <TopInfoText>Funded Companies</TopInfoText>
                     <TopInfoTitle>{moneyRaisedCount} out of {companyCount}</TopInfoTitle>
-                </StatsBox>
+                </TopInfoBox>
             </Grid>
 
             <Grid item xs={12} sm={2}>
-                <StatsBox>
+                <TopInfoBox>
                     <TopInfoText>Company Count</TopInfoText>
                     <TopInfoTitle>{companyCount}</TopInfoTitle>
-                </StatsBox>
+                </TopInfoBox>
             </Grid>
 
             <Grid item xs={12} sm={2}>
-                <StatsBox>
+                <TopInfoBox>
                     <TopInfoText>Investor Count</TopInfoText>
                     <TopInfoTitle>{investorCount}</TopInfoTitle>
-                </StatsBox>
+                </TopInfoBox>
             </Grid>
 
             <Grid item xs={12} sm={2}>
-                <StatsBox>
+                <TopInfoBox>
                     <TopInfoText>Funding Rounds</TopInfoText>
                     <TopInfoTitle>{fundingRoundsCount}</TopInfoTitle>
-                </StatsBox>
+                </TopInfoBox>
             </Grid>
 
             <Grid item xs={12} sm={3}>
-                <StatsBox>
+                <TopInfoBox>
                     <TopInfoText>Total Amount Funded</TopInfoText>
                     <TopInfoTitle>{totalAmountFunded.toLocaleString()}</TopInfoTitle>
-                </StatsBox>
+                </TopInfoBox>
             </Grid>
 
           {/* Middle Row - Two Boxes */}

@@ -7,7 +7,7 @@ import { Box, Typography, Toolbar, TextField, Avatar, Button, Select, MenuItem, 
 
 const drawerWidth = 240;
 
-function Profile() {
+function Profile( hasInvestorProfile ) {
   const [isEditable, setIsEditable] = useState(false);
   const [openCreateBusinessProfile, setCreateBusinessProfile] = useState(false);
   const [businessProfiles, setBusinessProfiles] = useState([]);
@@ -253,17 +253,17 @@ function Profile() {
 
           <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mt: 4, ml: 8, mr: 5 }}>
             <Box sx={{ borderRadius: 2, p: 4, display: 'flex', alignItems: 'center', boxShadow: '0 0 10px rgba(0,0,0,0.25)', width: '70%' }}>
-              <Avatar src="/images/prof.jpg" variant='square' sx={{ mr: 3, width: 200, height: 220, border: '4px rgba(0, 116, 144, 1) solid', borderRadius: 2}}></Avatar>
+              <Avatar src="/images/prof.jpg" variant='square' sx={{ mr: 3, width: 200, height: 250, border: '4px rgba(0, 116, 144, 1) solid', borderRadius: 2}}></Avatar>
               <Typography align='justify' sx={{ color: '#414a4c', fontWeight: '500' }}>
                 <b>Why Create a Business Profile?</b><br/>
-                Creating a business profile on Startup Vest benefits both startups and investors.
-                <br /><br /><b>Startups</b> gain visibility and credibility, making it easier to attract funding and network with industry leaders and partners. <b>Investors</b> access a diverse range of startups, enabling portfolio diversification and informed decisions. The platform’s tools streamline the search process and facilitate direct communication with founders.
+                Establishing a business profile on Startup Vest offers significant advantages for both startups and investors.
+                <br /><br /><b>For Startups</b> creating a profile enhances visibility and credibility, making it easier to attract funding and connect with industry leaders and potential partners.<br /><br /><b>For Investors</b> they can discover a diverse range of startups, invest in promising opportunities, and track progress over time.
               </Typography>
             </Box>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, p: 4, display: 'flex', alignItems: 'center', boxShadow: '0 0 10px rgba(0,0,0,0.5)', width: '28%', backgroundColor: '#007490'}}>
-              <Typography align='justify' sx={{ color: 'white', fontWeight: '500', mb: 2, mt: 6 }}>
-                <b>Don't wait any longer.</b><br /> Build your business profile now and unlock limitless potential!
+              <Typography align='justify' sx={{ color: 'white', fontWeight: '500', mb: 2, mt: 5 }}>
+                <b>Don’t miss out on opportunities.</b><br /><br /> Create your business profile today and unlock limitless potential for growth and success!
               </Typography>
 
               <Button variant="contained" fullWidth sx={{ color: '#007490', background: 'white', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'white'} }} onClick={handleOpenBusinessProfile}>
@@ -273,7 +273,8 @@ function Profile() {
           </Box>
         </Box>
 
-        <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} />
+        <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} 
+        hasInvestorProfile={hasInvestorProfile}/>
       </Box>
     </>
   );

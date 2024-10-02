@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, FormControl, Select, MenuItem, Stack, Pagination, Tooltip } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, FormControl, Select, MenuItem, Stack, Pagination } from '@mui/material';
 
 import ViewFundingRoundDialog from '../Dialogs/ViewFundingRoundDialog';
 import ConfirmDeleteDialog from '../Dialogs/ConfirmDeleteFundingRoundDialog';
@@ -133,14 +133,19 @@ function FundingRoundTable({
     setLocalFundingPage(newPage - 1);
   };
 
+  const isFundingRoundFinished = (closedDate) => {
+    const today = new Date();
+    return new Date(closedDate) < today;
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant="subtitle1" sx={{ pr: 1 }}>By Company:</Typography>
-          <FormControl sx={{ minWidth: 200 }}>
-            <Select  value={selectedStartupFunding}  onChange={handleStartupChangeFunding} variant="outlined" 
-              sx={{ minWidth: 150, height: '45px' }}>
+          <FormControl sx={{ minWidth: 200, background: 'white' }}>
+            <Select value={selectedStartupFunding} onChange={handleStartupChangeFunding} variant="outlined" 
+              sx={{ minWidth: 100, height: '45px' }}>
               <MenuItem value="All">All</MenuItem>
               {businessProfiles.filter(profile => profile.type === 'Startup')
                 .map((startup) => (
@@ -155,19 +160,19 @@ function FundingRoundTable({
         <Table>
           <TableHead sx={tableStyles.head}>
             <TableRow>
-              <TableCell sx={tableStyles.cell}>
+              <TableCell sx={tableStyles.head}>
                 <Typography sx={tableStyles.typography}>Closed on Date</Typography>
               </TableCell>
-              <TableCell sx={tableStyles.cell}>
+              <TableCell sx={tableStyles.head}>
                 <Typography sx={tableStyles.typography}>Funding Type</Typography>
               </TableCell>
-              <TableCell sx={tableStyles.cell}>
+              <TableCell sx={tableStyles.head}>
                 <Typography sx={tableStyles.typography}>Money Raised</Typography>
               </TableCell>
-              <TableCell sx={tableStyles.cell}>
+              <TableCell sx={tableStyles.head}>
                 <Typography sx={tableStyles.typography}>Target Funding</Typography>
               </TableCell>
-              <TableCell sx={tableStyles.cell}>
+              <TableCell sx={tableStyles.head}>
                 <Typography sx={tableStyles.typography}>Action</Typography>
               </TableCell>        
             </TableRow>
@@ -175,26 +180,35 @@ function FundingRoundTable({
           
           <TableBody>
             {paginatedFundingRounds.length > 0 ? (
-              paginatedFundingRounds.map((round) => (
-                <TableRow key={round.id}>
-                  <TableCell sx={tableStyles.cell}>{formatDate(round.closedDate)}</TableCell>
-                  <TableCell sx={tableStyles.cell}>{round.fundingType}</TableCell>
-                  <TableCell sx={tableStyles.cell}>{formatCurrency(round.moneyRaised)}</TableCell>
-                  <TableCell sx={tableStyles.cell}>{formatCurrency(round.targetFunding)}</TableCell>
-                  <TableCell sx={tableStyles.cell}>
-                    <Button variant="contained" sx={tableStyles.actionButton} onClick={() => handleViewFundingRound(round.id)}>
-                      View
-                    </Button>
-                    <Button variant="text" sx={tableStyles.deleteButton} onClick={() => handleOpenDeleteFundingRoundDialog(round)}>
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
+              paginatedFundingRounds.map((round) => {
+                const isFinished = isFundingRoundFinished(round.closedDate);
+                
+                return (
+                  <TableRow key={round.id}
+                  sx={{ backgroundColor: isFinished ? '#e0f7e0' : 'white' }}>
+                    <TableCell sx={tableStyles.cell}>{formatDate(round.closedDate)}</TableCell>
+                    <TableCell sx={tableStyles.cell}>{round.fundingType}</TableCell>
+                    <TableCell sx={tableStyles.cell}>{formatCurrency(round.moneyRaised)}</TableCell>
+                    <TableCell sx={tableStyles.cell}>{formatCurrency(round.targetFunding)}</TableCell>
+                    <TableCell sx={tableStyles.cell}>
+                      <Button variant="contained" sx={tableStyles.actionButton} onClick={() => handleViewFundingRound(round.id)}>
+                        View
+                      </Button>
+                      <Button variant="text" sx={tableStyles.deleteButton} 
+                        onClick={() => handleOpenDeleteFundingRoundDialog(round)} 
+                        disabled={isFinished}>
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             ) : (
-              <TableRow>
-                <TableCell colSpan={5} sx={tableStyles.cell}>
-                  <Typography variant="body2" color="textSecondary">No funding rounds available for your startups.</Typography>
+              <TableRow sx={{ background: 'white' }}>
+                <TableCell colSpan={5} sx={{ textAlign: 'center' }}>
+                  <Typography variant="body2" color="textSecondary">
+                    No funding rounds available for your startups.
+                  </Typography>
                 </TableCell>
               </TableRow>
             )}
@@ -202,7 +216,7 @@ function FundingRoundTable({
 
           {paginatedFundingRounds.length > 0 && (
             <TableBody>
-              <TableRow>
+              <TableRow sx={{ background: 'white' }}>
                 <TableCell sx={tableStyles.cell}></TableCell>
                 <TableCell sx={tableStyles.cell}><Typography sx={{ fontWeight: 'bold' }}>Total</Typography></TableCell>
                 <TableCell sx={{ ...tableStyles.cell, fontWeight: 'bold' }}>{formatCurrency(totalMoneyRaised)}</TableCell>
@@ -213,7 +227,7 @@ function FundingRoundTable({
           )}
         </Table>
 
-        <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
+        <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2, background: 'white' }}>
           <Pagination count={totalPages} page={localFundingPage + 1} onChange={handleFundingPageChange} size="medium" />
         </Stack>
       </TableContainer>

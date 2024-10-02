@@ -58,9 +58,9 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'startupName', numeric: false, disablePadding: false, label: 'StartUp Name', width: '20%' },
-  { id: 'fundingType', numeric: false, disablePadding: false, label: 'Funding Type', width: '20%' },
-  { id: 'moneyRaised', numeric: true, disablePadding: false, label: 'Money Raised', width: '20%' },
+  { id: 'startupName', numeric: false, disablePadding: false, label: 'StartUp Name', width: '30%' },
+  { id: 'fundingType', numeric: false, disablePadding: false, label: 'Funding Type', width: '15%' },
+  { id: 'moneyRaised', numeric: true, disablePadding: false, label: 'Money Raised', width: '15%' },
   { id: 'announcedDate', numeric: false, disablePadding: false, label: 'Announced Date', width: '20%' },
   { id: 'closedDate', numeric: false, disablePadding: true, label: 'Closed Date', width: '20%' },
 ];
@@ -134,21 +134,23 @@ export default function FundingRound() {
     const fetchFundingRounds = async () => {
       try {
         const response = await axios.get('http://localhost:3000/funding-rounds/all');
-        const fetchedRows = response.data.map(fundingRound => createData(
-          fundingRound.id,
-          fundingRound.transactionName || '---',
-          fundingRound.startup?.companyName ?? '---',
-          fundingRound.fundingType || '---',
-          fundingRound.moneyRaised || '---',
-          fundingRound.moneyRaisedCurrency || 'USD',
-          new Date(fundingRound.announcedDate).toLocaleDateString(),
-          new Date(fundingRound.closedDate).toLocaleDateString(),
-          fundingRound.avatar || '',
-          fundingRound.preMoneyValuation || '---',
-          fundingRound.capTableInvestors,
-          fundingRound.minimumShare || '---',
-          fundingRound.startup?.id  
-        ));
+        const fetchedRows = response.data
+          .filter(fundingRound => new Date(fundingRound.closedDate) > new Date()) // Filter out closed funding rounds
+          .map(fundingRound => createData(
+            fundingRound.id,
+            fundingRound.transactionName || '---',
+            fundingRound.startup?.companyName ?? '---',
+            fundingRound.fundingType || '---',
+            fundingRound.moneyRaised || '---',
+            fundingRound.moneyRaisedCurrency || 'USD',
+            new Date(fundingRound.announcedDate).toLocaleDateString(),
+            new Date(fundingRound.closedDate).toLocaleDateString(),
+            fundingRound.avatar || '',
+            fundingRound.preMoneyValuation || '---',
+            fundingRound.capTableInvestors,
+            fundingRound.minimumShare || '---',
+            fundingRound.startup?.id  
+          ));
         setRows(fetchedRows);
         setFilteredRows(fetchedRows);
         fetchAllProfilePictures(response.data); 
@@ -251,6 +253,12 @@ export default function FundingRound() {
                   <StyledTableCell>{formatDate(row.closedDate)}</StyledTableCell>
                 </StyledTableRow>
               ))}
+
+              {visibleRows.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">No funding rounds available</TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

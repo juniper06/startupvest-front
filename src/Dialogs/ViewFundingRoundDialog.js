@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box, Button, DialogActions } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import ViewFundingRound from '../Form/ViewFundingRound';
+import CloseIcon from '@mui/icons-material/Close';
 
 function ViewFundingRoundDialog({ open, fundingRoundDetails, onClose }) {
     return (
@@ -18,25 +19,33 @@ function ViewFundingRoundDialog({ open, fundingRoundDetails, onClose }) {
                     justifyContent: 'center',
                     alignItems: 'center',
                 }}>
+                <Box
+                    sx={{
+                        background: '#F2F2F2',
+                        maxWidth: '100%',
+                        maxHeight: '90%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflow: 'hidden',
+                        boxShadow: '0 0 20px rgba(0, 0, 0, 0.5)',
+                        position: 'relative',
+                    }}>
+                    <Box
+                        sx={{
+                            pt: 1,
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            width: '100%',
+                        }}>
+                        <IconButton onClick={onClose} sx={{ color: '#007490' }}>
+                            <CloseIcon sx={{ fontSize: '24px' }} />
+                        </IconButton>
+                    </Box>
 
-            <Box
-                sx={{
-                    background: '#F2F2F2',
-                    maxWidth: '100%',
-                    maxHeight: '90%',
-                    overflowY: 'auto',
-                    boxShadow: '0 0 20px rgba(0, 0, 0, 0.5)',
-                }}>
-
-                <ViewFundingRound fundingRoundDetails={fundingRoundDetails} />
-
-                <DialogActions>
-                        <Box sx={{ display: 'flex', mt: 1, mb: 1, mr: 5 }}>
-                            <Button variant="text" sx={{ mr: 2, color: 'rgba(0, 116, 144, 1)' }} onClick={onClose}>
-                                Cancel
-                            </Button>
-                        </Box>
-                    </DialogActions>
+                    {/* Form content with scrolling */}
+                    <Box sx={{ pb: 5, overflowY: 'auto' }}>
+                        <ViewFundingRound fundingRoundDetails={fundingRoundDetails} />
+                    </Box>
                 </Box>
             </Box>
         )

@@ -129,7 +129,7 @@ function UserProfileView() {
           <Grid container spacing={2}>
             {/* Left Box: User Information */}
             <Grid item xs={12} md={8}>
-              <Box sx={{ background: 'white', display: 'flex', flexDirection: 'column', borderRadius: 2, pb: 3, pl: 5, pr: 5 }}>
+              <Box sx={{ background: 'white', display: 'flex', flexDirection: 'column', borderRadius: 2, pl: 5, pr: 5 }}>
                 <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'rgba(0, 116, 144, 1)', mb: 2 }}>Overview</Typography>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
