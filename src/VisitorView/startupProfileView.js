@@ -107,7 +107,8 @@ function StartUpView() {
         </List>
       </Box>
 
-      <Divider sx={{ mb: 4 }} />
+      <Divider />
+
       <Box ml={4} flexGrow={1}>
         {selectedPage === 'summary' && (
           <Box component="main" sx={{ display: 'flex', flexGrow: 1, width: '100%', overflowX: 'hidden' }}>
@@ -259,7 +260,7 @@ function StartUpView() {
 
         {selectedPage === 'financial' && (
           <Box  component="main" 
-            sx={{  display: 'flex',  flexGrow: 1,  width: '100%',  overflowX: 'hidden',  pl: 3,  pr: 5, pb: 4 }}>
+            sx={{  display: 'flex',  flexGrow: 1,  width: '100%',  overflowX: 'hidden',  pl: 3,  pr: 5, pb: 4, pt: 4 }}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={4}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
