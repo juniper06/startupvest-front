@@ -11,7 +11,7 @@ import { StyledPaper, StyledAvatar, StyledTableRow, StyledTableCell, StyledStack
 const drawerWidth = 240;
 
 function createData(id, transactionName, startupName, fundingType, moneyRaised, moneyRaisedCurrency, announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, 
-  minimumShare, startupId ) {
+  minimumShare, startupId, fundingName ) {
   return {
     id,
     transactionName,
@@ -25,7 +25,8 @@ function createData(id, transactionName, startupName, fundingType, moneyRaised, 
     preMoneyValuation,
     capTableInvestors,
     minimumShare,
-    startupId
+    startupId,
+    fundingName
   };
 }
 
@@ -58,11 +59,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'startupName', numeric: false, disablePadding: false, label: 'StartUp Name', width: '30%' },
+  { id: 'startupName', numeric: false, disablePadding: false, label: 'StartUp Name', width: '25%' },
+  { id: 'fundingName', numeric: false, disablePadding: false, label: 'Funding Name', width: '15%' },
   { id: 'fundingType', numeric: false, disablePadding: false, label: 'Funding Type', width: '15%' },
   { id: 'moneyRaised', numeric: true, disablePadding: false, label: 'Money Raised', width: '15%' },
-  { id: 'announcedDate', numeric: false, disablePadding: false, label: 'Announced Date', width: '20%' },
-  { id: 'closedDate', numeric: false, disablePadding: true, label: 'Closed Date', width: '20%' },
+  { id: 'announcedDate', numeric: false, disablePadding: false, label: 'Announced Date', width: '15%' },
+  { id: 'closedDate', numeric: false, disablePadding: true, label: 'Closed Date', width: '15%' },
 ];
 
 function EnhancedTableHead(props) {
@@ -149,7 +151,8 @@ export default function FundingRound() {
             fundingRound.preMoneyValuation || '---',
             fundingRound.capTableInvestors,
             fundingRound.minimumShare || '---',
-            fundingRound.startup?.id  
+            fundingRound.startup?.id,
+            fundingRound.fundingName || '---',
           ));
         setRows(fetchedRows);
         setFilteredRows(fetchedRows);
@@ -204,6 +207,7 @@ export default function FundingRound() {
   const handleSearch = (searchText) => {
     const filtered = rows.filter(row =>
       (row.startupName.toLowerCase() || '').includes(searchText.toLowerCase()) ||
+      (row.fundingName.toLowerCase() || '').includes(searchText.toLowerCase()) ||
       (row.fundingType?.toLowerCase() || '').includes(searchText.toLowerCase()) ||
       (row.moneyRaised?.toLowerCase() || '').includes(searchText.toLowerCase()) ||
       (row.announcedDate?.toLowerCase() || '').includes(searchText.toLowerCase()) ||
@@ -245,6 +249,7 @@ export default function FundingRound() {
                       {row.startupName}
                     </StyledStack>
                   </StyledTableCell>
+                  <StyledTableCell>{row.fundingName}</StyledTableCell>
                   <StyledTableCell>{row.fundingType}</StyledTableCell>
                   <StyledTableCell>
                     {row.moneyRaisedCurrency} {row.moneyRaised === '---' ? row.moneyRaised : Number(row.moneyRaised).toLocaleString()}

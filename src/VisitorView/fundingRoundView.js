@@ -114,8 +114,8 @@ function FundingRoundView() {
                       </Grid>
 
                       <Grid item xs={3}>
-                        <Typography><strong>Funding Type</strong></Typography>
-                        <Typography variant="body1">{fundinground.fundingType}</Typography>
+                        <Typography><strong>Funding Name</strong></Typography>
+                        <Typography variant="body1">{fundinground.fundingName}</Typography>
                       </Grid>
 
                       <Grid item xs={3}>
@@ -126,6 +126,11 @@ function FundingRoundView() {
                       <Grid item xs={6}>
                         <Typography><strong>Closed on Date</strong></Typography>
                         <Typography variant="body1">{formatDate(fundinground.closedDate)}</Typography>
+                      </Grid>
+                      
+                      <Grid item xs={3}>
+                        <Typography><strong>Funding Type</strong></Typography>
+                        {fundinground.fundingType}
                       </Grid>
 
                       <Grid item xs={3}>

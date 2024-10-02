@@ -159,6 +159,9 @@ function FundingRoundTable({
                 <Typography sx={tableStyles.typography}>Closed on Date</Typography>
               </TableCell>
               <TableCell sx={tableStyles.head}>
+                <Typography sx={tableStyles.typography}>Funding Name</Typography>
+              </TableCell>
+              <TableCell sx={tableStyles.head}>
                 <Typography sx={tableStyles.typography}>Funding Type</Typography>
               </TableCell>
               <TableCell sx={tableStyles.head}>
@@ -180,6 +183,7 @@ function FundingRoundTable({
                   <TableRow key={round.id}
                   sx={{ backgroundColor: 'white' }}>
                     <TableCell sx={tableStyles.cell}>{formatDate(round.closedDate)}</TableCell>
+                    <TableCell sx={tableStyles.cell}>{round.fundingName}</TableCell>
                     <TableCell sx={tableStyles.cell}>{round.fundingType}</TableCell>
                     <TableCell sx={tableStyles.cell}>{formatCurrency(round.moneyRaised)}</TableCell>
                     <TableCell sx={tableStyles.cell}>{formatCurrency(round.targetFunding)}</TableCell>

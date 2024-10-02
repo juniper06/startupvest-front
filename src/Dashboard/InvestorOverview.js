@@ -8,11 +8,11 @@ import { TopInfoBox, TopInfoText, TopInfoTitle } from '../styles/UserDashboard';
 
 const drawerWidth = 285;
 
-function createData(id, transactionName, startupName, fundingType, moneyRaised, moneyRaisedCurrency,
+function createData(id, fundingName, startupName, fundingType, moneyRaised, moneyRaisedCurrency,
   announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, minimumShare, startupId, totalShares) {
   return {
     id,
-    transactionName,
+    fundingName,
     startupName,
     fundingType,
     moneyRaised,
@@ -98,7 +98,7 @@ function InvestorOverview() {
 
           return createData(
             fundingRound.id,
-            fundingRound.transactionName || 'N/A',
+            fundingRound.fundingName || 'N/A',
             fundingRound.startup?.companyName ?? 'N/A',
             fundingRound.fundingType || 'N/A',
             fundingRound.moneyRaised || '---',
@@ -262,6 +262,10 @@ function InvestorOverview() {
                     <TableCell>
                       <Typography sx={{ fontWeight: 'bold', color: 'white', ml: 10 }}>Company Name</Typography>
                     </TableCell>
+                    
+                    <TableCell sx={tableStyles.head}>
+                      <Typography sx={tableStyles.typography}>Funding Name</Typography>
+                    </TableCell>
 
                     <TableCell sx={tableStyles.head}>
                       <Typography sx={tableStyles.typography}>Type</Typography>
@@ -292,6 +296,8 @@ function InvestorOverview() {
                             {row.startupName}
                           </Box>
                         </TableCell>
+
+                        <TableCell sx={tableStyles.cell}>{row.fundingName}</TableCell>
 
                         <TableCell sx={tableStyles.cell}>{row.fundingType}</TableCell>
                         
