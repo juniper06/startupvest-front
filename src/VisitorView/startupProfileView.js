@@ -3,6 +3,7 @@ import { Box, Divider, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typo
 import axios from 'axios';
 import PaidIcon from '@mui/icons-material/Paid';
 import StoreIcon from '@mui/icons-material/Store';
+import StarsIcon from '@mui/icons-material/Stars';
 import LanguageIcon from '@mui/icons-material/Language';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -17,6 +18,7 @@ const drawerWidth = 240;
 
 function StartUpView() {
   const [selectedPage, setSelectedPage] = useState('summary');
+  const [isFollowed, setIsFollowed] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState('');
   const location = useLocation();
   const [companyId, setCompanyId] = useState(null);
@@ -25,16 +27,17 @@ function StartUpView() {
   // Fetch the profile picture
   useEffect(() => {
     const fetchProfilePicture = async () => {
-      if (!startup?.id) return; 
+      if (!startup?.id) return; // Ensure startup exists
       setCompanyId(startup.id);
       try {
-        const response = await axios.get(`http://localhost:3000/profile-picture/startup/${startup.id}`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/profile-picture/startup/${startup.id}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
-          responseType: 'blob', 
+          responseType: 'blob', // Important for getting the image as a blob
         });
 
+        // Create a URL for the blob
         const imageUrl = URL.createObjectURL(response.data);
         setAvatarUrl(imageUrl);
       } catch (error) {
@@ -42,8 +45,8 @@ function StartUpView() {
       }
     };
 
-    fetchProfilePicture();
-  }, [startup]); 
+    fetchProfilePicture(); // Always call the fetch function
+  }, [startup]); // Re-run the effect if the startup data changes
 
   const handlePageChange = (page) => {
     setSelectedPage(page);
@@ -58,8 +61,14 @@ function StartUpView() {
   const city = startup.city === "N/A" ? "" : startup.city || "";
   const state = startup.state === "N/A" ? "" : startup.state || "";
 
+  const totalMoneyRaised = startup.fundingRounds
+  .filter(fundingRound => !fundingRound.isDeleted) // Filter out deleted funding rounds
+  .reduce((total, fundingRound) => {
+    return total + (fundingRound.moneyRaised || 0); // Default to 0 if moneyRaised is undefined
+  }, 0);
+
   return (
-    <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px`, mt: 5}}>
+    <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px`, mt: 5 }}>
       <Navbar />
       <Toolbar />
 
@@ -155,8 +164,7 @@ function StartUpView() {
                                     backgroundColor: startup.linkedIn ? '#007bff' : '#e0e0e0',
                                     color: 'white',
                                     '&:hover': { backgroundColor: startup.website ? '#0069d9' : '#e0e0e0' },
-                                    borderRadius: '50%',
-                                  }}>
+                                    borderRadius: '50%',}}>
                                   <LanguageIcon />
                                 </IconButton>
 
@@ -168,8 +176,7 @@ function StartUpView() {
                                   backgroundColor: startup.linkedIn ? '#0A66C2' : '#e0e0e0',
                                   color: 'white',
                                   '&:hover': { backgroundColor: startup.linkedIn ? '#004182' : '#e0e0e0' },
-                                  borderRadius: '50%',
-                                }}>
+                                  borderRadius: '50%',}}>
                                 <LinkedInIcon />
                               </IconButton>
 
@@ -181,8 +188,7 @@ function StartUpView() {
                                   backgroundColor: startup.facebook ? '#1877F2' : '#e0e0e0',
                                   color: 'white',
                                   '&:hover': { backgroundColor: startup.facebook ? '#0a52cc' : '#e0e0e0' },
-                                  borderRadius: '50%',
-                                }}>
+                                  borderRadius: '50%',}}>
                                 <FacebookIcon />
                               </IconButton>
 
@@ -207,8 +213,7 @@ function StartUpView() {
                                   backgroundColor: startup.instagram ? '#E1306C' : '#e0e0e0',
                                   color: 'white',
                                   '&:hover': { backgroundColor: startup.instagram ? '#b02e5a' : '#e0e0e0' },
-                                  borderRadius: '50%',
-                                }}>
+                                  borderRadius: '50%',}}>
                                 <InstagramIcon />
                               </IconButton>
                             </IconsContainer>
@@ -233,7 +238,20 @@ function StartUpView() {
 
                     <Divider sx={{ mb: 2 }} />
 
-                    <FundingDescription>Total Funds Raised: <strong>P50,000</strong></FundingDescription>
+                    <FundingDescription>
+                      Total Funds Raised: 
+                      <strong>
+                        {startup.fundingRounds.length > 0 ? (
+                          <div>
+                            <p>
+                              {startup.fundingRounds[0].moneyRaisedCurrency} {totalMoneyRaised.toLocaleString()}
+                            </p>
+                          </div>
+                        ) : (
+                          <p>No funding rounds available</p>
+                        )}
+                      </strong>
+                    </FundingDescription>
                     <FundingNote>*Funds raised through various funding rounds.</FundingNote>
                   </CardStyled>
 
@@ -242,7 +260,7 @@ function StartUpView() {
                     <FundingTitle>Funding Rounds</FundingTitle>
                     <Divider sx={{ mb: 2 }} />
                     <FundingDescription>
-                      Total Number of Rounds: <strong>2</strong>
+                      Total Number of Rounds: <strong>{startup.fundingRounds.filter(round => !round.isDeleted).length}</strong>
                     </FundingDescription>
                     <FundingNote>*Includes all rounds since inception.</FundingNote>
                   </CardStyled>
@@ -251,12 +269,60 @@ function StartUpView() {
                   <CardStyled>
                     <FundingTitle>Investors</FundingTitle>
                     <Divider sx={{ mb: 2 }} />
+
+                    {/* Total Number of Investors */}
                     <FundingDescription>
-                      Total Number of Investors: <strong>10</strong>
+                      Total Number of Investors: <strong>{startup.fundingRounds.flatMap(round => round.capTableInvestors)
+                        .filter(investorDetail => !investorDetail.isDeleted && !investorDetail.investorRemoved)
+                        .map(investorDetail => investorDetail.investor.id) // To get unique investor IDs
+                        .filter((value, index, self) => self.indexOf(value) === index).length}</strong>
                     </FundingDescription>
-                    <FundingNote>Lead Investor: <strong>XYZ Capital</strong></FundingNote>
-                    <FundingNote>Repeat Investor: <strong>Rob Borinaga</strong></FundingNote>
+
+                    {/* Lead Investor */}
+                    <FundingNote>
+                      Lead Investor: <strong>
+                        {
+                          (() => {
+                            const allInvestors = startup.fundingRounds.flatMap(round => round.capTableInvestors)
+                              .filter(investorDetail => !investorDetail.isDeleted && !investorDetail.investorRemoved);
+
+                            const leadInvestor = allInvestors.reduce((prev, current) => {
+                              return (prev.totalInvestment > current.totalInvestment) ? prev : current;
+                            }, { totalInvestment: 0 });
+
+                            return leadInvestor.investor?.firstName ? `${leadInvestor.investor.firstName} ${leadInvestor.investor.lastName}` : 'N/A';
+                          })()
+                        }
+                      </strong>
+                    </FundingNote>
+
+                    {/* Repeat Investor */}
+                    <FundingNote>
+                      Repeat Investor: <strong>
+                        {
+                          (() => {
+                            const investmentCounts = {};
+                            const allInvestors = startup.fundingRounds.flatMap(round => round.capTableInvestors)
+                              .filter(investorDetail => !investorDetail.isDeleted && !investorDetail.investorRemoved);
+
+                            allInvestors.forEach(investorDetail => {
+                              const investorId = investorDetail.investor.id;
+                              if (investmentCounts[investorId]) {
+                                investmentCounts[investorId].count += 1;
+                                investmentCounts[investorId].investor = investorDetail.investor;
+                              } else {
+                                investmentCounts[investorId] = { count: 1, investor: investorDetail.investor };
+                              }
+                            });
+
+                            const repeatInvestors = Object.values(investmentCounts).filter(investor => investor.count > 1);
+                            return repeatInvestors.length > 0 ? `${repeatInvestors[0].investor.firstName} ${repeatInvestors[0].investor.lastName}` : 'N/A';
+                          })()
+                        }
+                      </strong>
+                    </FundingNote>
                   </CardStyled>
+
                 </FundingBox>
               </Grid>
 
