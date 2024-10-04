@@ -9,18 +9,25 @@ export const styles = {
       background: '#007490',
       borderRadius: '0 10px 10px 0',
       boxShadow: '10px 3px 8px rgba(0,0,0,.15)',
+      ml: -3
     },
     titleContainer: {
-      textAlign: 'center',
+      display: 'flex',             
+      flexDirection: 'column',     
+      alignItems: 'center',         
+      justifyContent: 'center',     
+      textAlign: 'center',        
       color: '#007490',
-      mt: 8,
     },
     title: {
-      fontSize: '4.5em',
+      fontSize: '5.2em',
       fontWeight: 'bold',
     },
     formContainer: {
-      p: 6,
+      pl: 8,
+      pr: 8,
+      pt: 10,
+      pb: 10,
       background: 'rgba(0, 116, 144, 1)',
       borderRadius: 2,
       boxShadow: '10px 3px 8px rgba(0,0,0,.15)',
@@ -33,36 +40,8 @@ export const styles = {
     textField: {
       background: '#F2F2F2',
       borderRadius: 1,
-      height: '45px',
-      '& .MuiInputBase-root': { height: '45px' },
-      '& .MuiInputBase-input': { padding: '12px 14px' },
-      '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#fff',
-      },
-      '& input:-webkit-autofill': {
-        WebkitBoxShadow: '0 0 0 30px #F2F2F2 inset',
-        WebkitTextFillColor: '#000',
-      },
-      '& input:-moz-autofill': {
-        boxShadow: '0 0 0 30px #F2F2F2 inset',
-        color: '#000',
-      },
-    },
-    select: {
-      background: '#F2F2F2',
-      borderRadius: 1,
-      height: '45px',
-      '& .MuiInputBase-root': { height: '45px' },
-      '& .MuiInputBase-input': { padding: '12px 14px' },
-      '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#fff',
-      },
-    },
-    passwordField: {
-      background: '#F2F2F2',
-      borderRadius: 1,
-      height: '45px',
-      '& .MuiInputBase-root': { height: '45px' },
+      height: '55px',
+      '& .MuiInputBase-root': { height: '55px' },
       '& .MuiInputBase-input': { padding: '12px 14px' },
       '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
         borderColor: '#fff',
@@ -78,10 +57,12 @@ export const styles = {
     },
     submitButton: {
       mt: 3,
-      mb: 2,
+      mb: 3,
       background: '#f2f2f2',
       color: '#007490',
       borderRadius: 1,
+      height: '55px',
+
       '&:hover': {
         backgroundColor: '#f2f2f2',
         color: '#007490',

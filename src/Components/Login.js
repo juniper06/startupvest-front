@@ -71,18 +71,17 @@ function Login() {
   };
 
   return (
-    <Container sx={styles.container}>
+    <Container maxWidth="xxl" sx={styles.container}>
       <Grid container justifyContent="center">
-        {/* LEFT SIDE (only show on large screens) */}
-        <Grid item xs={12} lg={6} display={{ xs: 'none', lg: 'block' }} textAlign="center">
+        <Grid item xs={5} display={{ xs: 'none', md: 'none', lg:'block' }} textAlign="center">
           <Paper elevation={3} sx={styles.paperLeft}>
-            <Typography variant='h4' sx={styles.welcomeText}>
+            <Typography sx={styles.welcomeText}>
               Welcome back! <br />
               Excited to have you again. <br />
               Sign in to get back on track!
             </Typography>
 
-            <Typography variant='h6' sx={styles.subtitleText}>
+            <Typography variant='h5' sx={styles.subtitleText}>
               "Empowering Startups, Tracking Investments"
             </Typography>
             <img src="images/picture.jpg" alt="Startup Vest Logo" style={styles.logoImage} />
@@ -90,8 +89,8 @@ function Login() {
         </Grid>
 
         {/* LOGIN FORM */}
-        <Grid item xs={12} md={8} lg={5} paddingX={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <img src="images/logo.png" alt="Logo" style={{ width: '70%', marginBottom: '10px', maxWidth: '100%' }} />
+        <Grid item xs={4} paddingX={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <img src="images/logo.png" alt="Logo" style={{ width: '60%', marginBottom: '10px', maxWidth: '100%' }} />
           <Paper elevation={3} style={styles.formContainer}>
             <form onSubmit={handleSubmit} sx={styles.form}>
               <Typography variant="h5" sx={styles.signInText}>
@@ -132,7 +131,7 @@ function Login() {
                 }}
                 fullWidth
                 margin="normal"
-                sx={styles.passwordField}
+                sx={styles.textField}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">

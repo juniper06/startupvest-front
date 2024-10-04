@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Grid, Typography, TextField, Button, Select, MenuItem, FormControl, InputAdornment, IconButton } from '@mui/material';
+import { Grid, Typography, TextField, Button, Select, MenuItem, FormControl, InputAdornment, IconButton, Container } from '@mui/material';
 import genderOptions from '../static/genderOptions';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -102,18 +102,18 @@ function Signup() {
     };
 
     return (
-        <div style={styles.container}>
+        <Container sx={styles.container} maxWidth="xxl">
             <Grid container>
                 <Grid item xs={12} sm={1} sx={styles.sideBar}></Grid>
 
-                <Grid item xs={12} sm={6} sx={styles.titleContainer}>
+                <Grid item xs={12} sm={6.5} sx={styles.titleContainer}>
                     <Typography sx={styles.title}>
                         "Empowering <br /> Startups, <br /> Tracking <br /> Investments"
                     </Typography>
                 </Grid>
 
                 <Grid item xs={12} sm={4} sx={styles.formContainer}>
-                    <Typography variant="h5" component="header" sx={styles.formTitle}>
+                    <Typography variant="h4" component="header" sx={styles.formTitle}>
                         Create Account
                     </Typography>
 
@@ -182,7 +182,7 @@ function Signup() {
                             <Grid item xs={6}>
                                 <Typography sx={{ color: '#F2F2F2' }}>Gender</Typography>
                                 <FormControl fullWidth>
-                                    <Select name="gender" sx={styles.select} defaultValue='Select Gender' error={!!genderError}>
+                                    <Select name="gender" sx={styles.textField} defaultValue='Select Gender' error={!!genderError}>
                                         {genderOptions.map((option) => (
                                             <MenuItem key={option.value} value={option.value}>
                                                 {option.label}
@@ -196,7 +196,7 @@ function Signup() {
                             </Grid>
 
                             <Grid item xs={12}>
-                                <Typography sx={{ color: '#F2F2F2' }}>Password</Typography>
+                                <Typography sx={{ color: '#F2F2F2'}}>Password</Typography>
                                 <TextField
                                     fullWidth
                                     name="password"
@@ -204,7 +204,7 @@ function Signup() {
                                     type={showPassword ? 'text' : 'password'}
                                     error={!!passwordError}
                                     required
-                                    sx={styles.passwordField}
+                                    sx={styles.textField}
                                     InputProps={{
                                         endAdornment: (
                                             <InputAdornment position="end">
@@ -239,8 +239,8 @@ function Signup() {
                 </Grid>
             </Grid>
 
-            <SignupDialog open={openDialog} onClose={handleCloseDialog} /> {/* Use the SignupDialog component */}
-        </div>
+            <SignupDialog open={openDialog} onClose={handleCloseDialog} />
+        </Container>
     );
 }
 
