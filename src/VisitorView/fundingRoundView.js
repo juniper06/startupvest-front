@@ -28,7 +28,7 @@ function FundingRoundView() {
 
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/profile-picture/startup/${fundinground.startupId}`,
+          `http://localhost:3000/profile-picture/startup/${fundinground.startupId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
