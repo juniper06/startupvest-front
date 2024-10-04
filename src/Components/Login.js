@@ -19,7 +19,7 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-        const response = await axios.post('http://localhost:3000/users/login', {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/users/login`, {
             email,
             password,
         });
@@ -53,7 +53,7 @@ function Login() {
 
   const isEmailRegistered = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/users/check-email', {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/users/check-email`, {
         email,
       });
       setEmailExists(response.data.exists);
@@ -71,17 +71,18 @@ function Login() {
   };
 
   return (
-    <Container maxWidth="xxl" sx={styles.container}>
+    <Container sx={styles.container}>
       <Grid container justifyContent="center">
-        <Grid item xs={5} display={{ xs: 'none', md: 'none', lg:'block' }} textAlign="center">
+        {/* LEFT SIDE (only show on large screens) */}
+        <Grid item xs={12} lg={6} display={{ xs: 'none', lg: 'block' }} textAlign="center">
           <Paper elevation={3} sx={styles.paperLeft}>
-            <Typography sx={styles.welcomeText}>
+            <Typography variant='h4' sx={styles.welcomeText}>
               Welcome back! <br />
               Excited to have you again. <br />
               Sign in to get back on track!
             </Typography>
 
-            <Typography variant='h5' sx={styles.subtitleText}>
+            <Typography variant='h6' sx={styles.subtitleText}>
               "Empowering Startups, Tracking Investments"
             </Typography>
             <img src="images/picture.jpg" alt="Startup Vest Logo" style={styles.logoImage} />
@@ -89,8 +90,8 @@ function Login() {
         </Grid>
 
         {/* LOGIN FORM */}
-        <Grid item xs={4} paddingX={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <img src="images/logo.png" alt="Logo" style={{ width: '60%', marginBottom: '10px', maxWidth: '100%' }} />
+        <Grid item xs={12} md={8} lg={5} paddingX={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <img src="images/logo.png" alt="Logo" style={{ width: '70%', marginBottom: '10px', maxWidth: '100%' }} />
           <Paper elevation={3} style={styles.formContainer}>
             <form onSubmit={handleSubmit} sx={styles.form}>
               <Typography variant="h5" sx={styles.signInText}>
@@ -131,7 +132,7 @@ function Login() {
                 }}
                 fullWidth
                 margin="normal"
-                sx={styles.textField}
+                sx={styles.passwordField}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">

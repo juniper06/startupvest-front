@@ -1,114 +1,169 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Box, Typography, Button, Grid } from '@mui/material';
+import { Container, Box, Typography, Button, Grid, useMediaQuery, useTheme } from '@mui/material';
+import { styled } from '@mui/system';
+
+const BorderBox = styled(Box)(({ position, direction }) => ({
+  position: 'fixed',
+  [position]: 0,
+  [direction]: '0',
+  backgroundColor: 'rgba(0, 116, 144, 1)',
+  zIndex: 10,
+}));
 
 const LandingPage = () => {
-  const [isLargeScreen, setIsLargeScreen] = useState(true);
+  const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between('md', 'lg'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const [isZoom100, setIsZoom100] = useState(window.devicePixelRatio === 1);
+
+  // Listen to zoom changes
   useEffect(() => {
-    const handleResize = () => {
-      setIsLargeScreen(window.innerWidth > 1024); 
+    const handleZoomChange = () => {
+      setIsZoom100(window.devicePixelRatio === 1);
     };
 
-    handleResize();
-
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleZoomChange);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleZoomChange);
     };
   }, []);
 
+  // Font sizes for title and body text (adjusted for zoom level)
+  const titleFontSize = isZoom100
+    ? { xs: '3rem', md: '4.5rem', lg: '4.2rem' } // Larger title for 100% zoom
+    : { xs: '2.5rem', md: '4rem', lg: '3.2rem' }; // Default title size
+
+  const bodyFontSize = isZoom100
+    ? { xs: '1rem', md: '1.4rem', lg: '1.2rem' } // Larger body font for 100% zoom
+    : { xs: '0.8rem', md: '1.2rem', lg: '1rem' }; // Default body size
+
   return (
-    <Container maxWidth="xxl" sx={{  display: 'flex',  flexDirection: 'column',  alignItems: 'center',  justifyContent: 'center', 
-        position: 'relative', minHeight: '100vh' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
-        <Box component="img" src="/images/logoStartUp.png" alt="Startup Vest Logo" sx={{ width: '15%', height: 'auto', ml: 15 }}/>
-          <Box>
-            <Button component={Link} to="/login" variant="text" color="primary" sx={{ mr: 2, color: '#007490' }}>
-              Login
-            </Button>
+    <Container 
+      maxWidth="xxl"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        minHeight: '100vh',
+        px: { xs: 2, md: 15 }, // Responsive padding
+      }}
+    >
+      {/* Header Section */}
+      <Grid container alignItems="center" justifyContent="space-between" sx={{ width: '100%', ml: 3 }}>
+        {/* Logo */}
+        <Grid item xs={6} md={4} lg={3}>
+          <Box
+            component="img"
+            src="/images/logoStartUp.png"
+            alt="Startup Vest Logo"
+            sx={{ width: '70%', height: 'auto' }}
+          />
+        </Grid>
 
-            <Button component={Link} to="/signup" variant="contained"
-              sx={{ backgroundImage: 'linear-gradient(45deg, #F1CC0A, #EDA61C)', color: '#FFFFFF', mr: 15 }}>
-              Signup
-            </Button>
-          </Box>
-        </Box>
+        {/* Buttons */}
+        <Grid item xs={6} md={8} lg={4} sx={{ textAlign: 'right', pr: { xs: 2, md: 8 } }}>
+          <Button
+            component={Link}
+            to="/login"
+            variant="text"
+            color="primary"
+            sx={{ mr: 2, color: theme.palette.primary.main }}
+            aria-label="Login Button"
+          >
+            Login
+          </Button>
+          <Button
+            component={Link}
+            to="/signup"
+            variant="contained"
+            sx={{
+              backgroundImage: 'linear-gradient(45deg, #F1CC0A, #EDA61C)',
+              color: '#FFFFFF',
+              mr: 1,
+            }}
+            aria-label="Signup Button"
+          >
+            Signup
+          </Button>
+        </Grid>
+      </Grid>
 
+      {/* Border Designs for Large Screens */}
       {isLargeScreen && (
         <>
-          {/* Top Right Border Design */}
-          <Box
-            sx={{
-              position: 'fixed',
-              top: 0,
-              right: 0,
-              width: '50%',
-              height: '15px',
-              backgroundColor: 'rgba(0, 116, 144, 1)',
-              borderRadius: '0 0 0 10px',
-              zIndex: 10,
-            }}/>
-
-          <Box sx={{
-              position: 'fixed',
-              top: 0,
-              right: 0,
-              width: '25px',
-              height: '50%',
-              backgroundColor: 'rgba(0, 116, 144, 1)',
-              borderRadius: '0 0 0 10px',
-              zIndex: 10,
-            }}/>
-
-          {/* Bottom Left Border Design */}
-          <Box sx={{
-              position: 'fixed',
-              bottom: 0,
-              left: 0,
-              width: '50%',
-              height: '15px',
-              backgroundColor: 'rgba(0, 116, 144, 1)',
-              borderRadius: '0 10px 0 0',
-              zIndex: 10,
-            }}/>
-
-          <Box sx={{
-              position: 'fixed',
-              bottom: 0,
-              left: 0,
-              width: '25px',
-              height: '50%',
-              backgroundColor: 'rgba(0, 116, 144, 1)',
-              borderRadius: '0 10px 0 0',
-              zIndex: 10,
-            }}/>
+          <BorderBox position="top" direction="right" sx={{ width: '50%', height: '15px', borderRadius: '0 0 0 10px' }} />
+          <BorderBox position="top" direction="right" sx={{ width: '25px', height: '50%', borderRadius: '0 0 0 10px' }} />
+          <BorderBox position="bottom" direction="left" sx={{ width: '50%', height: '15px', borderRadius: '0 10px 0 0' }} />
+          <BorderBox position="bottom" direction="left" sx={{ width: '25px', height: '50%', borderRadius: '0 10px 0 0' }} />
         </>
       )}
 
-      <Grid container sx={{ pl: 15}}>
-        <Grid item xs={12} md={5}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: { xs: 'center', md: 'flex-start' },  height: '100%', textAlign: { xs: 'center', md: 'left' } }}>
-            <Typography variant="h2" gutterBottom sx={{ fontWeight: 'bold', color: 'rgba(0, 116, 144, 1)', mt: 8 }}>
-              Turn Bold Ideas <br/> Into Startup Reality!
+      {/* Main Content */}
+      <Grid container spacing={4} sx={{ width: '100%' }}>
+        {/* Text Section */}
+        <Grid item xs={12} md={isMediumScreen ? 12 : 6}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', textAlign: { xs: 'center', md: 'left' } }}>
+            <Typography
+              variant={isLargeScreen ? 'h2' : isMediumScreen ? 'h3' : 'h5'}
+              gutterBottom
+              sx={{
+                fontWeight: 'bold',
+                color: '#007490',
+                mt: { xs: 5, md: 8 },
+                fontSize: titleFontSize,
+              }}
+            >
+              Turn Bold Ideas <br /> Into Startup Reality!
             </Typography>
 
-            <Typography variant="h6" align="justify" paragraph sx={{ color: '#373737', mr: 5, mt: 2 }}>
+            <Typography
+              variant={isLargeScreen ? 'h6' : isMediumScreen ? 'body1' : 'body2'}
+              align="justify"
+              paragraph
+              sx={{
+                color: theme.palette.text.primary,
+                mt: 2,
+                fontSize: bodyFontSize,
+              }}
+            >
               Our application equips startup owners with essential tools for effective funding management. Users can access key metrics like the highest-funded companies, top investors, and total funding amounts. They can also track investor counts, review funding rounds, and visualize monthly funding trends.
             </Typography>
 
-            <Typography variant="h6" align="justify" paragraph sx={{ color: '#373737', mr: 5 }}>
+            <Typography
+              variant={isLargeScreen ? 'h6' : isMediumScreen ? 'body1' : 'body2'}
+              align="justify"
+              paragraph
+              sx={{ color: theme.palette.text.primary, fontSize: bodyFontSize }}
+            >
               For investors, the app streamlines investment monitoring by highlighting top companies, tracking investment counts, analyzing average investment sizes, and allowing users to track the specific companies they have invested in.
             </Typography>
           </Box>
         </Grid>
 
-        <Grid item xs={12} md={7}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-            <Box component="img" src="/images/startup_illustration.png" alt="Startup Illustration" sx={{ width: '90%' }} />
-          </Box>
-        </Grid>
+        {/* Image Section */}
+        {!isMediumScreen && ( // Hides the image for medium screens
+          <Grid item xs={12} md={6}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              <Box
+                component="img"
+                src="/images/startup_illustration.png"
+                alt="Illustration of a Startup"
+                loading="lazy" // Lazy load the image for better performance
+                sx={{
+                  width: isLargeScreen ? '100%' : isSmallScreen ? '100%' : 'none', // Responsive width
+                  height: 'auto',
+                  maxHeight: isSmallScreen ? '250px' : 'none', // Limit max height on small screens
+                }}
+              />
+            </Box>
+          </Grid>
+        )}
       </Grid>
     </Container>
   );

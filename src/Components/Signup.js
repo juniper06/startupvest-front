@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Grid, Typography, TextField, Button, Select, MenuItem, FormControl, InputAdornment, IconButton, Container } from '@mui/material';
+import { Grid, Typography, TextField, Button, Select, MenuItem, FormControl, InputAdornment, IconButton } from '@mui/material';
 import genderOptions from '../static/genderOptions';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -71,7 +71,7 @@ function Signup() {
         }
 
         try {
-            const response = await axios.post('http://localhost:3000/users/register', userData);
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/users/register`, userData);
             console.log('Signup successful:', response.data);
             setOpenDialog(true);
             setTimeout(() => navigate('/login'), 2000);
@@ -83,7 +83,7 @@ function Signup() {
 
     const checkEmailExists = async () => {
         try {
-            const response = await axios.post('http://localhost:3000/users/check-email', { email });
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/users/check-email`, { email });
             setEmailExists(response.data.exists);
             setError(response.data.exists ? 'Email already exists. Please enter a different email.' : '');
         } catch (error) {
@@ -102,18 +102,18 @@ function Signup() {
     };
 
     return (
-        <Container sx={styles.container} maxWidth="xxl">
+        <div style={styles.container}>
             <Grid container>
                 <Grid item xs={12} sm={1} sx={styles.sideBar}></Grid>
 
-                <Grid item xs={12} sm={6.5} sx={styles.titleContainer}>
+                <Grid item xs={12} sm={6} sx={styles.titleContainer}>
                     <Typography sx={styles.title}>
                         "Empowering <br /> Startups, <br /> Tracking <br /> Investments"
                     </Typography>
                 </Grid>
 
                 <Grid item xs={12} sm={4} sx={styles.formContainer}>
-                    <Typography variant="h4" component="header" sx={styles.formTitle}>
+                    <Typography variant="h5" component="header" sx={styles.formTitle}>
                         Create Account
                     </Typography>
 
@@ -196,7 +196,7 @@ function Signup() {
                             </Grid>
 
                             <Grid item xs={12}>
-                                <Typography sx={{ color: '#F2F2F2'}}>Password</Typography>
+                                <Typography sx={{ color: '#F2F2F2' }}>Password</Typography>
                                 <TextField
                                     fullWidth
                                     name="password"
@@ -239,8 +239,8 @@ function Signup() {
                 </Grid>
             </Grid>
 
-            <SignupDialog open={openDialog} onClose={handleCloseDialog} />
-        </Container>
+            <SignupDialog open={openDialog} onClose={handleCloseDialog} /> {/* Use the SignupDialog component */}
+        </div>
     );
 }
 

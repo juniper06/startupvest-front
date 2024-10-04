@@ -99,7 +99,7 @@ function UserProfileView() {
                         <Typography variant="body1">{profile.gender}</Typography>
                       </Grid>
 
-                      <Grid item xs={10} lg={4}>
+                      <Grid item xs={10} lg={12}>
                         <Typography><strong>Location</strong></Typography>
                         <Typography variant="body1">{locationDisplay}</Typography>
                       </Grid>
