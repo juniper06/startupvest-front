@@ -32,14 +32,31 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/users/login', {
-        email,
-        password,
-      });
-      localStorage.setItem('token', response.data.jwt);
-      console.log('Login successful:', response.data);
-      setLoggedIn(true);
-      navigate('/asCompanyOwnerOverview');
+        const response = await axios.post(`http://localhost:3000/users/login`, {
+            email,
+            password,
+        });
+
+        // Check if the response contains the necessary data
+        if (response.data && response.data.jwt) {
+            localStorage.setItem('token', response.data.jwt);
+            localStorage.setItem('userId', response.data.userId);
+            localStorage.setItem('role', response.data.role); // Store the role from the response
+
+            console.log('Login successful:', response.data);
+            setLoggedIn(true);
+            setOpenAlert(true);
+
+            setTimeout(() => {
+                if (response.data.role === 'admin') {
+                    navigate('/admindashboard');
+                } else {
+                    navigate('/asCompanyOwnerOverview');
+                }
+            }, 1000);
+        } else {
+            throw new Error('Invalid login response');
+        }
     } catch (error) {
       console.error('Login failed:', error);
       setError('Incorrect email or password');
@@ -48,7 +65,7 @@ function Login() {
 
   const isEmailRegistered = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/users/check-email', {
+      const response = await axios.post(`http://localhost:3000/users/check-email`, {
         email,
       });
       setEmailExists(response.data.exists);
