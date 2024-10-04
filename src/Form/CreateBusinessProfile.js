@@ -231,7 +231,13 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                     <Grid container spacing={3} sx={{ ml: 2 }}>
                         <Grid item xs={12} sm={11.4}>
                             <Grid container spacing={2}>
-                                <Grid item xs={12}>
+                                <Grid item xs={4}>
+                                        <label>Startup Code {RequiredAsterisk}</label>
+                                        <TextField fullWidth  required variant="outlined" disabled
+                                            sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
+                                    </Grid>
+
+                                <Grid item xs={8}>
                                     <label>Company Name {RequiredAsterisk}</label>
                                     <TextField fullWidth  required variant="outlined" value={companyName}
                                         onChange={(e) => setCompanyName(e.target.value)}
@@ -242,7 +248,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
 
                                 <Grid item xs={12}>
                                     <label>Company Description {RequiredAsterisk}</label>
-                                    <TextField fullWidth variant="outlined" value={companyDescription} multiline rows={4}
+                                    <TextField fullWidth variant="outlined" value={companyDescription} multiline rows={6}
                                         onChange={(e) => setCompanyDescription(e.target.value)}
                                         error={!!errors.companyDescription}/>
                                         {errors.companyDescription && (<FormHelperText error>{errors.companyDescription}</FormHelperText>)}
@@ -580,7 +586,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
 
                             <Grid item xs={12}>
                                 <label>Biography {RequiredAsterisk}</label>
-                                <TextField fullWidth variant="outlined" multiline rows={4} value={biography} onChange={(e) => setBiography(e.target.value)}
+                                <TextField fullWidth variant="outlined" multiline rows={6} value={biography} onChange={(e) => setBiography(e.target.value)}
                                 error={!!errors.biography} />
                                 {errors.biography && (<FormHelperText error>{errors.biography}</FormHelperText>)}
                             </Grid>

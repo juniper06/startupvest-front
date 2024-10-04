@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+// src/components/Login.js
+import React, { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Container, Grid, Typography, TextField, Button, Link, Paper, IconButton, InputAdornment, Snackbar, Alert } from '@mui/material';
+import { Container, Grid, Typography, TextField, Button, Link, Paper, IconButton, InputAdornment } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import styles from '../styles/Login';
+import LoginStyles from '../styles/Login';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -13,47 +14,41 @@ function Login() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [openAlert, setOpenAlert] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(window.devicePixelRatio);
   const navigate = useNavigate();
+
+  // Adjust zoom level on window resize (for detecting zoom changes)
+  useEffect(() => {
+    const handleResize = () => {
+      setZoomLevel(window.devicePixelRatio);
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/users/login`, {
-            email,
-            password,
-        });
-
-        // Check if the response contains the necessary data
-        if (response.data && response.data.jwt) {
-            localStorage.setItem('token', response.data.jwt);
-            localStorage.setItem('userId', response.data.userId);
-            localStorage.setItem('role', response.data.role); // Store the role from the response
-
-            console.log('Login successful:', response.data);
-            setLoggedIn(true);
-            setOpenAlert(true);
-
-            setTimeout(() => {
-                if (response.data.role === 'admin') {
-                    navigate('/admindashboard');
-                } else {
-                    navigate('/asCompanyOwnerOverview');
-                }
-            }, 1000);
-        } else {
-            throw new Error('Invalid login response');
-        }
+      const response = await axios.post('http://localhost:3000/users/login', {
+        email,
+        password,
+      });
+      localStorage.setItem('token', response.data.jwt);
+      console.log('Login successful:', response.data);
+      setLoggedIn(true);
+      navigate('/asCompanyOwnerOverview');
     } catch (error) {
-        console.error('Login failed:', error);
-        setError('Incorrect email or password');
+      console.error('Login failed:', error);
+      setError('Incorrect email or password');
     }
-};
-
+  };
 
   const isEmailRegistered = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/users/check-email`, {
+      const response = await axios.post('http://localhost:3000/users/check-email', {
         email,
       });
       setEmailExists(response.data.exists);
@@ -66,45 +61,75 @@ function Login() {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  const handleCloseAlert = () => {
-    setOpenAlert(false);
-  };
+  const scaleFactor = zoomLevel >= 1.25 ? 0.85 : 1; 
 
   return (
-    <Container sx={styles.container}>
-      <Grid container justifyContent="center">
-        {/* LEFT SIDE (only show on large screens) */}
-        <Grid item xs={12} lg={6} display={{ xs: 'none', lg: 'block' }} textAlign="center">
-          <Paper elevation={3} sx={styles.paperLeft}>
-            <Typography variant='h4' sx={styles.welcomeText}>
+    <Container
+      sx={{
+        ...LoginStyles.container,  // Apply the external styles
+        transform: `scale(${scaleFactor})`,
+      }}
+    >
+      <Grid container>
+        {/* Left Side Content */}
+        <Grid 
+          item 
+          xs={12} 
+          sm={7} 
+          sx={LoginStyles.leftSideGrid}  // Apply the external styles
+        >
+          <Paper elevation={3} sx={LoginStyles.leftSidePaper}>
+            <Typography variant="h4" sx={LoginStyles.leftSideTypography}>
               Welcome back! <br />
               Excited to have you again. <br />
               Sign in to get back on track!
             </Typography>
-
-            <Typography variant='h6' sx={styles.subtitleText}>
+            <Typography variant="h6" sx={LoginStyles.leftSideSubtitle}>
               "Empowering Startups, Tracking Investments"
             </Typography>
-            <img src="images/picture.jpg" alt="Startup Vest Logo" style={styles.logoImage} />
+            <img
+              src="images/picture.jpg"
+              alt="Startup Vest Logo"
+              style={LoginStyles.leftSideImage}  // Apply the external styles
+            />
           </Paper>
         </Grid>
 
         {/* LOGIN FORM */}
-        <Grid item xs={12} md={8} lg={5} paddingX={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <img src="images/logo.png" alt="Logo" style={{ width: '70%', marginBottom: '10px', maxWidth: '100%' }} />
-          <Paper elevation={3} style={styles.formContainer}>
-            <form onSubmit={handleSubmit} sx={styles.form}>
-              <Typography variant="h5" sx={styles.signInText}>
+        <Grid
+          item
+          xs={12}
+          sm={5}
+          sx={LoginStyles.formContainer}  // Apply the external styles
+        >
+          <img
+            src="images/logo.png"
+            alt="Logo"
+            style={LoginStyles.logoImage}  // Apply the external styles
+          />
+          <Paper elevation={3} sx={LoginStyles.formPaper}>
+            <form
+              onSubmit={handleSubmit}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <Typography variant="h5" sx={LoginStyles.formHeading}>
                 Sign In
               </Typography>
 
               {error && (
-                <Typography variant="body2" color="error" sx={styles.errorText}>
+                <Typography
+                  variant="body2"
+                  color="error"
+                  sx={{ textAlign: 'center' }}
+                >
                   {error}
                 </Typography>
               )}
 
-              <Typography sx={styles.emailLabel}>Email</Typography>
+              <Typography sx={{ color: '#007490', mb: -1 }}>Email</Typography>
               <TextField
                 type="text"
                 placeholder="johndoe@gmail.com"
@@ -118,9 +143,12 @@ function Login() {
                 onBlur={isEmailRegistered}
                 fullWidth
                 margin="normal"
-                sx={styles.textField}/>
+                sx={LoginStyles.formInput}  // Apply the external styles
+              />
 
-              <Typography sx={styles.passwordLabel}>Password</Typography>
+              <Typography sx={{ color: '#007490', mt: 1.5, mb: -1 }}>
+                Password
+              </Typography>
               <TextField
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Example123"
@@ -132,7 +160,7 @@ function Login() {
                 }}
                 fullWidth
                 margin="normal"
-                sx={styles.passwordField}
+                sx={LoginStyles.formInput}  // Apply the external styles
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -140,21 +168,36 @@ function Login() {
                         aria-label="toggle password visibility"
                         onClick={handleTogglePasswordVisibility}
                         edge="end"
-                        size="small">
-                        {showPassword ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
+                        size="small"
+                      >
+                        {showPassword ? (
+                          <VisibilityOffIcon fontSize="small" />
+                        ) : (
+                          <VisibilityIcon fontSize="small" />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
-                }}/>
+                }}
+              />
 
-              <Button type="submit" variant="contained" color="primary" sx={styles.signInButton}>
+              <Typography variant="body2" sx={LoginStyles.forgotPasswordText}>
+                Forgot password?
+              </Typography>
+
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={LoginStyles.formSubmitButton}
+              >
                 Sign In
               </Button>
 
               <div style={{ marginTop: '16px' }}>
-                <Typography variant="body2" sx={styles.signUpLink}>
+                <Typography variant="body2" sx={LoginStyles.signUpText}>
                   Don't have an account?{' '}
-                  <Link component={RouterLink} to="/signup" sx={styles.signUpLink}>
+                  <Link component={RouterLink} to="/signup" sx={LoginStyles.signUpLink}>
                     Sign Up
                   </Link>
                 </Typography>
@@ -163,13 +206,6 @@ function Login() {
           </Paper>
         </Grid>
       </Grid>
-
-      <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} 
-      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-        <Alert onClose={handleCloseAlert} severity="success" sx={styles.snackbar}>
-          Login successful! Redirecting to homepage...
-        </Alert>
-      </Snackbar>
     </Container>
   );
 }

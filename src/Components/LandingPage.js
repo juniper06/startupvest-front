@@ -42,53 +42,31 @@ const LandingPage = () => {
     : { xs: '0.8rem', md: '1.2rem', lg: '1rem' }; // Default body size
 
   return (
-    <Container 
-      maxWidth="xxl"
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-        minHeight: '100vh',
-        px: { xs: 2, md: 15 }, // Responsive padding
-      }}
-    >
+    <Container maxWidth="xxl"
+      sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative',
+        minHeight: '100vh', px: { xs: 2, md: 15 }, }}>
+
       {/* Header Section */}
       <Grid container alignItems="center" justifyContent="space-between" sx={{ width: '100%', ml: 3 }}>
         {/* Logo */}
         <Grid item xs={6} md={4} lg={3}>
-          <Box
-            component="img"
+          <Box component="img"
             src="/images/logoStartUp.png"
             alt="Startup Vest Logo"
-            sx={{ width: '70%', height: 'auto' }}
-          />
+            sx={{ width: '70%', height: 'auto' }} />
         </Grid>
 
         {/* Buttons */}
         <Grid item xs={6} md={8} lg={4} sx={{ textAlign: 'right', pr: { xs: 2, md: 8 } }}>
-          <Button
-            component={Link}
-            to="/login"
-            variant="text"
-            color="primary"
-            sx={{ mr: 2, color: theme.palette.primary.main }}
-            aria-label="Login Button"
-          >
+          <Button component={Link} variant="text" to="/login"
+            sx={{ mr: 2, color: '#007490' }}
+            aria-label="Login Button">
             Login
           </Button>
-          <Button
-            component={Link}
-            to="/signup"
-            variant="contained"
-            sx={{
-              backgroundImage: 'linear-gradient(45deg, #F1CC0A, #EDA61C)',
-              color: '#FFFFFF',
-              mr: 1,
-            }}
-            aria-label="Signup Button"
-          >
+
+          <Button component={Link} variant="contained" to="/signup"
+            sx={{ backgroundImage: 'linear-gradient(45deg, #F1CC0A, #EDA61C)', color: '#FFFFFF', mr: 1, }}
+            aria-label="Signup Button">
             Signup
           </Button>
         </Grid>
@@ -109,58 +87,33 @@ const LandingPage = () => {
         {/* Text Section */}
         <Grid item xs={12} md={isMediumScreen ? 12 : 6}>
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', textAlign: { xs: 'center', md: 'left' } }}>
-            <Typography
-              variant={isLargeScreen ? 'h2' : isMediumScreen ? 'h3' : 'h5'}
-              gutterBottom
-              sx={{
-                fontWeight: 'bold',
-                color: '#007490',
-                mt: { xs: 5, md: 8 },
-                fontSize: titleFontSize,
-              }}
-            >
+            <Typography variant={isLargeScreen ? 'h2' : isMediumScreen ? 'h3' : 'h5'}
+              gutterBottom sx={{ fontWeight: 'bold', color: '#007490', mt: { xs: 5, md: 8 }, fontSize: titleFontSize, }}>
               Turn Bold Ideas <br /> Into Startup Reality!
             </Typography>
 
-            <Typography
-              variant={isLargeScreen ? 'h6' : isMediumScreen ? 'body1' : 'body2'}
-              align="justify"
-              paragraph
-              sx={{
-                color: theme.palette.text.primary,
-                mt: 2,
-                fontSize: bodyFontSize,
-              }}
-            >
+            <Typography variant={isLargeScreen ? 'h6' : isMediumScreen ? 'body1' : 'body2'} align="justify" paragraph
+              sx={{ color: theme.palette.text.primary, mt: 2, fontSize: bodyFontSize, }}>
               Our application equips startup owners with essential tools for effective funding management. Users can access key metrics like the highest-funded companies, top investors, and total funding amounts. They can also track investor counts, review funding rounds, and visualize monthly funding trends.
             </Typography>
 
-            <Typography
-              variant={isLargeScreen ? 'h6' : isMediumScreen ? 'body1' : 'body2'}
-              align="justify"
-              paragraph
-              sx={{ color: theme.palette.text.primary, fontSize: bodyFontSize }}
-            >
+            <Typography variant={isLargeScreen ? 'h6' : isMediumScreen ? 'body1' : 'body2'}align="justify" paragraph
+              sx={{ color: theme.palette.text.primary, fontSize: bodyFontSize }}>
               For investors, the app streamlines investment monitoring by highlighting top companies, tracking investment counts, analyzing average investment sizes, and allowing users to track the specific companies they have invested in.
             </Typography>
           </Box>
         </Grid>
 
         {/* Image Section */}
-        {!isMediumScreen && ( // Hides the image for medium screens
+        {!isMediumScreen && ( 
           <Grid item xs={12} md={6}>
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
               <Box
                 component="img"
                 src="/images/startup_illustration.png"
                 alt="Illustration of a Startup"
-                loading="lazy" // Lazy load the image for better performance
-                sx={{
-                  width: isLargeScreen ? '100%' : isSmallScreen ? '100%' : 'none', // Responsive width
-                  height: 'auto',
-                  maxHeight: isSmallScreen ? '250px' : 'none', // Limit max height on small screens
-                }}
-              />
+                loading="lazy"
+                sx={{ width: isLargeScreen ? '100%' : isSmallScreen ? '100%' : 'none', height: 'auto', maxHeight: isSmallScreen ? '250px' : 'none',}}/>
             </Box>
           </Grid>
         )}
