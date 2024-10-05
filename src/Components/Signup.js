@@ -136,14 +136,13 @@ function Signup() {
     };
 
     const checkEmailExists = async () => {
-        if (email) {
-            try {
-                const response = await axios.post(`http://localhost:3000/users/check-email`, { email });
-                setEmailExists(response.data.exists);
-                setError(response.data.exists ? 'Email already exists. Please enter a different email.' : '');
-            } catch (error) {
-                setError('Error checking email. Please try again.');
-            }
+        try {
+            const response = await axios.post(`http://localhost:3000/users/check-email`, { email });
+            setEmailExists(response.data.exists);
+            setError(response.data.exists ? 'Email already exists. Please enter a different email.' : '');
+        } catch (error) {
+            console.error('Error checking email:', error);
+            setError('Error checking email. Please try again.');
         }
     };
 
