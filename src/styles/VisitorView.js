@@ -7,7 +7,7 @@ export const StyledAvatar = styled(Avatar)(({ theme }) => ({
     height: 160,
     border: '3px solid rgba(0, 116, 144, 1)',
     borderRadius: 3,
-    marginLeft: theme.spacing(8),
+    marginLeft: theme.spacing(9),
     fontSize: '3rem',
     color: 'white',
     display: 'flex',

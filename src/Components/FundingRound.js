@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Toolbar, Typography, Paper, TextField, Avatar, Stack, Pagination } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Toolbar, Typography, TextField, Pagination, Skeleton } from '@mui/material';
 import PropTypes from 'prop-types';
 import SearchIcon from '@mui/icons-material/Search';
 import { visuallyHidden } from '@mui/utils';
@@ -130,10 +130,12 @@ export default function FundingRound() {
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
   const [profilePictures, setProfilePictures] = useState({});
+  const [loading, setLoading] = useState(true); // Loading state
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFundingRounds = async () => {
+      setLoading(true); // Start loading
       try {
         const response = await axios.get('http://localhost:3000/funding-rounds/all');
         const fetchedRows = response.data
@@ -156,9 +158,11 @@ export default function FundingRound() {
           ));
         setRows(fetchedRows);
         setFilteredRows(fetchedRows);
-        fetchAllProfilePictures(response.data); 
+        await fetchAllProfilePictures(response.data); 
       } catch (error) {
         console.error('Error fetching funding rounds:', error);
+      } finally {
+        setLoading(false); // End loading
       }
     };
   
@@ -236,25 +240,50 @@ export default function FundingRound() {
           <Table stickyHeader>
             <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
             <TableBody>
-              {visibleRows.map((row) => (
-                <StyledTableRow key={row.id} onClick={() => handleRowClick(row)}>
-                  <StyledTableCell>
-                    <StyledStack direction="row" alignItems="center">
-                      <StyledAvatar alt={row.startupName} src={profilePictures[row.id]} variant='rounded'/>
-                      {row.startupName}
-                    </StyledStack>
-                  </StyledTableCell>
-                  <StyledTableCell>{row.fundingName}</StyledTableCell>
-                  <StyledTableCell>{row.fundingType}</StyledTableCell>
-                  <StyledTableCell>
-                    {row.moneyRaisedCurrency} {row.moneyRaised === '---' ? row.moneyRaised : Number(row.moneyRaised).toLocaleString()}
-                  </StyledTableCell>
-                  <StyledTableCell>{formatDate(row.announcedDate)}</StyledTableCell>
-                  <StyledTableCell>{formatDate(row.closedDate)}</StyledTableCell>
-                </StyledTableRow>
-              ))}
-
-              {visibleRows.length === 0 && (
+              {loading ? (
+                [...Array(rowsPerPage)].map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Skeleton variant="rectangular" width={40} height={40} />
+                      <Skeleton variant="text" width="60%" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" width="40%" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" width="60%" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" width="40%" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" width="40%" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="text" width="40%" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                visibleRows.map((row) => (
+                  <StyledTableRow key={row.id} onClick={() => handleRowClick(row)}>
+                    <StyledTableCell>
+                      <StyledStack direction="row" alignItems="center">
+                        <StyledAvatar alt={row.startupName} src={profilePictures[row.id]} variant='rounded'/>
+                        {row.startupName}
+                      </StyledStack>
+                    </StyledTableCell>
+                    <StyledTableCell>{row.fundingName}</StyledTableCell>
+                    <StyledTableCell>{row.fundingType}</StyledTableCell>
+                    <StyledTableCell>
+                      {row.moneyRaisedCurrency} {row.moneyRaised === '---' ? row.moneyRaised : Number(row.moneyRaised).toLocaleString()}
+                    </StyledTableCell>
+                    <StyledTableCell>{formatDate(row.announcedDate)}</StyledTableCell>
+                    <StyledTableCell>{formatDate(row.closedDate)}</StyledTableCell>
+                  </StyledTableRow>
+                ))
+              )}
+              {visibleRows.length === 0 && !loading && (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
                     <Typography variant="body2" color="textSecondary">No funding rounds available.</Typography>

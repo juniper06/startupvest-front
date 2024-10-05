@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Box, Table, TableBody, TableContainer, TableHead, TableRow, TableSortLabel, Toolbar, Typography, TextField, Pagination, TableCell } from '@mui/material';
+import { Box, Table, TableBody, TableContainer, TableHead, TableRow, TableSortLabel, Toolbar, Typography, TextField, Pagination, TableCell, Skeleton } from '@mui/material';
 import PropTypes from 'prop-types';
 import SearchIcon from '@mui/icons-material/Search';
 import { visuallyHidden } from '@mui/utils';
@@ -101,13 +101,13 @@ export default function Companies() {
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [filteredRows, setFilteredRows] = useState([]);
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [profilePictures, setProfilePictures] = useState({});
+  const [loading, setLoading] = useState(true); 
 
   const formatAddress = (streetAddress, city, country) => {
-    const parts = [streetAddress, city, country].filter(Boolean); // Filter out empty or undefined values
-    return parts.length ? parts.join(', ') : 'Location not available'; // If no parts, return placeholder
+    const parts = [streetAddress, city, country].filter(Boolean); 
+    return parts.length ? parts.join(', ') : 'Location not available';
   };  
 
   useEffect(() => {
@@ -183,7 +183,7 @@ export default function Companies() {
   );
 
   return (
-    <Box sx={{ display: 'flex', width: `${drawerWidth}`}}>
+    <Box sx={{ display: 'flex', width: `${drawerWidth}` }}>
       <Navbar />
       <StyledPaper>
         <EnhancedTableToolbar onRequestSearch={handleSearch} />
@@ -191,14 +191,32 @@ export default function Companies() {
           <Table>
             <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
             <TableBody>
-              {visibleRows.map((row, index) => (
+              {loading ? (
+                Array.from(new Array(rowsPerPage)).map((_, index) => (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell>
+                      <Skeleton variant="rounded" width={40} height={40} />
+                      <Skeleton variant="text" width="80%" />
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Skeleton variant="text" width="100%" />
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Skeleton variant="text" width="50%" />
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Skeleton variant="text" width="80%" />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))
+              ) : visibleRows.map((row, index) => (
                 <StyledTableRow hover tabIndex={-1} key={row.id} onClick={() => handleRowClick(row)}>
                   <StyledTableCell>
                     <StyledStack direction="row">
                       <StyledAvatar alt={row.startup} src={profilePictures[row.id]} variant='rounded' />
                       {row.companyName}
                     </StyledStack>
-                  </StyledTableCell>  
+                  </StyledTableCell>
                   <StyledTableCell>{formatAddress(row.streetAddress, row.city, row.country)}</StyledTableCell>
                   <StyledTableCell>{row.foundedDate}</StyledTableCell>
                   <StyledTableCell sx={{ textAlign: 'justify' }}>
@@ -206,7 +224,7 @@ export default function Companies() {
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
-              {visibleRows.length === 0 && (
+              {visibleRows.length === 0 && !loading && (
                 <TableRow>
                   <TableCell colSpan={headCells.length} align="center">
                     <Typography variant="body2" color="textSecondary">No companies available.</Typography>

@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Divider, Toolbar, Typography, Grid, Button, Pagination, PaginationItem, TableRow, TableBody, TableCell,} from '@mui/material';
+import { Box, Divider, Toolbar, Typography, Grid, Button, Pagination, PaginationItem, TableRow, TableBody, TableCell, Skeleton,
+} from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 import axios from 'axios';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import InvestNowDialog from '../Dialogs/InvestNowDialog';
-import { StyledAvatar, OverviewBox, OverviewTitle, StyledTable, StyledTableHead, StyledTableCell, PaginationBox, } from '../styles/VisitorView';
+import {
+  StyledAvatar,
+  OverviewBox,
+  OverviewTitle,
+  StyledTable,
+  StyledTableHead,
+  StyledTableCell,
+  PaginationBox,
+} from '../styles/VisitorView';
 
 const drawerWidth = 240;
 
@@ -15,14 +24,16 @@ function FundingRoundView() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(5);
   const [openDialog, setOpenDialog] = useState(false);
+  const [loading, setLoading] = useState(true); 
   const location = useLocation();
-  const { fundinground } = location.state || {};  
+  const { fundinground } = location.state || {};
 
   useEffect(() => {
     const fetchProfilePicture = async () => {
       if (!fundinground?.startupId) {
         console.error('startupId is undefined');
         setAvatarUrl('path/to/default/image.png');
+        setLoading(false); 
         return;
       }
 
@@ -47,6 +58,8 @@ function FundingRoundView() {
       } catch (error) {
         console.error('Failed to fetch profile picture:', error.message);
         setAvatarUrl('path/to/default/image.png');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -88,19 +101,29 @@ function FundingRoundView() {
       <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px`, mt: 5 }}>
         <Grid container alignItems="center">
           <Grid item mr={4}>
-            <StyledAvatar
-              variant="rounded"
-              src={avatarUrl || 'path/to/default/image.png'} />
+            {loading ? (
+              <Skeleton variant="rounded" width={160} height={160} sx={{ ml: 9 }} />
+            ) : (
+              <StyledAvatar variant="rounded" src={avatarUrl || 'path/to/default/image.png'} />
+            )}
           </Grid>
 
           <Grid item>
-            <Typography variant="h4" gutterBottom>
-              {fundinground.fundingType} - {fundinground.startupName}
-            </Typography>
-            
-            <Button variant='outlined' sx={{ width: '150px' }} onClick={handleOpenDialog}>
-              Invest Now
-            </Button>
+            {loading ? (
+              <Skeleton variant="text" width={300} height={60} />
+            ) : (
+              <Typography variant="h4" gutterBottom>
+                {fundinground.fundingType} - {fundinground.startupName}
+              </Typography>
+            )}
+
+            {loading ? (
+              <Skeleton variant="rectangular" width={150} height={40} /> 
+            ) : (
+              <Button variant="outlined" sx={{ width: '150px' }} onClick={handleOpenDialog}>
+                Invest Now
+              </Button>
+            )}
           </Grid>
         </Grid>
 
@@ -110,60 +133,130 @@ function FundingRoundView() {
           <Grid container spacing={2}>
             {/* Left Box. Investor Information */}
             <Grid item xs={10} md={10}>
-            <OverviewBox>
-              <OverviewTitle variant="h5">Overview</OverviewTitle>
+              <OverviewBox>
+                <OverviewTitle variant="h5">Overview</OverviewTitle>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <Grid container spacing={3}>
                       <Grid item xs={12}>
-                        <Typography variant="body1" textAlign="justify">
-                          To invest in our company, we require a minimum purchase of <b>{fundinground.moneyRaisedCurrency}{parseInt(fundinground.minimumShare, 10).toLocaleString()}</b> worth of shares. This ensures a significant commitment to our long-term growth and aligns investors with our strategic goals. By setting this threshold, we aim to attract serious investors who are dedicated to supporting our vision and contributing to our future success. We appreciate your consideration in joining us on this journey.
-                          <br /><br />
-                          For more information, please contact us.
-                        </Typography>
+                        {loading ? (
+                          <Skeleton variant="text" height={100} />
+                        ) : (
+                          <Typography variant="body1" textAlign="justify">
+                            To invest in our company, we require a minimum purchase of{' '}
+                            <b>
+                              {fundinground.moneyRaisedCurrency}
+                              {parseInt(fundinground.minimumShare, 10).toLocaleString()}
+                            </b>{' '}
+                            worth of shares. This ensures a significant commitment to our long-term growth and aligns investors with our strategic goals. By setting this threshold, we aim to attract serious investors who are dedicated to supporting our vision and contributing to our future success. We appreciate your consideration in joining us on this journey.
+                            <br />
+                            <br />
+                            For more information, please contact us.
+                          </Typography>
+                        )}
                       </Grid>
 
                       <Grid item xs={3}>
-                        <Typography><strong>Funding Name</strong></Typography>
-                        <Typography variant="body1">{fundinground.fundingName}</Typography>
+                        {loading ? (
+                          <Skeleton variant="text" />
+                        ) : (
+                          <>
+                            <Typography>
+                              <strong>Funding Name</strong>
+                            </Typography>
+                            <Typography variant="body1">{fundinground.fundingName}</Typography>
+                          </>
+                        )}
                       </Grid>
 
                       <Grid item xs={3}>
-                        <Typography><strong>Announced Date</strong></Typography>
-                        <Typography variant="body1">{formatDate(fundinground.announcedDate)}</Typography>
+                        {loading ? (
+                          <Skeleton variant="text" />
+                        ) : (
+                          <>
+                            <Typography>
+                              <strong>Announced Date</strong>
+                            </Typography>
+                            <Typography variant="body1">
+                              {formatDate(fundinground.announcedDate)}
+                            </Typography>
+                          </>
+                        )}
                       </Grid>
 
                       <Grid item xs={6}>
-                        <Typography><strong>Closed on Date</strong></Typography>
-                        <Typography variant="body1">{formatDate(fundinground.closedDate)}</Typography>
-                      </Grid>
-                      
-                      <Grid item xs={3}>
-                        <Typography><strong>Funding Type</strong></Typography>
-                        {fundinground.fundingType}
+                        {loading ? (
+                          <Skeleton variant="text" />
+                        ) : (
+                          <>
+                            <Typography>
+                              <strong>Closed on Date</strong>
+                            </Typography>
+                            <Typography variant="body1">
+                              {formatDate(fundinground.closedDate)}
+                            </Typography>
+                          </>
+                        )}
                       </Grid>
 
                       <Grid item xs={3}>
-                        <Typography><strong>Money Raised</strong></Typography>
-                        {fundinground.moneyRaisedCurrency} {fundinground.moneyRaised ? Number(fundinground.moneyRaised).toLocaleString() : 'N/A'}
+                        {loading ? (
+                          <Skeleton variant="text" />
+                        ) : (
+                          <>
+                            <Typography>
+                              <strong>Funding Type</strong>
+                            </Typography>
+                            {fundinground.fundingType}
+                          </>
+                        )}
+                      </Grid>
+
+                      <Grid item xs={3}>
+                        {loading ? (
+                          <Skeleton variant="text" />
+                        ) : (
+                          <>
+                            <Typography>
+                              <strong>Money Raised</strong>
+                            </Typography>
+                            {fundinground.moneyRaisedCurrency}{' '}
+                            {fundinground.moneyRaised
+                              ? Number(fundinground.moneyRaised).toLocaleString()
+                              : 'N/A'}
+                          </>
+                        )}
                       </Grid>
 
                       <Grid item xs={4}>
-                        <Typography><strong>Pre-Money Valuation</strong></Typography>
-                        <Typography variant="body1">
-                          {fundinground.moneyRaisedCurrency} {fundinground.preMoneyValuation ? Number(fundinground.preMoneyValuation).toLocaleString() : 'N/A'}
-                        </Typography>
+                        {loading ? (
+                          <Skeleton variant="text" />
+                        ) : (
+                          <>
+                            <Typography>
+                              <strong>Pre-Money Valuation</strong>
+                            </Typography>
+                            <Typography variant="body1">
+                              {fundinground.moneyRaisedCurrency}{' '}
+                              {fundinground.preMoneyValuation
+                                ? Number(fundinground.preMoneyValuation).toLocaleString()
+                                : 'N/A'}
+                            </Typography>
+                          </>
+                        )}
                       </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
 
-                <Divider sx={{mt: 5}}/>
+                <Divider sx={{ mt: 5 }} />
 
-                <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'rgba(0, 116, 144, 1)', mt: 5, mb: 3 }}>Investors</Typography>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'rgba(0, 116, 144, 1)', mt: 5, mb: 3 }}>
+                  Investors
+                </Typography>
                 <StyledTable>
                   <StyledTableHead>
-                  <TableRow>
+                    <TableRow>
                       <StyledTableCell>Investor Name</StyledTableCell>
                       <StyledTableCell>Title</StyledTableCell>
                       <StyledTableCell>Share</StyledTableCell>
@@ -171,46 +264,59 @@ function FundingRoundView() {
                     </TableRow>
                   </StyledTableHead>
                   <TableBody>
-                    {paginatedInvestors &&
+                    {loading ? (
+                      <TableRow>
+                        <TableCell colSpan={4} align="center">
+                          <Skeleton variant="text" />
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      paginatedInvestors &&
                       paginatedInvestors
-                        .filter(investorDetail => {
+                        .filter((investorDetail) => {
                           const investor = investorDetail.investor || {};
-                          return !investor.isDeleted && !investorDetail.investorRemoved; // Only include non-deleted and non-removed investors
+                          return !investor.isDeleted && !investorDetail.investorRemoved;
                         })
                         .map((investorDetail, index) => {
                           const investor = investorDetail.investor || {};
                           return (
                             <TableRow key={index}>
                               <TableCell sx={{ textAlign: 'center' }}>
-                                {investor.firstName || 
-                                  fundinground.capTableInvestors[0]?.investorDetails.firstName || 
-                                  'N/A'} {investor.lastName || 
-                                  fundinground.capTableInvestors[0]?.investorDetails.lastName || 
+                                {investor.firstName ||
+                                  fundinground.capTableInvestors[0]?.investorDetails.firstName ||
+                                  'N/A'}{' '}
+                                {investor.lastName ||
+                                  fundinground.capTableInvestors[0]?.investorDetails.lastName ||
                                   'N/A'}
                               </TableCell>
-                              <TableCell sx={{ textAlign: 'center' }}>{investorDetail.title || 'N/A'}</TableCell>
+                              <TableCell sx={{ textAlign: 'center' }}>
+                                {investorDetail.title || 'N/A'}
+                              </TableCell>
                               <TableCell sx={{ textAlign: 'center' }}>
                                 {Number(investorDetail.shares || 0).toLocaleString()}
                               </TableCell>
                               <TableCell sx={{ textAlign: 'center' }}>
-                                {fundinground.moneyRaisedCurrency} {investorDetail.totalInvestment ? Number(investorDetail.totalInvestment).toLocaleString() : 'N/A'}
+                                {fundinground.moneyRaisedCurrency}{' '}
+                                {investorDetail.totalInvestment
+                                  ? Number(investorDetail.totalInvestment).toLocaleString()
+                                  : 'N/A'}
                               </TableCell>
                             </TableRow>
                           );
-                        })}
+                        })
+                    )}
                   </TableBody>
                 </StyledTable>
 
                 {fundinground.capTableInvestors && fundinground.capTableInvestors.length > rowsPerPage && (
                   <PaginationBox>
-                    <Pagination 
-                      count={Math.ceil(fundinground.capTableInvestors.length / rowsPerPage)}
-                      page={currentPage} 
+                    <Pagination count={Math.ceil(fundinground.capTableInvestors.length / rowsPerPage)} page={currentPage}
                       onChange={handlePageChange}
                       renderItem={(item) => (
-                        <PaginationItem slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }} {...item}/>
-                      )}
-                    />
+                        <PaginationItem
+                          slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                          {...item}/>
+                      )}/>
                   </PaginationBox>
                 )}
               </OverviewBox>
@@ -219,9 +325,9 @@ function FundingRoundView() {
         </Box>
 
         {/* Invest Now Dialog */}
-        <InvestNowDialog  open={openDialog} onClose={handleCloseDialog} pricePerShare={fundinground.minimumShare}
+        <InvestNowDialog open={openDialog} onClose={handleCloseDialog} pricePerShare={fundinground.minimumShare}
           companyName={fundinground.startupName} fundingRound={fundinground.fundingType} />
-    </Box>
+      </Box>
     </>
   );
 }

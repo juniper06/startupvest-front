@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Box, Table, TableBody, TableContainer, TableHead, TableSortLabel, Pagination, Toolbar, Typography, TextField, TableRow, TableCell } from '@mui/material';
+import { Box, Table, TableBody, TableContainer, TableHead, TableSortLabel, Pagination, Toolbar, Typography, TextField, TableRow, TableCell, Skeleton } from '@mui/material';
 import PropTypes from 'prop-types';
 import SearchIcon from '@mui/icons-material/Search';
 import { visuallyHidden } from '@mui/utils';
@@ -209,45 +209,58 @@ export default function Companies() {
           <Table>
             <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
             <TableBody>
-              {visibleRows.map((row) => (
-                <StyledTableRow key={row.id} onClick={() => handleRowClick(row)}>
-                  <StyledTableCell>
-                    <StyledStack direction='row'>
-                    <StyledAvatar 
-                        variant="rounded" 
-                        src={profilePictures[row.id] || ''}
-                        alt={getInitials(row.firstName, row.lastName)}
-                      >
-                        {(!profilePictures[row.id] || profilePictures[row.id] === null) && 
-                          getInitials(row.firstName, row.lastName)}
-                      </StyledAvatar>
-                      {row.firstName} {row.lastName}
-                    </StyledStack>
-                  </StyledTableCell>
-                  <StyledTableCell>  {formatAddress(row.streetAddress, row.city, row.country)}</StyledTableCell>
-                  <StyledTableCell>{row.emailAddress}</StyledTableCell>
-                  <StyledTableCell sx={{ textAlign: 'justify' }}>
-                    {row.biography.split(' ').slice(0, 20).join(' ')}...
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-              {filteredRows.length === 0 && (
+              {loading ? (
+                Array.from(new Array(rowsPerPage)).map((_, index) => (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell>
+                      <Skeleton variant="rectangular" width={40} height={40} sx={{ marginRight: 1 }} />
+                      <Skeleton variant="text" width="60%" />
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Skeleton variant="text" width="80%" />
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Skeleton variant="text" width="50%" />
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Skeleton variant="text" width="100%" />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))
+              ) : (
+                visibleRows.map((row) => (
+                  <StyledTableRow key={row.id} onClick={() => handleRowClick(row)}>
+                    <StyledTableCell>
+                      <StyledStack direction='row'>
+                        <StyledAvatar variant="rounded" src={profilePictures[row.id] || ''}
+                          alt={getInitials(row.firstName, row.lastName)}>
+                          {(!profilePictures[row.id] || profilePictures[row.id] === null) &&
+                            getInitials(row.firstName, row.lastName)}
+                        </StyledAvatar>
+                        {row.firstName} {row.lastName}
+                      </StyledStack>
+                    </StyledTableCell>
+                    <StyledTableCell>{formatAddress(row.streetAddress, row.city, row.country)}</StyledTableCell>
+                    <StyledTableCell>{row.emailAddress}</StyledTableCell>
+                    <StyledTableCell sx={{ textAlign: 'justify' }}>
+                      {row.biography.split(' ').slice(0, 20).join(' ')}...
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))
+              )}
+              {filteredRows.length === 0 && !loading && (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
                     <Typography variant="body2" color="textSecondary">No profiles available.</Typography>
-                  </TableCell>                
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </TableContainer>
+        
         <StyledStack spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
-          <Pagination
-            count={Math.ceil(filteredRows.length / rowsPerPage)}
-            page={page}
-            onChange={handlePageChange}
-            size="large"
-          />
+          <Pagination count={Math.ceil(filteredRows.length / rowsPerPage)} page={page} onChange={handlePageChange} size="large"/>
         </StyledStack>
       </StyledPaper>
     </Box>
