@@ -96,7 +96,7 @@ export const CardStyled = styled(Card)(({ theme }) => ({
   export const FundingBox = styled(Box)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(2.6),
+    gap: theme.spacing(3),
   }));
   
   export const FundingTitle = styled(Typography)(({ theme }) => ({

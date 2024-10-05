@@ -228,7 +228,7 @@ function StartUpView() {
         )}
 
         {selectedPage === 'financial' && (
-          <Box component="main" sx={{ display: 'flex', flexGrow: 1, width: '100%', overflowX: 'hidden', pl: 3, pr: 5, pb: 3, pt: 4.5 }}>
+          <Box component="main" sx={{ display: 'flex', flexGrow: 1, width: '100%', overflowX: 'hidden', pl: 3, pr: 5, pt: 3, pb: 3 }}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={4}>
                 <FundingBox>
@@ -238,20 +238,7 @@ function StartUpView() {
 
                     <Divider sx={{ mb: 2 }} />
 
-                    <FundingDescription>
-                      Total Funds Raised: 
-                      <strong>
-                        {startup.fundingRounds.length > 0 ? (
-                          <div>
-                            <p>
-                              {startup.fundingRounds[0].moneyRaisedCurrency} {totalMoneyRaised.toLocaleString()}
-                            </p>
-                          </div>
-                        ) : (
-                          <p>No funding rounds available</p>
-                        )}
-                      </strong>
-                    </FundingDescription>
+                    <FundingDescription>Total Funds Raised: <strong>{startup.fundingRounds.length > 0 ? <span>{startup.fundingRounds[0].moneyRaisedCurrency} {totalMoneyRaised.toLocaleString()}</span> : <span>No funding rounds available</span>}</strong></FundingDescription>
                     <FundingNote>*Funds raised through various funding rounds.</FundingNote>
                   </CardStyled>
 
