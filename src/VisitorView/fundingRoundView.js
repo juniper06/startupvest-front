@@ -219,8 +219,14 @@ function FundingRoundView() {
         </Box>
 
         {/* Invest Now Dialog */}
-        <InvestNowDialog open={openDialog} onClose={handleCloseDialog} />
-      </Box>
+        <InvestNowDialog 
+          open={openDialog} 
+          onClose={handleCloseDialog} 
+          pricePerShare={fundinground.minimumShare}
+          companyName={fundinground.startupName}
+          fundingRound={fundinground.fundingType}
+        />
+    </Box>
     </>
   );
 }

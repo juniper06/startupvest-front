@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, Typography, Box, Tooltip, IconButton, } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, Typography, Box, Tooltip, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 const InvestNowDialog = ({
   open,
   onClose,
-  pricePerShare = 10000,
-  companyName = 'Chaching',
-  fundingRound = 'Pre-seed',
+  pricePerShare = 0,
+  companyName = '',
+  fundingRound = '', 
 }) => {
   const [shareAmount, setShareAmount] = useState('');
   const [title, setTitle] = useState('');
@@ -15,7 +15,9 @@ const InvestNowDialog = ({
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    setTotalCost(shareAmount * pricePerShare || 0);
+    console.log('Price per Share:', pricePerShare); // Updated log message
+    const total = shareAmount ? shareAmount * pricePerShare : 0;
+    setTotalCost(total);
   }, [shareAmount, pricePerShare]);
 
   // Clear state when dialog closes
@@ -71,7 +73,8 @@ const InvestNowDialog = ({
           color="inherit"
           onClick={handleClose}
           aria-label="close"
-          sx={{ position: 'absolute', right: 15 }}>
+          sx={{ position: 'absolute', right: 15 }}
+        >
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -83,7 +86,7 @@ const InvestNowDialog = ({
             <Typography variant="body1" gutterBottom align="center">
               You are about to invest in the <strong>{fundingRound}</strong> funding round conducted by{' '}
               <strong>{companyName}</strong>. The price per share is{' '}
-              <strong>P{pricePerShare.toLocaleString()}</strong>.
+              <strong>P{pricePerShare ? pricePerShare.toLocaleString() : '0'}</strong>.
             </Typography>
           </Grid>
 
@@ -102,7 +105,8 @@ const InvestNowDialog = ({
                 value={title}
                 onChange={handleTitleChange}
                 error={!!errors.title}
-                helperText={errors.title}/>
+                helperText={errors.title}
+              />
             </Tooltip>
           </Grid>
 
@@ -122,7 +126,8 @@ const InvestNowDialog = ({
               InputProps={{
                 inputProps: { min: 1 },
               }}
-              error={!!errors.shareAmount}/>
+              error={!!errors.shareAmount}
+            />
           </Grid>
 
           {/* Investment Summary */}
@@ -133,10 +138,10 @@ const InvestNowDialog = ({
               </Typography>
               <Typography variant="body2" gutterBottom>
                 You are buying <strong>{shareAmount || 0} shares</strong> at a price of{' '}
-                <strong>P{pricePerShare.toLocaleString()}</strong> per share.
+                <strong>P{pricePerShare ? pricePerShare.toLocaleString() : '0'}</strong> per share.
               </Typography>
               <Typography variant="h6" color="primary" sx={{ mt: 1 }}>
-                Total cost: P{totalCost.toLocaleString()}
+                Total cost: P{totalCost ? totalCost.toLocaleString() : '0'}
               </Typography>
             </Box>
           </Grid>
@@ -157,8 +162,9 @@ const InvestNowDialog = ({
           onClick={handleConfirm}
           variant="contained"
           color="primary"
-          sx={{ px: 4, }}
-          disabled={!shareAmount || shareAmount <= 0 || !title.trim()}>
+          sx={{ px: 4 }}
+          disabled={!shareAmount || shareAmount <= 0 || !title.trim()}
+        >
           Confirm Investment
         </Button>
       </DialogActions>
