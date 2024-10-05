@@ -7,20 +7,27 @@ export const styles = {
   },
   sideBar: {
     background: '#007490',
-    borderRadius: '0 10px 10px 0',
+    borderRadius: '10px',
     boxShadow: '10px 3px 8px rgba(0,0,0,.15)',
   },
   titleContainer: {
+    display: 'flex',               
+    justifyContent: 'center',        
+    alignItems: 'center',           
+    flexDirection: 'column',         
     textAlign: 'center',
     color: '#007490',
-    mt: 8,
+    width: '100%',                  
   },
   title: {
     fontSize: '4.5em',
     fontWeight: 'bold',
   },
   formContainer: {
-    p: 6,
+    pl: { xs: 2, md: 6, lg: 8 },
+    pr: { xs: 2, md: 6, lg: 8 },
+    pt: { xs: 2, md: 6, lg: 6 },
+    pb: { xs: 2, md: 6, lg: 6 },
     background: 'rgba(0, 116, 144, 1)',
     borderRadius: 2,
     boxShadow: '10px 3px 8px rgba(0,0,0,.15)',
@@ -49,7 +56,7 @@ export const styles = {
     },
   },
   submitButton: {
-    mt: 3,
+    mt: 2,
     mb: 2,
     background: '#f2f2f2',
     color: '#007490',
@@ -74,6 +81,6 @@ export const styles = {
   titleLink: {
     textAlign: 'center',
     color: '#F2F2F2',
-    fontSize: '0.8rem',
+    fontSize: { xs: '0.85rem', lg: '1rem' },
   },
 };

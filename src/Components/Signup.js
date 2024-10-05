@@ -1,25 +1,109 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Grid, Typography, TextField, Button, Select, MenuItem, FormControl, InputAdornment, IconButton } from '@mui/material';
+import { Grid, Typography, TextField, Button, Select, MenuItem, FormControl, InputAdornment, IconButton, Tooltip } from '@mui/material';
 import genderOptions from '../static/genderOptions';
+import roleOptions from '../static/roleOptions';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import SignupDialog from '../Dialogs/SignupDialog';
 import { styles } from '../styles/Signup';
 
 function Signup() {
-    const [error, setError] = useState('');
+    const navigate = useNavigate();
+    const [role, setRole] = useState('user');
+    const [openDialog, setOpenDialog] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [emailExists, setEmailExists] = useState(false);
-    const [passwordError, setPasswordError] = useState('');
     const [email, setEmail] = useState('');
-    const [genderError, setGenderError] = useState('');
     const [contactNumber, setContactNumber] = useState('');
+    const [position, setPosition] = useState('CEO');
+    const [startupCode, setStartupCode] = useState('');
+
+    const [error, setError] = useState('');
     const [contactNumberError, setContactNumberError] = useState('');
-    const [openDialog, setOpenDialog] = useState(false);
-    const [role, setRole] = useState('user');
-    const navigate = useNavigate();
+    const [passwordError, setPasswordError] = useState('');
+    const [password, setPassword] = useState('');
+    const [passwordValidation, setPasswordValidation] = useState({
+        feedback: {
+            length: false,
+            hasUpperCase: false,
+            hasLowerCase: false,
+            hasNumber: false,
+            hasSpecialChar: false,
+        },
+    });
+    const [zoomLevel, setZoomLevel] = useState(window.devicePixelRatio);
+
+    // Adjust zoom level on window resize
+    useEffect(() => {
+        const handleResize = () => {
+            setZoomLevel(window.devicePixelRatio);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    const handlePasswordChange = (e) => {
+        const value = e.target.value;
+        setPassword(value);
+        setPasswordValidation({
+            feedback: {
+                length: value.length >= 8,
+                hasUpperCase: /[A-Z]/.test(value),
+                hasLowerCase: /[a-z]/.test(value),
+                hasNumber: /\d/.test(value),
+                hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(value),
+            },
+        });
+
+        // Clear password error when typing
+        if (passwordError) {
+            setPasswordError('');
+        }
+    };
+
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setError('Please enter a valid email address with a domain (e.g., .com).');
+            return false;
+        }
+        setError('');
+        return true;
+    };
+
+    const validatePassword = (password) => {
+        const { length, hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar } = passwordValidation.feedback;
+
+        const isValidPassword = length && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+        
+        if (!isValidPassword) {
+            const feedbackMessages = [];
+            if (!length) feedbackMessages.push('Must be at least 8 characters long.');
+            if (!hasUpperCase) feedbackMessages.push('Must contain at least one uppercase letter.');
+            if (!hasLowerCase) feedbackMessages.push('Must contain at least one lowercase letter.');
+            if (!hasNumber) feedbackMessages.push('Must contain at least one number.');
+            if (!hasSpecialChar) feedbackMessages.push('Must contain at least one special character.');
+            setPasswordError('Please enter valid password.');
+            return false;
+        }
+
+        setPasswordError('');
+        return true;
+    };
+
+    const validateContactNumber = (number) => {
+        const phoneRegex = /^[0-9]{10,15}$/;
+        if (!phoneRegex.test(number)) {
+            setContactNumberError('Enter a valid number (10-15 digits).');
+            return false;
+        }
+        setContactNumberError('');
+        return true;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -30,44 +114,14 @@ function Signup() {
             email: e.target.elements.email.value,
             contactNumber: e.target.elements.contactNumber.value,
             gender: e.target.elements.gender.value,
-            password: e.target.elements.password.value,
+            password,
             role: role,
+            position,
+            startupCode: position === 'CFO' ? startupCode : '',
         };
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(userData.email)) {
-            setError('Please enter a valid email address with a domain (e.g., .com, .net).');
+        if (!validateEmail(userData.email) || !validatePassword(password) || !validateContactNumber(userData.contactNumber)) {
             return;
-        } else {
-            setError('');
-        }
-
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#-])[A-Za-z\d@$!%*?&#-]{8,}$/;
-        if (!passwordRegex.test(userData.password)) {
-            setPasswordError('Password must be 8+ characters, with uppercase, lowercase, number, and special character.');
-            return;
-        } else {
-            setPasswordError('');
-        }
-
-        if (emailExists) {
-            setError('Email already exists. Please enter a different email.');
-            return;
-        }
-
-        if (userData.gender === 'Select Gender') {
-            setGenderError('Please select a valid gender.');
-            return;
-        } else {
-            setGenderError('');
-        }
-
-        const phoneRegex = /^[0-9]{10,15}$/;
-        if (!phoneRegex.test(userData.contactNumber)) {
-            setContactNumberError('Enter a valid number (10-15 digits).');
-            return;
-        } else {
-            setContactNumberError('');
         }
 
         try {
@@ -93,7 +147,7 @@ function Signup() {
     };
 
     const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
+        setShowPassword((prev) => !prev);
     };
 
     const handleCloseDialog = () => {
@@ -101,88 +155,113 @@ function Signup() {
         navigate('/login');
     };
 
+    const scaleFactor = zoomLevel >= 1.25 ? 0.85 : 1;
+
     return (
-        <div style={styles.container}>
+        <div style={{ ...styles.container, transform: `scale(${scaleFactor})` }}>
             <Grid container>
                 <Grid item xs={12} sm={1} sx={styles.sideBar}></Grid>
-
                 <Grid item xs={12} sm={6} sx={styles.titleContainer}>
                     <Typography sx={styles.title}>
                         "Empowering <br /> Startups, <br /> Tracking <br /> Investments"
                     </Typography>
                 </Grid>
-
                 <Grid item xs={12} sm={4} sx={styles.formContainer}>
                     <Typography variant="h5" component="header" sx={styles.formTitle}>
                         Create Account
                     </Typography>
 
                     <form onSubmit={handleSubmit} className="signup-form">
-                        <Grid container spacing={2} className="signup-details">
+                        <Grid container spacing={1.5} className="signup-details">
                             <Grid item xs={6}>
-                                <Typography sx={{ color: '#F2F2F2' }}>First Name</Typography>
+                                <Typography variant="body2" sx={{ color: '#F2F2F2' }}>First Name</Typography>
                                 <TextField fullWidth name="firstName" placeholder="John" required sx={styles.textField} />
                             </Grid>
-
                             <Grid item xs={6}>
-                                <Typography sx={{ color: '#F2F2F2' }}>Last Name</Typography>
+                                <Typography variant="body2" sx={{ color: '#F2F2F2' }}>Last Name</Typography>
                                 <TextField fullWidth name="lastName" placeholder="Doe" required sx={styles.textField} />
                             </Grid>
+                            <Grid item xs={12}>
+                                <Typography variant="body2" sx={{ color: '#F2F2F2' }}>Position</Typography>
+                                <FormControl fullWidth>
+                                    <Select name="position" sx={styles.textField} defaultValue='CEO' onChange={(e) => setPosition(e.target.value)}>
+                                        {roleOptions.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+
+                            {position === 'CFO' && (
+                                <Grid item xs={12}>
+                                    <Typography variant="body2" sx={{ color: '#F2F2F2' }}>Startup Code</Typography>
+                                    <TextField required fullWidth name="startupCode" placeholder="Enter Startup Code"
+                                        value={startupCode}
+                                        onChange={(e) => setStartupCode(e.target.value)}
+                                        sx={styles.textField} />
+                                </Grid>
+                            )}
 
                             <Grid item xs={12}>
-                                <Typography sx={{ color: '#F2F2F2' }}>Email</Typography>
-                                <TextField
-                                    fullWidth
-                                    name="email"
-                                    placeholder="johndoe@gmail.com"
-                                    type="email"
-                                    required
-                                    value={email}
-                                    error={emailExists || !!error}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    onBlur={checkEmailExists}
-                                    sx={styles.textField}
-                                />
-                                {error && (
-                                    <Typography sx={styles.errorText}>
-                                        {error}
-                                    </Typography>
-                                )}
+                                <Typography variant="body2" sx={{ color: '#F2F2F2' }}>Email</Typography>
+                                <Tooltip title={error} open={!!error} placement="bottom-start"
+                                    PopperProps={{
+                                        modifiers: [
+                                            {
+                                                name: 'offset',
+                                                options: {
+                                                    offset: [0, 10],
+                                                },
+                                            },
+                                        ],
+                                    }}>
+                                    <span>
+                                        <TextField fullWidth name="email" placeholder="johndoe@gmail.com"type="email"
+                                            value={email} sx={styles.textField}
+                                            error={emailExists || !!error}
+                                            onChange={(e) => {
+                                                const emailInput = e.target.value;
+                                                setEmail(emailInput);
+                                                validateEmail(emailInput);
+                                            }}
+                                            onBlur={checkEmailExists} />
+                                    </span>
+                                </Tooltip>
                             </Grid>
 
                             <Grid item xs={6}>
-                                <Typography sx={{ color: '#F2F2F2' }}>Phone Number</Typography>
-                                <TextField
-                                    fullWidth
-                                    name="contactNumber"
-                                    placeholder="09362632344"
-                                    type="tel"
-                                    required
-                                    value={contactNumber}
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        if (/^\d*$/.test(value) && value.length <= 15) {
-                                            setContactNumber(value);
-                                        }
-                                        // Error handling for validation
-                                        if (!/^\d{10,15}$/.test(value)) {
-                                            setContactNumberError('Enter a valid number (10-15 digits).');
-                                        } else {
-                                            setContactNumberError('');
-                                        }
-                                    }}
-                                    sx={styles.textField}
-                                    error={!!contactNumberError}
-                                />
-                                {contactNumberError && (
-                                    <Typography sx={styles.errorText}>{contactNumberError}</Typography>
-                                )}
+                                <Typography variant="body2" sx={{ color: '#F2F2F2' }}>Phone Number</Typography>
+                                <Tooltip title={contactNumberError} open={!!contactNumberError} placement="bottom-start"
+                                    PopperProps={{
+                                        modifiers: [
+                                            {
+                                                name: 'offset',
+                                                options: {
+                                                    offset: [0, 10],
+                                                },
+                                            },
+                                        ],
+                                    }}>
+                                    <span>
+                                        <TextField fullWidth name="contactNumber" placeholder="09231321889" type="tel"
+                                            value={contactNumber} sx={styles.textField}
+                                            onChange={(e) => {
+                                                const numberInput = e.target.value;
+                                                const cleanedInput = numberInput.replace(/\D/g, '');
+                                                setContactNumber(cleanedInput);
+                                                validateContactNumber(cleanedInput);
+                                            }}
+                                            error={!!contactNumberError} />
+                                    </span>
+                                </Tooltip>
                             </Grid>
-
+                            
                             <Grid item xs={6}>
-                                <Typography sx={{ color: '#F2F2F2' }}>Gender</Typography>
+                                <Typography variant="body2" sx={{ color: '#F2F2F2' }}>Gender</Typography>
                                 <FormControl fullWidth>
-                                    <Select name="gender" sx={styles.textField} defaultValue='Select Gender' error={!!genderError}>
+                                    <Select name="gender" sx={styles.textField} defaultValue='Male'>
                                         {genderOptions.map((option) => (
                                             <MenuItem key={option.value} value={option.value}>
                                                 {option.label}
@@ -190,37 +269,62 @@ function Signup() {
                                         ))}
                                     </Select>
                                 </FormControl>
-                                {genderError && (
-                                    <Typography sx={styles.errorText}>{genderError}</Typography>
-                                )}
                             </Grid>
 
                             <Grid item xs={12}>
-                                <Typography sx={{ color: '#F2F2F2' }}>Password</Typography>
-                                <TextField
-                                    fullWidth
-                                    name="password"
-                                    placeholder="Your Password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    error={!!passwordError}
-                                    required
-                                    sx={styles.textField}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <IconButton
-                                                    onClick={togglePasswordVisibility}
-                                                    edge="end"
-                                                    sx={{ p: '10px' }}>
-                                                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                                                </IconButton>
-                                            </InputAdornment>
-                                        ),
-                                    }} />
+                                <Typography variant="body2" sx={{ color: '#F2F2F2' }}>Password</Typography>
+                                <Tooltip
+                                    title={
+                                        <div>
+                                            <div style={{ color: passwordValidation.feedback.length ? 'lightgreen' : 'white' }}>
+                                                Must be at least 8 characters long.
+                                            </div>
+                                            <div style={{ color: passwordValidation.feedback.hasLowerCase ? 'lightgreen' : 'white' }}>
+                                               Must contain at least one uppercase letter.
+                                            </div>
+                                            <div style={{ color: passwordValidation.feedback.hasUpperCase ? 'lightgreen' : 'white' }}>
+                                              Must contain at least one lowercase letter.
+                                            </div>
+                                            <div style={{ color: passwordValidation.feedback.hasNumber ? 'lightgreen' : 'white' }}>
+                                                Must contain at least one number.
+                                            </div>
+                                            <div style={{ color: passwordValidation.feedback.hasSpecialChar ? 'lightgreen' : 'white' }}>
+                                                Must contain at least one special character.
+                                            </div>
+                                        </div>
+                                    }
+                                    PopperProps={{
+                                        modifiers: [
+                                            {
+                                                name: 'offset',
+                                                options: {
+                                                    offset: [0, 10],
+                                                },
+                                            },
+                                        ],
+                                    }}
+                                    placement="bottom-start">
+                                    <span>
+                                        <TextField fullWidth name="password" placeholder="Your Password"
+                                            type={showPassword ? 'text' : 'password'} value={password}
+                                            onChange={handlePasswordChange} sx={styles.textField}
+                                            error={!!passwordError}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <IconButton
+                                                            onClick={togglePasswordVisibility}
+                                                            edge="end"
+                                                            sx={{ p: '10px' }}>
+                                                            {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                ),
+                                            }}/>
+                                    </span>
+                                </Tooltip>
                                 {passwordError && (
-                                    <Typography sx={styles.errorText}>
-                                        {passwordError}
-                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'white' }}>{passwordError}</Typography>
                                 )}
                             </Grid>
                         </Grid>
@@ -238,8 +342,8 @@ function Signup() {
                     </form>
                 </Grid>
             </Grid>
-
-            <SignupDialog open={openDialog} onClose={handleCloseDialog} /> {/* Use the SignupDialog component */}
+            
+            <SignupDialog open={openDialog} handleClose={handleCloseDialog} />
         </div>
     );
 }
