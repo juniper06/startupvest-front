@@ -139,6 +139,13 @@ function StartUpView() {
                           <Typography variant="body1">{startup.numberOfEmployees}</Typography>
                         </Grid>
 
+                        <Grid item xs={3}>
+                          <Typography>
+                            <strong>Industry</strong>
+                          </Typography>
+                          <Typography variant="body1">{startup.industry}</Typography>
+                        </Grid>
+
                         <Grid item xs={12}>
                           <Typography>
                             <strong>Location</strong>
