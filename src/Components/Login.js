@@ -82,7 +82,7 @@ function Login() {
     <Container sx={{ ...LoginStyles.container, transform: `scale(${scaleFactor})`, }}>
       <Grid container>
         {/* Left Side Content */}
-        <Grid item  xs={12}  sm={7} sx={LoginStyles.leftSideGrid}>
+        <Grid item  xs={12} sm={7} sx={LoginStyles.leftSideGrid}>
           <Paper elevation={3} sx={LoginStyles.leftSidePaper}>
             <Typography variant="h4" sx={LoginStyles.leftSideTypography}>
               Welcome back! <br /> Excited to have you again. <br /> Sign in to get back on track!
@@ -113,7 +113,7 @@ function Login() {
                 }}
                 onBlur={isEmailRegistered} fullWidth margin="normal" sx={LoginStyles.formInput}/>
 
-              <Typography sx={{ color: '#007490', mt: 1.5, mb: -1 }}>Password</Typography>
+              <Typography sx={{ color: '#007490', mt: 1.5, mb: 1 }}>Password</Typography>
               <TextField type={showPassword ? 'text' : 'password'}
                 placeholder="Example123" required value={password}
                 onChange={(e) => {

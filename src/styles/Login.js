@@ -84,6 +84,7 @@ const LoginStyles = {
     cursor: 'pointer',
     color: 'rgba(0, 116, 144, 1)',
     fontSize: { xs: '0.75rem', lg: '0.85rem' },
+    mt: 1,
   },
   signUpText: {
     textAlign: 'center',
@@ -93,7 +94,7 @@ const LoginStyles = {
   signUpLink: {
     color: 'rgba(0, 116, 144, 1)',
     fontWeight: 'bold',
-      fontSize: { xs: '0.85rem', lg: '1rem' },
+      fontSize: { xs: '0.85rem', lg: '0.9rem' },
   },
 };
 
