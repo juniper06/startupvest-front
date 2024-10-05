@@ -128,7 +128,7 @@ function Signup() {
             const response = await axios.post(`http://localhost:3000/users/register`, userData);
             console.log('Signup successful:', response.data);
             setOpenDialog(true);
-            setTimeout(() => navigate('/login'), 2000);
+            setTimeout(() => navigate('/login'), 3000);
         } catch (error) {
             console.error('Signup failed:', error);
             setError('Signup failed. Please try again.');
@@ -343,7 +343,7 @@ function Signup() {
                 </Grid>
             </Grid>
             
-            <SignupDialog open={openDialog} handleClose={handleCloseDialog} />
+            <SignupDialog open={openDialog} handleClose={handleCloseDialog} email={email} />
         </div>
     );
 }

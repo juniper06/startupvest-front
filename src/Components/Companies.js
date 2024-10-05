@@ -206,9 +206,11 @@ export default function Companies() {
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <StyledTableCell colSpan={6} />
+              {visibleRows.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={headCells.length} align="center">
+                    <Typography variant="body2" color="textSecondary">No companies available.</Typography>
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>

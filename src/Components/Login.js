@@ -6,6 +6,7 @@ import { Container, Grid, Typography, TextField, Button, Link, Paper, IconButton
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import LoginStyles from '../styles/Login';
+import Loading from './Loading';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -16,6 +17,7 @@ function Login() {
   const [error, setError] = useState('');
   const [zoomLevel, setZoomLevel] = useState(window.devicePixelRatio);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false); 
 
   // Adjust zoom level on window resize (for detecting zoom changes)
   useEffect(() => {
@@ -31,34 +33,36 @@ function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-        const response = await axios.post(`http://localhost:3000/users/login`, {
-            email,
-            password,
-        });
+    setLoading(true); // Start loading
 
-        // Check if the response contains the necessary data
-        if (response.data && response.data.jwt) {
-            localStorage.setItem('token', response.data.jwt);
-            localStorage.setItem('userId', response.data.userId);
-            localStorage.setItem('role', response.data.role); 
+    // Simulate a 3-second delay
+    setTimeout(async () => {
+        try {
+            const response = await axios.post(`http://localhost:3000/users/login`, {
+                email,
+                password,
+            });
 
-            setLoggedIn(true);
+            if (response.data && response.data.jwt) {
+                localStorage.setItem('token', response.data.jwt);
+                localStorage.setItem('userId', response.data.userId);
+                localStorage.setItem('role', response.data.role); 
 
-            setTimeout(() => {
                 if (response.data.role === 'admin') {
                     navigate('/admindashboard');
                 } else {
                     navigate('/asCompanyOwnerOverview');
                 }
-            }, 1000);
-        } else {
-            throw new Error('Invalid login response');
+            } else {
+                throw new Error('Invalid login response');
+            }
+        } catch (error) {
+            console.error('Login failed:', error);
+            setError('Incorrect email or password');
+        } finally {
+            setLoading(false); // Stop loading after the timeout
         }
-    } catch (error) {
-      console.error('Login failed:', error);
-      setError('Incorrect email or password');
-    }
+    }, 3000); // 3-second delay
   };
 
   const isEmailRegistered = async () => {
@@ -77,6 +81,10 @@ function Login() {
   };
 
   const scaleFactor = zoomLevel >= 1.25 ? 0.85 : 1; 
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Container sx={{ ...LoginStyles.container, transform: `scale(${scaleFactor})`, }}>

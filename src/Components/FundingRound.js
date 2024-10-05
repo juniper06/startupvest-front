@@ -256,7 +256,9 @@ export default function FundingRound() {
 
               {visibleRows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} align="center">No funding rounds available</TableCell>
+                  <TableCell colSpan={6} align="center">
+                    <Typography variant="body2" color="textSecondary">No funding rounds available.</Typography>
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Box, Table, TableBody, TableContainer, TableHead, TableSortLabel, Pagination, Toolbar, Typography, TextField, TableRow
-} from '@mui/material';
+import { Box, Table, TableBody, TableContainer, TableHead, TableSortLabel, Pagination, Toolbar, Typography, TextField, TableRow, TableCell } from '@mui/material';
 import PropTypes from 'prop-types';
 import SearchIcon from '@mui/icons-material/Search';
 import { visuallyHidden } from '@mui/utils';
@@ -233,9 +232,11 @@ export default function Companies() {
                 </StyledTableRow>
               ))}
               {filteredRows.length === 0 && (
-                <StyledTableRow>
-                  <StyledTableCell colSpan={headCells.length} align="center">No results found</StyledTableCell>
-                </StyledTableRow>
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    <Typography variant="body2" color="textSecondary">No profiles available.</Typography>
+                  </TableCell>                
+                </TableRow>
               )}
             </TableBody>
           </Table>
