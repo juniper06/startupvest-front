@@ -18,6 +18,7 @@ function ViewInvestorProfileDialog({ open, profile, onClose }) {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    borderRadius: '8px'
                 }}>
                 <Box
                     sx={{

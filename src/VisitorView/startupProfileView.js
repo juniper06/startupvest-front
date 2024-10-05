@@ -3,7 +3,6 @@ import { Box, Divider, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typo
 import axios from 'axios';
 import PaidIcon from '@mui/icons-material/Paid';
 import StoreIcon from '@mui/icons-material/Store';
-import StarsIcon from '@mui/icons-material/Stars';
 import LanguageIcon from '@mui/icons-material/Language';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -18,7 +17,6 @@ const drawerWidth = 240;
 
 function StartUpView() {
   const [selectedPage, setSelectedPage] = useState('summary');
-  const [isFollowed, setIsFollowed] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState('');
   const location = useLocation();
   const [companyId, setCompanyId] = useState(null);
@@ -27,14 +25,14 @@ function StartUpView() {
   // Fetch the profile picture
   useEffect(() => {
     const fetchProfilePicture = async () => {
-      if (!startup?.id) return; // Ensure startup exists
+      if (!startup?.id) return; 
       setCompanyId(startup.id);
       try {
         const response = await axios.get(`http://localhost:3000/profile-picture/startup/${startup.id}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
-          responseType: 'blob', // Important for getting the image as a blob
+          responseType: 'blob', 
         });
 
         // Create a URL for the blob
@@ -45,8 +43,8 @@ function StartUpView() {
       }
     };
 
-    fetchProfilePicture(); // Always call the fetch function
-  }, [startup]); // Re-run the effect if the startup data changes
+    fetchProfilePicture(); 
+  }, [startup]);
 
   const handlePageChange = (page) => {
     setSelectedPage(page);
@@ -62,9 +60,9 @@ function StartUpView() {
   const state = startup.state === "N/A" ? "" : startup.state || "";
 
   const totalMoneyRaised = startup.fundingRounds
-  .filter(fundingRound => !fundingRound.isDeleted) // Filter out deleted funding rounds
+  .filter(fundingRound => !fundingRound.isDeleted) 
   .reduce((total, fundingRound) => {
-    return total + (fundingRound.moneyRaised || 0); // Default to 0 if moneyRaised is undefined
+    return total + (fundingRound.moneyRaised || 0); 
   }, 0);
 
   return (

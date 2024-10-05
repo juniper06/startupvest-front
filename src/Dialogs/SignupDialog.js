@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, Typography, Box } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import EmailIcon from '@mui/icons-material/Email'; // Changed Icon to Email
 
 const SignupDialog = ({ open, onClose }) => {
     return (
@@ -18,15 +18,17 @@ const SignupDialog = ({ open, onClose }) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                     }} >
-                    <CheckCircleIcon sx={{ fontSize: 50, color: '#4caf50', marginBottom: '10px' }} />
-                    <Typography variant="h6" sx={{ color: '#4caf50', fontWeight: 'bold' }}>
-                        Signup Successful
+                    <EmailIcon sx={{ fontSize: 50, color: '#007490', marginBottom: '10px' }} /> 
+                    <Typography variant="h6" sx={{ color: '#007490', fontWeight: 'bold' }}>
+                        Email Confirmation Sent
                     </Typography>
                 </Box>
             </DialogTitle>
 
             <DialogContent>
-                <Typography>You have successfully signed up! You will be redirected to the login page shortly.</Typography>
+                <Typography>
+                    A confirmation email has been sent to your inbox. Please check your email to complete your signup.
+                </Typography>
             </DialogContent>
         </Dialog>
     );

@@ -76,9 +76,9 @@ export const PaginationBox = styled(Box)(({ theme }) => ({
 export const CardStyled = styled(Card)(({ theme }) => ({
     padding: theme.spacing(3),
     boxShadow: 3,
-    borderRadius: 2,
+    borderRadius: 10,
     transition: '0.3s',
-    border: '1px solid #007490',
+    border: '1px solid lightgray',
     '&:hover': {
       boxShadow: 6,
       transform: 'translateY(-5px)',
@@ -86,11 +86,10 @@ export const CardStyled = styled(Card)(({ theme }) => ({
   }));
   
   export const FundingChartCard = styled(Card)(({ theme }) => ({
-    boxShadow: 3,
-    borderRadius: 2,
+    borderRadius: 10,
     height: '100%',
     padding: theme.spacing(2),
-    border: '1px solid #007490',
+    border: '1px solid lightgray',
   }));
   
   export const FundingBox = styled(Box)(({ theme }) => ({

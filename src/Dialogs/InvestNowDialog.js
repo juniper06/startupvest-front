@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, Typography, Box, Tooltip, IconButton } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, Typography, Box, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 const InvestNowDialog = ({
@@ -15,7 +15,6 @@ const InvestNowDialog = ({
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    console.log('Price per Share:', pricePerShare); // Updated log message
     const total = shareAmount ? shareAmount * pricePerShare : 0;
     setTotalCost(total);
   }, [shareAmount, pricePerShare]);
@@ -64,81 +63,59 @@ const InvestNowDialog = ({
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'justify', position: 'relative', mt: 2, ml: 3 }}>
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           Invest in {companyName}
         </Typography>
-        <IconButton
-          edge="end"
-          color="inherit"
-          onClick={handleClose}
-          aria-label="close"
-          sx={{ position: 'absolute', right: 15 }}
-        >
+        <IconButton edge="end" color="inherit" aria-label="close" sx={{ position: 'absolute', right: 15, top: -12 }}
+          onClick={handleClose}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
-      <DialogContent>
+      <DialogContent sx={{ pl: 6, pr: 6}}>
         <Grid container spacing={1}>
           {/* Investment Information */}
           <Grid item xs={12}>
-            <Typography variant="body1" gutterBottom align="center">
+            <Typography variant="body1" gutterBottom align="justify">
               You are about to invest in the <strong>{fundingRound}</strong> funding round conducted by{' '}
               <strong>{companyName}</strong>. The price per share is{' '}
-              <strong>P{pricePerShare ? pricePerShare.toLocaleString() : '0'}</strong>.
+              <strong>P{Number(pricePerShare).toLocaleString() || '0'}</strong>.
             </Typography>
           </Grid>
 
           {/* Title Input */}
           <Grid item xs={12} sm={7}>
-            <Typography><strong>Title</strong></Typography>
-            <Tooltip title="Enter your title (e.g., President, CEO)" arrow="top">
-              <TextField
-                autoFocus
-                margin="dense"
-                id="title"
-                type="text"
-                fullWidth
-                variant="outlined"
-                placeholder="e.g., President"
-                value={title}
+            <Typography>Title</Typography>
+              <TextField autoFocus margin="dense" id="title" type="text" fullWidth variant="outlined"
+                placeholder="e.g., President" value={title}
                 onChange={handleTitleChange}
                 error={!!errors.title}
-                helperText={errors.title}
-              />
-            </Tooltip>
+                helperText={errors.title}/>
           </Grid>
 
           {/* Shares Input */}
           <Grid item xs={12} sm={5}>
-            <Typography><strong>Shares</strong></Typography>
-            <TextField
-              margin="dense"
-              id="share"
-              type="number"
-              fullWidth
-              variant="outlined"
-              placeholder="e.g., 2"
-              value={shareAmount}
+            <Typography>Shares</Typography>
+            <TextField margin="dense" id="share" type="number" fullWidth variant="outlined"
+              placeholder="e.g., 2" value={shareAmount}
               onChange={handleShareAmountChange}
               helperText={errors.shareAmount}
               InputProps={{
                 inputProps: { min: 1 },
               }}
-              error={!!errors.shareAmount}
-            />
+              error={!!errors.shareAmount} />
           </Grid>
 
           {/* Investment Summary */}
           <Grid item xs={12}>
-            <Box mt={2} p={3} sx={{ backgroundColor: '#f5f5f5', borderRadius: 2 }}>
+            <Box p={3} sx={{ backgroundColor: '#f5f5f5', borderRadius: 2 }}>
               <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                 Investment Summary
               </Typography>
               <Typography variant="body2" gutterBottom>
                 You are buying <strong>{shareAmount || 0} shares</strong> at a price of{' '}
-                <strong>P{pricePerShare ? pricePerShare.toLocaleString() : '0'}</strong> per share.
+                <strong>P{pricePerShare ? Number(pricePerShare).toLocaleString() : '0'}</strong> per share.
               </Typography>
               <Typography variant="h6" color="primary" sx={{ mt: 1 }}>
                 Total cost: P{totalCost ? totalCost.toLocaleString() : '0'}
@@ -148,7 +125,7 @@ const InvestNowDialog = ({
 
           {/* Disclaimer */}
           <Grid item xs={12}>
-            <Typography variant="caption" color="textSecondary" sx={{ mt: 2 }}>
+            <Typography variant="caption" align='justify' color="textSecondary" sx={{ mt: 2 }}>
               * By confirming this investment, you agree to the terms and conditions of the funding round. Please note
               that investments are subject to risk, and you should only invest what you can afford to lose.
             </Typography>
@@ -158,13 +135,8 @@ const InvestNowDialog = ({
 
       {/* Dialog Actions */}
       <DialogActions sx={{ p: 3, justifyContent: 'center' }}>
-        <Button
-          onClick={handleConfirm}
-          variant="contained"
-          color="primary"
-          sx={{ px: 4 }}
-          disabled={!shareAmount || shareAmount <= 0 || !title.trim()}
-        >
+        <Button onClick={handleConfirm} variant="contained" color="primary" sx={{ px: 8 }}
+          disabled={!shareAmount || shareAmount <= 0 || !title.trim()}>
           Confirm Investment
         </Button>
       </DialogActions>
