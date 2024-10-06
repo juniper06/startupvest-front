@@ -33,36 +33,33 @@ function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true); // Start loading
+    setLoading(true);
 
-    // Simulate a 3-second delay
-    setTimeout(async () => {
-        try {
-            const response = await axios.post(`http://localhost:3000/users/login`, {
-                email,
-                password,
-            });
+    try {
+        const response = await axios.post(`http://localhost:3000/users/login`, {
+            email,
+            password,
+        });
 
-            if (response.data && response.data.jwt) {
-                localStorage.setItem('token', response.data.jwt);
-                localStorage.setItem('userId', response.data.userId);
-                localStorage.setItem('role', response.data.role); 
+        if (response.data && response.data.jwt) {
+            localStorage.setItem('token', response.data.jwt);
+            localStorage.setItem('userId', response.data.userId);
+            localStorage.setItem('role', response.data.role); 
 
-                if (response.data.role === 'admin') {
-                    navigate('/admindashboard');
-                } else {
-                    navigate('/asCompanyOwnerOverview');
-                }
+            if (response.data.role === 'admin') {
+                navigate('/admindashboard');
             } else {
-                throw new Error('Invalid login response');
+                navigate('/asCompanyOwnerOverview');
             }
-        } catch (error) {
-            console.error('Login failed:', error);
-            setError('Incorrect email or password');
-        } finally {
-            setLoading(false); // Stop loading after the timeout
+        } else {
+            throw new Error('Invalid login response');
         }
-    }, 3000); // 3-second delay
+    } catch (error) {
+        console.error('Login failed:', error);
+        setError('Incorrect email or password');
+    } finally {
+        setLoading(false);
+    }
   };
 
   const isEmailRegistered = async () => {

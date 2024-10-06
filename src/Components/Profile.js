@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../Navbar/Navbar';
 import CreateBusinessProfileDialog from '../Dialogs/CreateBusinessProfileDialog';
+import genderOptions from '../static/genderOptions';
+import ChangePasswordDialog from '../Dialogs/ChangePasswordDialog';
 
-import { Box, Typography, Toolbar, TextField, Avatar, Button, Select, MenuItem, Grid} from '@mui/material';
+import { Box, Typography, Toolbar, TextField, Avatar, Button, Select, MenuItem, Grid, Skeleton} from '@mui/material';
 
 const drawerWidth = 240;
 
@@ -11,8 +13,10 @@ function Profile( hasInvestorProfile ) {
   const [isEditable, setIsEditable] = useState(false);
   const [openCreateBusinessProfile, setCreateBusinessProfile] = useState(false);
   const [businessProfiles, setBusinessProfiles] = useState([]);
+  const [openChangePassword, setOpenChangePassword] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-    const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState({
         firstName: '',
         lastName: '',
         email: '',
@@ -34,62 +38,49 @@ function Profile( hasInvestorProfile ) {
         }
     }, [userData.id]);
 
-  const fetchUserData = async () => {
-    try {
-      const response = await axios.get('http://localhost:3000/users/profile', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-      });
-      setUserData(response.data);
-    } catch (error) {
-      console.error('Failed to fetch user data:', error);
-    }
-  };
+    const fetchUserData = async () => {
+      setLoading(true); 
+
+      try {
+          const response = await axios.get('http://localhost:3000/users/profile', {
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          });
+          setUserData(response.data);
+      } catch (error) {
+          console.error('Failed to fetch user data:', error);
+      } finally {
+          setLoading(false); 
+      }
+    };
 
     const fetchBusinessProfiles = async () => {
-        try {
-            const responseStartups = await axios.get(`http://localhost:3000/startups`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-
-            const responseInvestors = await axios.get(`http://localhost:3000/investors`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-
-            const startups = responseStartups.data.filter(profile => !profile.isDeleted).map(profile => ({ ...profile, type: 'Startup' }));
-            const investors = responseInvestors.data.filter(profile => !profile.isDeleted).map(profile => ({ ...profile, type: 'Investor' }));
-    
-            setBusinessProfiles([...investors, ...startups]);
-        } catch (error) {
-            console.error('Failed to fetch business profiles:', error);
-        }
+      setLoading(true); 
+      try {
+          const responseStartups = await axios.get(`http://localhost:3000/startups`, {
+              headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              },
+          });
+  
+          const responseInvestors = await axios.get(`http://localhost:3000/investors`, {
+              headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              },
+          });
+  
+          const startups = responseStartups.data.filter(profile => !profile.isDeleted).map(profile => ({ ...profile, type: 'Startup' }));
+          const investors = responseInvestors.data.filter(profile => !profile.isDeleted).map(profile => ({ ...profile, type: 'Investor' }));
+  
+          setBusinessProfiles([...investors, ...startups]);
+      } catch (error) {
+          console.error('Failed to fetch business profiles:', error);
+      } finally {
+          setLoading(false); 
+      }
     };
     
     const handleEditClick = () => {
         setIsEditable(!isEditable);
-    };
-
-    // Function to handle file upload
-    const handleAvatarUpload = async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-    
-        try {
-        // const userId = /* logic to get the user's ID */;
-        await axios.post(`http://localhost:3000/profile-picture/${userData.id}/upload`, formData, {
-            headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'multipart/form-data',
-            },
-        });
-        // After uploading, fetch the profile picture to update the avatar
-        fetchProfilePicture(userData.id);
-        } catch (error) {
-        console.error('Error uploading profile picture:', error);
-        }
     };
 
     // Function to fetch and display the profile picture
@@ -159,8 +150,14 @@ function Profile( hasInvestorProfile ) {
       throw error;
     }
   };  
+
+  const handleSavePassword = (currentPassword, newPassword) => {
+    // Add logic to handle password change, e.g., API call to update password
+    console.log('Current Password:', currentPassword);
+    console.log('New Password:', newPassword);
+  };
     
-  return (
+ return (
     <>
       <Navbar />
       <Toolbar />
@@ -173,77 +170,162 @@ function Profile( hasInvestorProfile ) {
           <Typography sx={{ color: 'white', background: 'rgba(0, 116, 144, 1)', fontWeight: '500', pl: 8, pt: 1.5, pb: 1.5, mb: 3, fontSize: '20px' }}>
             Personal Information
           </Typography>
-          
+
+          {loading ? ( 
             <Grid container spacing={2} sx={{ ml: 7 }}>
               <Grid item xs={12} sm={2.5}>
-                <label htmlFor="avatar-upload">
-                  <Avatar sx={{ width: 200, height: 200, mt: 4, cursor: 'pointer', border: '5px rgba(0, 116, 144, 1) solid' }}
-                    src={profilePicUrl}/>
-                </label>
-                
-                <input type="file" accept="image/*" id="avatar-upload" style={{ display: 'none' }}
-                  onChange={(event) => {
-                    const file = event.target.files[0];
-                      if (file && userData.id) {
-                        updateProfilePicture(userData.id, file);
-                      }
-                    }}
-                disabled={!isEditable}/>
-              <Typography sx={{ mt: 1, ml: 6.5, color: 'rgba(0, 116, 144, 1)' }}>Upload Photo</Typography>
-            </Grid>
+                <Skeleton variant="circular" width={200} height={200} sx={{ mt: 4 }} />
+                <Skeleton variant="text" width="30%" sx={{ mt: 1, ml: 6.5 }} />
+              </Grid>
 
-            <Grid item xs={12} sm={7.8}>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <label>First Name</label>
-                  <TextField fullWidth variant="outlined" value={userData.firstName} onChange={(e) => setUserData((prevData) => ({ ...prevData, firstName: e.target.value }))} InputProps={{ disabled: !isEditable, style: {
-                     height: '45px', boxShadow: '0 0 10px rgba(0,0,0,0.1)'
-                  } }} />
-                </Grid>
+              <Grid item xs={12} sm={7.8}>
+                <Grid container spacing={2}>
+                  <Grid item xs={2}>
+                    <Skeleton variant="text" width="100%" height={45} />
+                  </Grid>
 
-                <Grid item xs={6}>
-                  <label>Last Name</label>
-                  <TextField fullWidth variant="outlined" value={userData.lastName} onChange={(e) => setUserData((prevData) => ({ ...prevData, lastName: e.target.value }))} InputProps={{ disabled: !isEditable, style: {
-                     height: '45px', boxShadow: '0 0 10px rgba(0,0,0,0.1)'
-                    } }} />
-                </Grid>
+                  <Grid item xs={4}>
+                    <Skeleton variant="text" width="100%" height={45} />
+                  </Grid>
 
-                <Grid item xs={12}>
-                  <label>Email Address</label>
-                  <TextField fullWidth variant="outlined" value={userData.email} onChange={(e) => setUserData((prevData) => ({ ...prevData, email: e.target.value }))} InputProps={{ disabled: !isEditable, style: {
-                     height: '45px', boxShadow: '0 0 10px rgba(0,0,0,0.1)'
-                    } }} />
-                </Grid>
+                  <Grid item xs={6}>
+                    <Skeleton variant="text" width="100%" height={45} />
+                  </Grid>
 
-                <Grid item xs={6}>
-                  <label>Phone Number</label>
-                  <TextField fullWidth variant="outlined" value={userData.contactNumber} onChange={(e) => setUserData((prevData) => ({ ...prevData, contactNumber: e.target.value }))} InputProps={{ disabled: !isEditable, style: {
-                     height: '45px', boxShadow: '0 0 10px rgba(0,0,0,0.1)'
-                    } }} />
-                </Grid>
+                  <Grid item xs={6}>
+                    <Skeleton variant="text" width="100%" height={45} />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Skeleton variant="text" width="100%" height={45} />
+                  </Grid>
 
-                <Grid item xs={6}>
-                  <label>Gender</label>
-                  <Select fullWidth variant="outlined" value={userData.gender} onChange={(e) => setUserData((prevData) => ({ ...prevData, gender: e.target.value }))} disabled={!isEditable} style={{ height: '45px', boxShadow: '0 0 10px rgba(0,0,0,0.2)' }}>
-                    <MenuItem value={'Male'}>Male</MenuItem>
-                    <MenuItem value={'Female'}>Female</MenuItem>
-                    <MenuItem value={'Neutral'}>Neutral</MenuItem>
-                    <MenuItem value={'Other'}>Other</MenuItem>
-                  </Select>
-                </Grid>
-
-                <Grid container justifyContent="flex-end">
-                  <Grid item>
-                    <Button variant="contained"
-                      sx={{ mt: 3, width: 150, background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }}
-                      onClick={isEditable ? handleSaveChanges : handleEditClick}>
-                      {isEditable ? 'Save Changes' : 'Edit Profile'}
-                    </Button>
+                  <Grid item xs={6}>
+                    <Skeleton variant="text" width="100%" height={45} />
+                  </Grid>
+                  
+                  <Grid item xs={6}>
+                    <Skeleton variant="text" width="100%" height={45} />
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>
+          ) : (
+            <Grid container spacing={2} sx={{ ml: 7 }}>
+              <Grid item xs={12} sm={2.5}>
+                <label htmlFor="avatar-upload">
+                  <Avatar sx={{ width: 200, height: 200, mt: 4, cursor: 'pointer', border: '5px rgba(0, 116, 144, 1) solid' }} src={profilePicUrl} />
+                </label>
+
+                <input type="file" accept="image/*" id="avatar-upload" style={{ display: 'none' }}
+                  onChange={(event) => {
+                    const file = event.target.files[0];
+                    if (file && userData.id) {
+                      updateProfilePicture(userData.id, file);
+                    }
+                  }}
+                  disabled={!isEditable} />
+                <Typography sx={{ mt: 1, ml: 6.5, color: 'rgba(0, 116, 144, 1)' }}>Upload Photo</Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={7.8}>
+                <Grid container spacing={2}>
+                  <Grid item xs={2}>
+                    <label>Role</label>
+                    <TextField fullWidth variant="outlined" disabled InputProps={{ sx: { height: '45px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' } }} />
+                  </Grid>
+
+                  <Grid item xs={4}>
+                    <label>First Name</label>
+                    <TextField fullWidth variant="outlined" value={userData.firstName}
+                      onChange={(e) => setUserData((prevData) => ({ ...prevData, firstName: e.target.value }))}
+                      InputProps={{
+                        disabled: !isEditable,
+                        style: { height: '45px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' },
+                      }}/>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <label>Last Name</label>
+                    <TextField fullWidth variant="outlined" value={userData.lastName}
+                      onChange={(e) => setUserData((prevData) => ({ ...prevData, lastName: e.target.value }))}
+                      InputProps={{
+                        disabled: !isEditable,
+                        style: { height: '45px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' },
+                      }}/>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <label>Email Address</label>
+                    <TextField fullWidth variant="outlined" value={userData.email}
+                      onChange={(e) => setUserData((prevData) => ({ ...prevData, email: e.target.value }))}
+                      InputProps={{
+                        disabled: !isEditable,
+                        style: { height: '45px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' },
+                      }} />
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <label>Password</label>
+                      {isEditable ? (
+                        <Typography variant="caption" sx={{ color: '#007490', ml: 1, textDecoration: 'underline', cursor: 'pointer' }}
+                          onClick={() => setOpenChangePassword(true)}>
+                          Change Password
+                        </Typography>
+                      ) : (
+                        <Typography variant="caption" sx={{ color: 'gray', ml: 1, textDecoration: 'underline' }}>
+                          Change Password
+                        </Typography>
+                      )}
+                    </Box>
+                    <TextField fullWidth variant="outlined" type="password" disabled
+                      InputProps={{
+                        style: {
+                          height: '45px',
+                          boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+                        },
+                      }} />
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <label>Gender</label>
+                    <Select fullWidth variant="outlined" value={userData.gender}
+                      onChange={(e) => setUserData((prevData) => ({ ...prevData, gender: e.target.value }))}
+                      disabled={!isEditable}
+                      style={{ height: '45px', boxShadow: '0 0 10px rgba(0,0,0,0.2)' }}>
+                      {genderOptions.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <label>Phone Number</label>
+                    <TextField fullWidth variant="outlined" value={userData.contactNumber}
+                      onChange={(e) => setUserData((prevData) => ({ ...prevData, contactNumber: e.target.value }))}
+                      InputProps={{
+                        disabled: !isEditable,
+                        style: { height: '45px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' },
+                      }}/>
+                  </Grid>
+
+                  <Grid container justifyContent="flex-end">
+                    <Grid item>
+                      <Button variant="contained" sx={{ mt: 3, width: 150,
+                          background: 'rgba(0, 116, 144, 1)',
+                          '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' },
+                        }}
+                        onClick={isEditable ? handleSaveChanges : handleEditClick}>
+                        {isEditable ? 'Save Changes' : 'Edit Profile'}
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          )}
         </Box>
 
         <Box component="main" sx={{ display: 'flex', flexDirection: 'column', mt: 8, mb: 4 }}>
@@ -253,28 +335,30 @@ function Profile( hasInvestorProfile ) {
 
           <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mt: 4, ml: 8, mr: 5 }}>
             <Box sx={{ borderRadius: 2, p: 4, display: 'flex', alignItems: 'center', boxShadow: '0 0 10px rgba(0,0,0,0.25)', width: '70%' }}>
-              <Avatar src="/images/prof.jpg" variant='square' sx={{ mr: 3, width: 200, height: 250, border: '4px rgba(0, 116, 144, 1) solid', borderRadius: 2}}></Avatar>
-              <Typography align='justify' sx={{ color: '#414a4c', fontWeight: '500' }}>
-                <b>Why Create a Business Profile?</b><br/>
-                Establishing a business profile on Startup Vest offers significant advantages for both startups and investors.
-                <br /><br /><b>For Startups</b> creating a profile enhances visibility and credibility, making it easier to attract funding and connect with industry leaders and potential partners.<br /><br /><b>For Investors</b> they can discover a diverse range of startups, invest in promising opportunities, and track progress over time.
+              <Avatar src="/images/prof.jpg" variant="square" sx={{ mr: 3, width: 200, height: 250, border: '4px rgba(0, 116, 144, 1) solid', borderRadius: 2 }}></Avatar>
+              <Typography align="justify" sx={{ color: '#414a4c', fontWeight: '500' }}>
+                <b>Why Create a Business Profile?</b>
+                <br />Establishing a business profile on Startup Vest offers significant advantages for both startups and investors.
+                <br /> <br /> <b>For Startups</b> creating a profile enhances visibility and credibility, making it easier to attract funding and connect with industry leaders and potential partners. <br /><br /><b>For Investors</b> they can discover a diverse range of startups, invest in promising opportunities, and track progress over time.
               </Typography>
             </Box>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, p: 4, display: 'flex', alignItems: 'center', boxShadow: '0 0 10px rgba(0,0,0,0.5)', width: '28%', backgroundColor: '#007490'}}>
-              <Typography align='justify' sx={{ color: 'white', fontWeight: '500', mb: 2, mt: 5 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, p: 4, display: 'flex', alignItems: 'center', boxShadow: '0 0 10px rgba(0,0,0,0.5)', width: '28%', backgroundColor: '#007490' }}>
+              <Typography align="justify" sx={{ color: 'white', fontWeight: '500', mb: 2, mt: 5 }}>
                 <b>Don’t miss out on opportunities.</b><br /><br /> Create your business profile today and unlock limitless potential for growth and success!
               </Typography>
 
-              <Button variant="contained" fullWidth sx={{ color: '#007490', background: 'white', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'white'} }} onClick={handleOpenBusinessProfile}>
+              <Button variant="contained" fullWidth
+                sx={{ color: '#007490', background: 'white', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'white' } }}
+                onClick={handleOpenBusinessProfile}>
                 Create Profile
               </Button>
             </Box>
           </Box>
         </Box>
 
-        <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} 
-        hasInvestorProfile={hasInvestorProfile}/>
+        <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} hasInvestorProfile={hasInvestorProfile} />
+        <ChangePasswordDialog open={openChangePassword} onClose={() => setOpenChangePassword(false)} onSave={handleSavePassword} />
       </Box>
     </>
   );
