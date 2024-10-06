@@ -67,30 +67,36 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const contactInfoRegex = /^[0-9]{10,15}$/;
         const emptyFieldError = 'This field cannot be empty';
-      
+        const maxDescriptionLength = 1000;
+        
         if (selectedProfileType === 'Startup Company') {
-          if (!companyName.trim()) newErrors.companyName = emptyFieldError;
-          if (!companyDescription.trim()) newErrors.companyDescription = emptyFieldError;
-          if (!foundedMonth) newErrors.foundedMonth = emptyFieldError;
-          if (!foundedDay) newErrors.foundedDay = emptyFieldError;
-          if (!foundedYear) newErrors.foundedYear = emptyFieldError;
-          if (!typeOfCompany) newErrors.typeOfCompany = emptyFieldError;
-          if (!numberOfEmployees) newErrors.numberOfEmployees = emptyFieldError;
-          if (!phoneNumber.trim()) newErrors.phoneNumber = emptyFieldError;
-          else if (!contactInfoRegex.test(phoneNumber)) newErrors.phoneNumber = 'Enter a valid phone number (10-15 digits).';
-          if (!contactEmail.trim()) newErrors.contactEmail = emptyFieldError;
-          else if (!emailRegex.test(contactEmail)) newErrors.contactEmail = 'Invalid email address format';
-          if (!industry) newErrors.industry = emptyFieldError;
+            if (!companyName.trim()) newErrors.companyName = emptyFieldError;
+            if (!companyDescription.trim()) newErrors.companyDescription = emptyFieldError;
+            else if (companyDescription.length > maxDescriptionLength) 
+                newErrors.companyDescription = `Company description cannot exceed ${maxDescriptionLength} characters.`;
+            if (!foundedMonth) newErrors.foundedMonth = emptyFieldError;
+            if (!foundedDay) newErrors.foundedDay = emptyFieldError;
+            if (!foundedYear) newErrors.foundedYear = emptyFieldError;
+            if (!typeOfCompany) newErrors.typeOfCompany = emptyFieldError;
+            if (!numberOfEmployees) newErrors.numberOfEmployees = emptyFieldError;
+            if (!phoneNumber.trim()) newErrors.phoneNumber = emptyFieldError;
+            else if (!contactInfoRegex.test(phoneNumber)) newErrors.phoneNumber = 'Enter a valid phone number (10-15 digits).';
+            if (!contactEmail.trim()) newErrors.contactEmail = emptyFieldError;
+            else if (!emailRegex.test(contactEmail)) newErrors.contactEmail = 'Invalid email address format';
+            if (!industry) newErrors.industry = emptyFieldError;
         } else {
-          if (!firstName.trim()) newErrors.firstName = emptyFieldError;
-          if (!lastName.trim()) newErrors.lastName = emptyFieldError;
-          if (!emailAddress.trim()) newErrors.emailAddress = emptyFieldError;
-          else if (!emailRegex.test(emailAddress)) newErrors.emailAddress = 'Invalid email address format';
-          if (!contactInformation.trim()) newErrors.contactInformation = emptyFieldError;
-          else if (!contactInfoRegex.test(contactInformation)) newErrors.contactInformation = 'Enter a valid contact number (10-15 digits).';
-          if (!gender) newErrors.gender = emptyFieldError;
-          if (!biography.trim()) newErrors.biography = emptyFieldError;
+            if (!firstName.trim()) newErrors.firstName = emptyFieldError;
+            if (!lastName.trim()) newErrors.lastName = emptyFieldError;
+            if (!emailAddress.trim()) newErrors.emailAddress = emptyFieldError;
+            else if (!emailRegex.test(emailAddress)) newErrors.emailAddress = 'Invalid email address format';
+            if (!contactInformation.trim()) newErrors.contactInformation = emptyFieldError;
+            else if (!contactInfoRegex.test(contactInformation)) newErrors.contactInformation = 'Enter a valid contact number (10-15 digits).';
+            if (!gender) newErrors.gender = emptyFieldError;
+            if (!biography.trim()) newErrors.biography = emptyFieldError;
+            else if (biography.length > maxDescriptionLength) 
+                newErrors.biography = `Biography cannot exceed ${maxDescriptionLength} characters.`;
         }
+        
         if (!streetAddress.trim()) newErrors.streetAddress = emptyFieldError;
         if (!country) newErrors.country = emptyFieldError;
         if (!city.trim()) newErrors.city = emptyFieldError;
@@ -99,7 +105,7 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
       
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
-    };
+    };    
 
     const handleCreateProfile = async () => {
         if (!validateFields()) {
@@ -471,11 +477,11 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                                         value={industry}
                                         onChange={(event, newValue) => setIndustry(newValue)}
                                         onInputChange={(event, newInputValue) => setIndustry(newInputValue)} 
-                                        error={!!errors.industry}
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
                                                 variant="outlined"
+                                                error={!!errors.industry}
                                                 sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }} />
                                         )} />
                                 </FormControl>
