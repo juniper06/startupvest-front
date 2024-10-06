@@ -122,7 +122,7 @@ function UserDashboard() {
 
     const fetchRecentActivities = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/activities', {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/activities`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
@@ -141,12 +141,12 @@ function UserDashboard() {
     const fetchBusinessProfiles = async () => {
         try {
             const [responseStartups, responseInvestors] = await Promise.all([
-                axios.get(`http://localhost:3000/startups`, {
+                axios.get(`${process.env.REACT_APP_API_URL}/startups`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     },
                 }),
-                axios.get(`http://localhost:3000/investors`, {
+                axios.get(`${process.env.REACT_APP_API_URL}/investors`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
@@ -155,7 +155,7 @@ function UserDashboard() {
     
             const fetchProfilePicture = async (id, type) => {
                 try {
-                    const response = await axios.get(`http://localhost:3000/profile-picture/${type}/${id}`, {
+                    const response = await axios.get(`${process.env.REACT_APP_API_URL}/profile-picture/${type}/${id}`, {
                         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                         responseType: 'blob',
                     });
@@ -198,7 +198,7 @@ function UserDashboard() {
         }
 
         try {
-            const endpoint = `http://localhost:3000/startups/${profileToDelete.id}/delete`;
+            const endpoint = `${process.env.REACT_APP_API_URL}/startups/${profileToDelete.id}/delete`;
 
             await axios.put(endpoint, {}, {
                 headers: {
@@ -256,7 +256,7 @@ function UserDashboard() {
     const fetchCountInvestor = async () => {
         try {
         const response = await axios.get(
-            `http://localhost:3000/cap-table-investor`,
+            `${process.env.REACT_APP_API_URL}/cap-table-investor`,
             {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -272,7 +272,7 @@ function UserDashboard() {
     const fetchTopInvestorContributor = async (userId) => {
         try {
           const response = await axios.get(
-            `http://localhost:3000/cap-table-investor/${userId}/top`,
+            `${process.env.REACT_APP_API_URL}/cap-table-investor/${userId}/top`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -288,7 +288,7 @@ function UserDashboard() {
     const handleViewFundingRound = async (fundingRoundId) => {
         try {
         const response = await axios.get(
-            `http://localhost:3000/funding-rounds/${fundingRoundId}`,
+            `${process.env.REACT_APP_API_URL}/funding-rounds/${fundingRoundId}`,
             {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -311,7 +311,7 @@ function UserDashboard() {
             const companyName = fundingRoundToDelete?.startup?.companyName || 'Unknown Company';
             const fundingType = fundingRoundToDelete?.fundingType || 'Unknown Funding Type';
 
-            await axios.put(`http://localhost:3000/funding-rounds/${fundingRoundId}/delete`, {
+            await axios.put(`${process.env.REACT_APP_API_URL}/funding-rounds/${fundingRoundId}/delete`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -335,7 +335,7 @@ function UserDashboard() {
     const fetchFundingRounds = async () => {
       
         try {
-            const response = await axios.get('http://localhost:3000/funding-rounds/all', {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/funding-rounds/all`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
@@ -360,7 +360,7 @@ function UserDashboard() {
 
     const fetchAllInvestorsByEachUsersCompany = async (companyId) => {
         try {
-            const response = await axios.get(`http://localhost:3000/funding-rounds/${companyId}/investors/all`, {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/funding-rounds/${companyId}/investors/all`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },

@@ -42,7 +42,7 @@ function Profile( hasInvestorProfile ) {
       setLoading(true); 
 
       try {
-          const response = await axios.get('http://localhost:3000/users/profile', {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/users/profile`, {
               headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
           });
           setUserData(response.data);
@@ -56,13 +56,13 @@ function Profile( hasInvestorProfile ) {
     const fetchBusinessProfiles = async () => {
       setLoading(true); 
       try {
-          const responseStartups = await axios.get(`http://localhost:3000/startups`, {
+          const responseStartups = await axios.get(`${process.env.REACT_APP_API_URL}/startups`, {
               headers: {
                   'Authorization': `Bearer ${localStorage.getItem('token')}`,
               },
           });
   
-          const responseInvestors = await axios.get(`http://localhost:3000/investors`, {
+          const responseInvestors = await axios.get(`${process.env.REACT_APP_API_URL}/investors`, {
               headers: {
                   'Authorization': `Bearer ${localStorage.getItem('token')}`,
               },
@@ -86,7 +86,7 @@ function Profile( hasInvestorProfile ) {
     // Function to fetch and display the profile picture
     const fetchProfilePicture = async () => {
         try {
-          const response = await axios.get(`http://localhost:3000/profile-picture/${userData.id}`, {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/profile-picture/${userData.id}`, {
             responseType: 'blob',
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -105,7 +105,7 @@ function Profile( hasInvestorProfile ) {
         formData.append('file', file);
     
         try {
-        const response = await axios.put(`http://localhost:3000/profile-picture/${userData.id}`, formData, {
+        const response = await axios.put(`${process.env.REACT_APP_API_URL}/profile-picture/${userData.id}`, formData, {
             headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'multipart/form-data',
@@ -140,7 +140,7 @@ function Profile( hasInvestorProfile ) {
   
   const updateUser = async (userData) => {
     try {
-      const response = await axios.put(`http://localhost:3000/users/${userData.id}`, userData, {
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/users/${userData.id}`, userData, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
       });
       console.log('User data updated successfully:', response.data);

@@ -10,6 +10,7 @@ import { StyledCard } from '../styles/CardStyles';
 import axios from 'axios';
 
 import { logActivity } from '../utils/activityUtils';
+import { generateStartupCode } from '../Components/StartupCode';
 
 function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
     const [selectedProfileType, setSelectedProfileType] = useState(null);
@@ -111,16 +112,16 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
             streetAddress, country, city, state, postalCode, website, facebook, twitter, 
             instagram, linkedIn, companyName, companyDescription, 
             foundedDate: `${foundedMonth} ${foundedDay}, ${foundedYear}`,
-            typeOfCompany, numberOfEmployees, phoneNumber, contactEmail, industry,
+            typeOfCompany, numberOfEmployees, phoneNumber, contactEmail, industry,startupCode: generateStartupCode(),
           };
     
           let endpoint;
           let logMessage;
           if (selectedProfileType === 'Startup Company') {
-            endpoint = 'http://localhost:3000/startups/create';
+            endpoint = `${process.env.REACT_APP_API_URL}/startups/create`;
             logMessage = `${companyName} profile created successfully.`;
           } else if (selectedProfileType === 'Investor') {
-            endpoint = 'http://localhost:3000/investors/create';
+            endpoint = `${process.env.REACT_APP_API_URL}/investors/create`;
             logMessage = `${firstName} ${lastName} profile created successfully.`;
           } else {
             console.error('Invalid profile type:', selectedProfileType);

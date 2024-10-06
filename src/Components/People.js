@@ -118,7 +118,7 @@ export default function Companies() {
   useEffect(() => {
     const fetchInvestors = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/investors/all');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/investors/all`);
         setInvestors(response.data);
       } catch (error) {
         console.error('Error fetching investors:', error);
@@ -136,7 +136,7 @@ export default function Companies() {
 
   const fetchProfilePicture = async (investorId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/profile-picture/investor/${investorId}`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/profile-picture/investor/${investorId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },

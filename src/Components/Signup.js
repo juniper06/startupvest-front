@@ -11,13 +11,12 @@ import { styles } from '../styles/Signup';
 
 function Signup() {
     const navigate = useNavigate();
-    const [role, setRole] = useState('user');
+    const [role, setRole] = useState('CEO');
     const [openDialog, setOpenDialog] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [emailExists, setEmailExists] = useState(false);
     const [email, setEmail] = useState('');
     const [contactNumber, setContactNumber] = useState('');
-    const [position, setPosition] = useState('CEO');
     const [startupCode, setStartupCode] = useState('');
 
     const [error, setError] = useState('');
@@ -116,8 +115,7 @@ function Signup() {
             gender: e.target.elements.gender.value,
             password,
             role: role,
-            position,
-            startupCode: position === 'CFO' ? startupCode : '',
+            startupCode: role === 'CFO' ? startupCode : '',
         };
 
         if (!validateEmail(userData.email) || !validatePassword(password) || !validateContactNumber(userData.contactNumber)) {
@@ -125,7 +123,7 @@ function Signup() {
         }
 
         try {
-            const response = await axios.post(`http://localhost:3000/users/register`, userData);
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/users/register`, userData);
             console.log('Signup successful:', response.data);
             setOpenDialog(true);
             setTimeout(() => navigate('/login'), 3000);
@@ -137,7 +135,7 @@ function Signup() {
 
     const checkEmailExists = async () => {
         try {
-            const response = await axios.post(`http://localhost:3000/users/check-email`, { email });
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/users/check-email`, { email });
             setEmailExists(response.data.exists);
             setError(response.data.exists ? 'Email already exists. Please enter a different email.' : '');
         } catch (error) {
@@ -182,9 +180,9 @@ function Signup() {
                                 <TextField fullWidth name="lastName" placeholder="Doe" required sx={styles.textField} />
                             </Grid>
                             <Grid item xs={12}>
-                                <Typography variant="body2" sx={{ color: '#F2F2F2' }}>Position</Typography>
+                                <Typography variant="body2" sx={{ color: '#F2F2F2' }}>Role</Typography>
                                 <FormControl fullWidth>
-                                    <Select name="position" sx={styles.textField} defaultValue='CEO' onChange={(e) => setPosition(e.target.value)}>
+                                    <Select name="role" sx={styles.textField} defaultValue='CEO' onChange={(e) => setRole(e.target.value)}>
                                         {roleOptions.map((option) => (
                                             <MenuItem key={option.value} value={option.value}>
                                                 {option.label}
@@ -194,7 +192,7 @@ function Signup() {
                                 </FormControl>
                             </Grid>
 
-                            {position === 'CFO' && (
+                            {role === 'CFO' && (
                                 <Grid item xs={12}>
                                     <Typography variant="body2" sx={{ color: '#F2F2F2' }}>Startup Code</Typography>
                                     <TextField required fullWidth name="startupCode" placeholder="Enter Startup Code"
