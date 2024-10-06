@@ -213,18 +213,15 @@ export default function Companies() {
                 Array.from(new Array(rowsPerPage)).map((_, index) => (
                   <StyledTableRow key={index}>
                     <StyledTableCell>
-                      <Skeleton variant="rectangular" width={40} height={40} sx={{ marginRight: 1 }} />
-                      <Skeleton variant="text" width="60%" />
+                      <StyledStack direction="row" alignItems="center">
+                        <Skeleton variant="rectangular" width={40} height={40} sx={{ marginRight: 1 }} />
+                        <Skeleton variant="text" width="60%" sx={{ ml: 2 }} />
+                      </StyledStack>
                     </StyledTableCell>
-                    <StyledTableCell>
-                      <Skeleton variant="text" width="80%" />
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Skeleton variant="text" width="50%" />
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Skeleton variant="text" width="100%" />
-                    </StyledTableCell>
+
+                    <StyledTableCell><Skeleton variant="text" width="80%" /></StyledTableCell>
+                    <StyledTableCell><Skeleton variant="text" width="50%" /></StyledTableCell>
+                    <StyledTableCell><Skeleton variant="text" width="100%" /></StyledTableCell>
                   </StyledTableRow>
                 ))
               ) : (

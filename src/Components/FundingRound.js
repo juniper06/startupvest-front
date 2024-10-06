@@ -139,7 +139,7 @@ export default function FundingRound() {
       try {
         const response = await axios.get('http://localhost:3000/funding-rounds/all');
         const fetchedRows = response.data
-          .filter(fundingRound => new Date(fundingRound.closedDate) > new Date()) // Filter out closed funding rounds
+          .filter(fundingRound => new Date(fundingRound.closedDate) > new Date())
           .map(fundingRound => createData(
             fundingRound.id,
             fundingRound.transactionName || '---',
@@ -156,13 +156,14 @@ export default function FundingRound() {
             fundingRound.startup?.id,
             fundingRound.fundingName || '---',
           ));
+          
         setRows(fetchedRows);
         setFilteredRows(fetchedRows);
         await fetchAllProfilePictures(response.data); 
       } catch (error) {
         console.error('Error fetching funding rounds:', error);
       } finally {
-        setLoading(false); // End loading
+        setLoading(false);
       }
     };
   
@@ -243,25 +244,18 @@ export default function FundingRound() {
               {loading ? (
                 [...Array(rowsPerPage)].map((_, index) => (
                   <TableRow key={index}>
-                    <TableCell>
-                      <Skeleton variant="rectangular" width={40} height={40} />
-                      <Skeleton variant="text" width="60%" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" width="40%" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" width="60%" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" width="40%" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" width="40%" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="text" width="40%" />
-                    </TableCell>
+                    <StyledTableCell>
+                      <StyledStack direction="row" alignItems="center">
+                        <Skeleton variant="rectangular" width={40} height={40} sx={{ borderRadius: '4px' }} />
+                        <Skeleton variant="text" width="30%" sx={{ ml: 2 }} />
+                      </StyledStack>
+                    </StyledTableCell>
+                    
+                    <StyledTableCell><Skeleton variant="text" width="60%" /></StyledTableCell>
+                    <StyledTableCell><Skeleton variant="text" width="40%" /></StyledTableCell>
+                    <StyledTableCell><Skeleton variant="text" width="30%" /></StyledTableCell>
+                    <StyledTableCell><Skeleton variant="text" width="50%" /></StyledTableCell>
+                    <StyledTableCell><Skeleton variant="text" width="50%" /></StyledTableCell>
                   </TableRow>
                 ))
               ) : (

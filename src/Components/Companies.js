@@ -172,11 +172,6 @@ export default function Companies() {
     navigate(`/startupview`, { state: { startup: startup } });
   };
 
-  const emptyRows = useMemo(
-    () => page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredRows.length) : 0,
-    [page, rowsPerPage, filteredRows.length]
-  );
-
   const visibleRows = useMemo(
     () => stableSort(filteredRows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     [filteredRows, order, orderBy, page, rowsPerPage]
@@ -195,18 +190,15 @@ export default function Companies() {
                 Array.from(new Array(rowsPerPage)).map((_, index) => (
                   <StyledTableRow key={index}>
                     <StyledTableCell>
-                      <Skeleton variant="rounded" width={40} height={40} />
-                      <Skeleton variant="text" width="80%" />
+                      <StyledStack direction="row" alignItems="center">
+                        <Skeleton variant="rounded" width={40} height={40} />
+                        <Skeleton variant="text" width="30%" sx={{ ml: 2 }} />
+                      </StyledStack>
                     </StyledTableCell>
-                    <StyledTableCell>
-                      <Skeleton variant="text" width="100%" />
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Skeleton variant="text" width="50%" />
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Skeleton variant="text" width="80%" />
-                    </StyledTableCell>
+
+                    <StyledTableCell><Skeleton variant="text" width="100%" /></StyledTableCell>
+                    <StyledTableCell><Skeleton variant="text" width="50%" /></StyledTableCell>
+                    <StyledTableCell><Skeleton variant="text" width="80%" /></StyledTableCell>
                   </StyledTableRow>
                 ))
               ) : visibleRows.map((row, index) => (
