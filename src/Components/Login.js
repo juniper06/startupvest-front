@@ -7,6 +7,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import LoginStyles from '../styles/Login';
 import Loading from './Loading';
+import ForgotPasswordDialog from '../Dialogs/ForgotPasswordDialog';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -18,6 +19,15 @@ function Login() {
   const [zoomLevel, setZoomLevel] = useState(window.devicePixelRatio);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false); 
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+
+  const handleOpenForgotPassword = () => {
+    setForgotPasswordOpen(true);
+  };
+
+  const handleCloseForgotPassword = () => {
+    setForgotPasswordOpen(false);
+  };
 
   // Adjust zoom level on window resize (for detecting zoom changes)
   useEffect(() => {
@@ -140,7 +150,7 @@ function Login() {
                   ),
                 }}/>
 
-              <Typography variant="body2" sx={LoginStyles.forgotPasswordText}>
+              <Typography variant="body2" sx={LoginStyles.forgotPasswordText} onClick={handleOpenForgotPassword}>
                 Forgot password?
               </Typography>
 
@@ -158,6 +168,7 @@ function Login() {
           </Paper>
         </Grid>
       </Grid>
+      <ForgotPasswordDialog open={forgotPasswordOpen} onClose={handleCloseForgotPassword} />
     </Container>
   );
 }
