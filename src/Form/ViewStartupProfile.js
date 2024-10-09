@@ -218,7 +218,7 @@ function ViewStartupProfile({ profile }) {
 
             <Grid item xs={12} sm={3}>
                 <label htmlFor="avatar-upload" onClick={handleAvatarClick}>
-                <Avatar sx={{ width: 200, height: 200, mb: 2, ml: 49.5, cursor: 'pointer', border: '5px rgba(0, 116, 144, 1) solid' }}
+                <Avatar sx={{ width: 200, height: 200, mb: 2, ml: 49.5, cursor: 'pointer', border: '5px #336FB0 solid' }}
                         src={avatar} onClick={handleAvatarClick} />
                 </label>
             
@@ -545,7 +545,8 @@ function ViewStartupProfile({ profile }) {
             </Grid>
         </Grid>
         
-        <Button variant="contained" sx={{ width: 150, background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }} style={{ marginLeft: '83.5%' }} 
+        <Button variant="contained" sx={{ width: 150, background: '#336FB0', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: '#336FB0' } }} 
+        style={{ marginLeft: '83.5%' }} 
         onClick={handleUpdateProfile}>
             {isEditable ? 'Save Changes' : 'Edit Profile'}
         </Button>

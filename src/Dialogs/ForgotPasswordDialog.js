@@ -119,7 +119,7 @@ function ForgotPasswordDialog({ open, onClose }) {
     <Dialog open={open} onClose={handleClose} maxWidth="sm">
       <DialogTitle sx={{ position: 'relative', padding: '20px 24px' }}>
         <Typography variant="h6" fontWeight="bold">Forgot Password</Typography>
-        <IconButton aria-label="close" onClick={handleClose} style={{ position: 'absolute', right: 8, top: 8 }}>
+        <IconButton aria-label="close" onClick={handleClose} style={{ position: 'absolute', right: 0, top: 3, color: '#ED262A' }}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>

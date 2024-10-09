@@ -38,7 +38,7 @@ function ViewFundingRoundDialog({ open, fundingRoundDetails, onClose }) {
                             justifyContent: 'flex-end',
                             width: '100%',
                         }}>
-                        <IconButton onClick={onClose} sx={{ color: '#007490' }}>
+                        <IconButton onClick={onClose} sx={{ color: '#ED262A' }}>
                             <CloseIcon sx={{ fontSize: '24px' }} />
                         </IconButton>
                     </Box>

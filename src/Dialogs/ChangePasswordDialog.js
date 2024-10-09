@@ -84,7 +84,7 @@ const ChangePasswordDialog = ({ open, onClose, onSave }) => {
       <DialogTitle sx={{ position: 'relative', padding: '16px 24px' }}>
         <Typography variant="h6" fontWeight="bold">Change Password</Typography>
         <IconButton aria-label="close" onClick={onClose}
-          sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}>
+          sx={{ position: 'absolute', right: 0, top: 3, color: '#ED262A' }}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>

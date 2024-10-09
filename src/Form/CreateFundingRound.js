@@ -391,7 +391,7 @@ function CreateFundingRound({ onSuccess }) {
                         </Grid>
                         
                         <Grid item xs={12}>
-                            <Typography sx={{ color: '#007490'}}>
+                            <Typography sx={{ color: '#336FB0'}}>
                             The price per share refers to the amount of money you need to pay to purchase one share of a company's stock. For example, if the price per share is P10,000, you would need to invest P10,000 to acquire a single share in that company.                            
                             </Typography>
                         </Grid>
@@ -477,13 +477,15 @@ function CreateFundingRound({ onSuccess }) {
                     </Grid>
                 ))}
                 <Grid item xs={12} sm={11}>
-                    <Button variant="outlined" sx={{ color: 'rgba(0, 116, 144, 1)', borderColor: 'rgba(0, 116, 144, 1)', '&:hover': { color: 'rgba(0, 116, 144, 0.7)', borderColor: 'rgba(0, 116, 144, 0.7)' } }} onClick={handleAddInvestor}>
+                    <Button variant="outlined" sx={{ color: '#336FB0', borderColor: '#336FB0', '&:hover': { color: '#336FB0', borderColor: '#336FB0' } }} 
+                    onClick={handleAddInvestor}>
                         Add Investor
                     </Button>
                 </Grid>
             </Grid>
 
-            <Button variant="contained" sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' } }} style={{ marginLeft: '80.56%' }} onClick={handleCreateFundingRound}>
+            <Button variant="contained" sx={{ background: '#336FB0', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: '#336FB0' } }} 
+            style={{ marginLeft: '80.56%' }} onClick={handleCreateFundingRound}>
                 Create Round
             </Button>
 

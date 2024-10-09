@@ -46,8 +46,8 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
     const RequiredAsterisk = <span style={{ color: 'red' }}>*</span>;
 
     const cardTypes = [
-        { label: 'Startup Company', icon: <Business />, color: '#007490' },
-        { label: 'Investor', icon: <MonetizationOn />, color: '#007490' },
+        { label: 'Startup Company', icon: <Business />, color: '#336FB0' },
+        { label: 'Investor', icon: <MonetizationOn />, color: '#336FB0' },
     ];
     
     // Error State Variables
@@ -527,7 +527,8 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Button variant="contained" sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' }}} style={{marginLeft: '82.7%'}} onClick={handleCreateProfile}>
+                <Button variant="contained" sx={{ background: '#336FB0', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: '#336FB0' }}} 
+                style={{marginLeft: '82.7%'}} onClick={handleCreateProfile}>
                     Create Profile
                 </Button>
             </>
@@ -735,7 +736,8 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                     </Grid>
                 </Grid>
                 
-                <Button variant="contained" sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' }}} style={{marginLeft: '82.7%'}} 
+                <Button variant="contained" sx={{ background: '#336FB0', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: '#336FB0)' }}} 
+                style={{marginLeft: '82.7%'}} 
                     onClick={handleCreateProfile} onClose={handleCreateProfile}>
                     Create Profile
                 </Button>
