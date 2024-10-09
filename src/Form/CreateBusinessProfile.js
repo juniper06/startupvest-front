@@ -58,8 +58,28 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
     });
     const years = [...Array(51).keys()].map(i => new Date().getFullYear() - i);
 
+    const fetchCurrentUser = async () => {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/users/current`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          });
+          
+          // Only set specific fields for investor profile
+          setFirstName(response.data.firstName || '');
+          setLastName(response.data.lastName || '');
+          setEmailAddress(response.data.email || '');
+          setContactInformation(response.data.contactNumber || '');
+          setGender(response.data.gender || '');
+        } catch (error) {
+          console.error('Failed to fetch current user data:', error);
+        }
+      };
+
     const handleCardClick = (cardType) => {
         setSelectedProfileType(cardType);
+        if (cardType === 'Investor') {
+            fetchCurrentUser();
+        }
     };
 
     const validateFields = () => {
