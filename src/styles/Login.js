@@ -76,7 +76,7 @@ const LoginStyles = {
     fontSize: { xs: '1rem', md: '1rem' },
     '&:hover': {
       boxShadow: '0 0 10px rgba(0,0,0,0.5)',
-      backgroundColor: '#336FB0)',
+      backgroundColor: '#004A98',
     },
   },
   forgotPasswordText: {
@@ -94,7 +94,7 @@ const LoginStyles = {
   signUpLink: {
     color: '#004A98',
     fontWeight: 'bold',
-      fontSize: { xs: '0.85rem', lg: '0.9rem' },
+    fontSize: { xs: '0.85rem', lg: '0.9rem' },
   },
 };
 
