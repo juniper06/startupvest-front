@@ -394,11 +394,11 @@ return (
                             <CreateButton {...bindTrigger(popupState)}><AddCircle sx={{ mr: 1}} />Create</CreateButton>
                             <Menu {...bindMenu(popupState)}>
                             <MenuItem onClick={() => { handleOpenBusinessProfile(); popupState.close(); }}> 
-                                <Person2 sx={{ mr: 1, color: "#007490" }} /> Business Profile
+                                <Person2 sx={{ mr: 1, color: "#336FB0" }} /> Business Profile
                             </MenuItem>
                             
                             <MenuItem onClick={() => { handleOpenFundingRound(); popupState.close(); }}> 
-                                <MonetizationOnRounded sx={{ mr: 1, color: "#007490" }} /> Funding Round
+                                <MonetizationOnRounded sx={{ mr: 1, color: "#336FB0" }} /> Funding Round
                             </MenuItem>
                             </Menu>
                         </>

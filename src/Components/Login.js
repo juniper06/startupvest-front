@@ -59,7 +59,7 @@ function Login() {
             if (response.data.role === 'admin') {
                 navigate('/admindashboard');
             } else {
-                navigate('/asCompanyOwnerOverview');
+                navigate('/profile');
             }
         } else {
             throw new Error('Invalid login response');

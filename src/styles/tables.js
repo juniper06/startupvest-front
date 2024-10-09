@@ -5,7 +5,7 @@ export const tableStyles = {
       border: '1px solid #e0e0e0',    
     },
     head: {
-      backgroundColor: '#007490',
+      backgroundColor: '#336FB0',
       textAlign: 'center',
     },
     headerCell: {
@@ -18,16 +18,16 @@ export const tableStyles = {
       color: '#333333',
     },
     actionButton: {
-      mr: 1,
-      background: 'rgba(0, 116, 144, 1)',
+      background: '#336FB0',
       '&:hover': {
         boxShadow: '0 0 10px rgba(0,0,0,0.5)',
-        backgroundColor: 'rgba(0, 116, 144, 1)',
+        backgroundColor: '#336FB0',
       },
     },
     deleteButton: {
+      ml: 1,
       width: 'calc(50% - 5px)',
-      color: 'rgba(0, 116, 144, 1)',
+      color: '#ED262A',
     },
     acceptButton: {
       mr: 1,

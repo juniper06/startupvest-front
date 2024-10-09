@@ -95,12 +95,12 @@ function BusinessProfileTable({
                     <TableCell>{profile.streetAddress}, {profile.city}, {profile.state}</TableCell>
                     <TableCell sx={tableStyles.cell}>
                       {profile.type === 'Investor' ? (
-                        <Button variant="contained" sx={{ width: 'calc(100% - 10px)', ...tableStyles.actionButton }}
+                        <Button variant="contained" sx={{ width: 'calc(100% - 10px)', ml: -1.2, ...tableStyles.actionButton }}
                           onClick={() => handleOpenInvestor(profile)}>
                           View
                         </Button>
                       ) : (
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                        <Box sx={{ display: 'flex', width: '100%' }}>
                           <Button variant="contained" sx={{ width: 'calc(50% - 5px)', ...tableStyles.actionButton }}
                             onClick={() => handleOpenStartUp(profile)}>
                             View

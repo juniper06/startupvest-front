@@ -126,7 +126,7 @@ function StartUpView() {
             <Grid container spacing={2}>
               <Grid item xs={10} md={8}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, pl: 5, mt: 5 }}>
-                  <OverviewTitle variant="h5">Overview</OverviewTitle>
+                  <OverviewTitle variant="h5" sx={{ mb: 3 }}>{loading? <Skeleton width={100} /> : 'Overview' }</OverviewTitle>
                   <Grid container spacing={3}>
                     <Grid item xs={12}>
                       <Grid container spacing={3}>

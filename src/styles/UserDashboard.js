@@ -40,7 +40,7 @@ export const TopInfoIcon = styled(Box)`
   width: 40px; 
   height: 40px;
   border-radius: 50%;
-  background-color: #007490; /* Original background color */
+  background-color: #336FB0; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,13 +70,13 @@ export const TopInfoTitle = styled(Typography)`
 
 export const CreateButton = styled(Button)`
   width: 180px; 
-  background-color: #007490;
+  background-color: #336FB0;
   color: #f2f2f2;
   border-radius: 5px;
   transition: background-color 0.3s, box-shadow 0.3s; 
   &:hover {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    background-color: #007490;
+    background-color: #336FB0;
   }
 `;
 

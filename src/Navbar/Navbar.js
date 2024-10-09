@@ -99,7 +99,7 @@ export default function Navbar() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, background: 'rgba(0, 116, 144, 1)' }}>
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, background: '#004A98' }}>
         <Toolbar>
           <Avatar sx={{ ml: -3, width: 70, height: 70 }} src='images/logoonly.png' />
           <Typography variant="h6" noWrap component="div" sx={{ ml: -1 }}>
@@ -134,7 +134,7 @@ export default function Navbar() {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', background: 'rgba(0, 116, 144, 1)', color: '#F2F2F2' },
+          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', background: '#004A98', color: '#F2F2F2' },
         }}>
         <Toolbar />
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -212,7 +212,7 @@ export default function Navbar() {
           {/* Place the "Show More Info" button at the bottom */}
           <Box sx={{ p: 1, position: 'relative', bottom: 0}}>
             <List>
-              <ListItem disablePadding sx={{ background: '#005a6c', borderRadius: 2, color: '#f2f2f2' }}>
+              <ListItem disablePadding sx={{ background: '#336FB0', borderRadius: 2, color: '#f2f2f2' }}>
                 <ListItemButton onClick={handleClickOpen}>
                   <ListItemIcon>
                       <NavigationIcon sx={{ color: '#f2f2f2' }} />

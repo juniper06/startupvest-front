@@ -6,7 +6,7 @@ import { visuallyHidden } from '@mui/utils';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../Navbar/Navbar';
-import { StyledPaper, StyledAvatar, StyledTableRow, StyledTableCell, StyledStack } from '../styles/components'; 
+import { StyledPaper, StyledAvatar, StyledTableRow, StyledTableCell, StyledStack, Title } from '../styles/components'; 
 
 const drawerWidth = 240;
 
@@ -51,7 +51,7 @@ function EnhancedTableHead(props) {
         {headCells.map((headCell) => (
           <TableCell key={headCell.id} align="left" padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
-            style={{ width: headCell.width, fontWeight: 'bold', backgroundColor: '#007490', color: '#ffffff', }}>
+            style={{ width: headCell.width, fontWeight: 'bold', backgroundColor: '#336FB0', color: '#ffffff', }}>
             <TableSortLabel active={orderBy === headCell.id} direction={orderBy === headCell.id ? order : 'asc'}
               onClick={createSortHandler(headCell.id)} style={{ color: '#ffffff' }}>
                 {headCell.label}
@@ -84,11 +84,9 @@ function EnhancedTableToolbar({ onRequestSearch }) {
 
   return (
     <Toolbar sx={{ pt: 12, mb: 3, ml: -3 }}>
-      <Typography sx={{ flex: '1 1 100%', color: 'rgba(0, 116, 144, 1)', fontWeight: 'bold' }} variant="h5">
-        Search Companies
-      </Typography>
-
-      <TextField variant="standard" placeholder="Search…" onChange={handleSearch} value={searchText} sx={{ width: 350 }}
+      <Title>Search Companies</Title>
+      <TextField variant="outlined" placeholder="Search…" onChange={handleSearch} value={searchText} 
+      sx={{ width: 350, mr: -3, '& .MuiInputBase-root': { height: '45px' }, '& input': { padding: '10px 14px' } }}
         InputProps={{ startAdornment: <SearchIcon /> }} />
     </Toolbar>
   );

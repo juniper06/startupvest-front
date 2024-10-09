@@ -2,6 +2,12 @@
 import { styled } from '@mui/material/styles';
 import { Paper, Avatar, TableRow, TableCell, Stack } from '@mui/material';
 
+export const Title = styled('div')(({ theme }) => ({
+  flex: '1 1 100%', 
+  color: '#1E1E1E', 
+  fontSize: '1.5rem'
+}));
+
 export const StyledPaper = styled(Paper)(({ theme }) => ({
   width: '100%',
   padding: theme.spacing(3),
@@ -12,7 +18,7 @@ export const StyledAvatar = styled(Avatar)(({ theme }) => ({
   width: 40,
   height: 40,
   marginRight: theme.spacing(2),
-  border: `2px solid #007490`,
+  border: `2px solid #336FB0`,
 }));
 
 export const StyledTableRow = styled(TableRow)(({ theme }) => ({

@@ -5,7 +5,7 @@ import { Box, Avatar, Typography, Table, TableHead, TableCell, Card } from '@mui
 export const StyledAvatar = styled(Avatar)(({ theme }) => ({
     width: 160,
     height: 160,
-    border: '3px solid rgba(0, 116, 144, 1)',
+    border: '3px solid #336FB0',
     borderRadius: 3,
     marginLeft: theme.spacing(9),
     fontSize: '3rem',

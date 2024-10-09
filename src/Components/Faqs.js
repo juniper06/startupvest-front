@@ -3,17 +3,15 @@ import { Typography, Toolbar, Box, Accordion, AccordionSummary, AccordionDetails
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Navbar from "../Navbar/Navbar";
 
-const drawerWidth = 280;
+const drawerWidth = 270;
 
 function Faqs() {
     return (
         <>
             <Navbar />
             <Toolbar />
-            <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px`, pt: '50px', pr: '50px' }}>
-                <Typography variant="h4" gutterBottom>
-                    Frequently Asked Questions (FAQs)
-                </Typography>
+            <Box sx={{ width: '100%', paddingLeft: `${drawerWidth}px`, pt: '50px', pr: '50px', mb: 5 }}>
+                <Typography variant="h5" gutterBottom sx={{ mb: 3, mt: 2 }}>Frequently Asked Questions (FAQs)</Typography>
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography variant="h6">What is a startup investment?</Typography>

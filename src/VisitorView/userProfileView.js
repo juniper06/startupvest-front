@@ -82,9 +82,7 @@ function UserProfileView() {
           <Grid container spacing={2}>
             <Grid item xs={10} md={8}>
               <UserInfoBox>
-                <OverviewTitle variant="h5">
-                  {loading ? <Skeleton width={200} /> : 'Overview'}
-                </OverviewTitle>
+                <OverviewTitle variant="h5" sx= {{ mb: 3 }}>{loading ? <Skeleton width={200} /> : 'Overview'}</OverviewTitle>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <Grid container spacing={3}>
