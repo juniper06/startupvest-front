@@ -1,20 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Button,
-  Typography,
-  Stepper,
-  Step,
-  StepLabel,
-  InputAdornment,
-  LinearProgress,
-  IconButton,
-  Box,
-} from '@mui/material';
+import {Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Typography, Stepper, Step, StepLabel, InputAdornment, LinearProgress, IconButton,Box, } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import CloseIcon from '@mui/icons-material/Close';
@@ -24,7 +9,7 @@ const steps = ['Input Email', 'Wait for OTP', 'Reset Password'];
 function ForgotPasswordDialog({ open, onClose }) {
   const [activeStep, setActiveStep] = useState(0);
   const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(new Array(6).fill(''));
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -61,7 +46,6 @@ function ForgotPasswordDialog({ open, onClose }) {
     if (activeStep === 0) {
       // Simulate sending OTP
       if (email) {
-        setSuccessMessage('An OTP has been sent to your email!');
         setIsOtpSent(true);
         setActiveStep((prevStep) => prevStep + 1);
       } else {
@@ -70,10 +54,9 @@ function ForgotPasswordDialog({ open, onClose }) {
     } else if (activeStep === 1) {
       // Simulate OTP verification
       if (otp) {
-        setSuccessMessage('OTP verified successfully!');
         setActiveStep((prevStep) => prevStep + 1);
       } else {
-        setErrorMessage('Please enter the OTP sent to your email.');
+        setErrorMessage('Please enter the 6-digit OTP sent to your email.');
       }
     } else if (activeStep === 2) {
       // Validate new password
@@ -90,6 +73,18 @@ function ForgotPasswordDialog({ open, onClose }) {
     }
   };
 
+  const handleOtpChange = (element, index) => {
+    if (isNaN(element.value)) return; // Only allow numbers
+    const otpArray = [...otp];
+    otpArray[index] = element.value;
+    setOtp(otpArray);
+
+    // Automatically focus next input box
+    if (element.nextSibling && element.value !== '') {
+      element.nextSibling.focus();
+    }
+  };
+
   const passwordMeetsRequirements = () => {
     return (
       newPassword.length >= passwordRequirements.minLength &&
@@ -103,7 +98,7 @@ function ForgotPasswordDialog({ open, onClose }) {
   const resetForm = () => {
     setActiveStep(0);
     setEmail('');
-    setOtp('');
+    setOtp(new Array(6).fill('')); 
     setNewPassword('');
     setConfirmNewPassword('');
     setSuccessMessage('');
@@ -148,11 +143,23 @@ function ForgotPasswordDialog({ open, onClose }) {
         {activeStep === 1 && isOtpSent && (
           <Box>
             <Typography variant="body1" align="justify" sx={{ mb: 2 }}>
-                An OTP has been sent to your email. Please enter it below to verify your identity and continue the password reset process.
+              An OTP has been sent to your email. Please enter it below to verify your identity and continue the password reset process.
             </Typography>
-
-            <Typography variant="body2" align="justify" sx={{ mt: 2 }}>OTP</Typography>
-            <TextField autoFocus margin="dense" type="text" fullWidth variant="outlined" value={otp} onChange={(e) => setOtp(e.target.value)} />
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', maxWidth: '400px', margin: '0 auto' }}>
+              {otp.map((data, index) => (
+                <TextField
+                  key={index}
+                  autoFocus={index === 0}
+                  margin="dense"
+                  type="text"
+                  required
+                  inputProps={{ maxLength: 1 }}
+                  value={data}
+                  onChange={(e) => handleOtpChange(e.target, index)}
+                  sx={{ width: '50px' }}
+                />
+              ))}
+            </Box>
           </Box>
         )}
 
