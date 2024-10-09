@@ -6,7 +6,7 @@ export const styles = {
     minHeight: '100vh',
   },
   sideBar: {
-    background: '#007490',
+    background: '#004A98',
     borderRadius: '10px',
     boxShadow: '10px 3px 8px rgba(0,0,0,.15)',
   },
@@ -16,7 +16,7 @@ export const styles = {
     alignItems: 'center',           
     flexDirection: 'column',         
     textAlign: 'center',
-    color: '#007490',
+    color: '#004A98',
     width: '100%',                  
   },
   title: {
@@ -28,7 +28,7 @@ export const styles = {
     pr: { xs: 2, md: 6, lg: 8 },
     pt: { xs: 2, md: 6, lg: 6 },
     pb: { xs: 2, md: 6, lg: 6 },
-    background: 'rgba(0, 116, 144, 1)',
+    background: '#004A98',
     borderRadius: 2,
     boxShadow: '10px 3px 8px rgba(0,0,0,.15)',
   },

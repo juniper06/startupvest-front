@@ -7,7 +7,7 @@ const BorderBox = styled(Box)(({ position, direction }) => ({
   position: 'fixed',
   [position]: 0,
   [direction]: '0',
-  backgroundColor: 'rgba(0, 116, 144, 1)',
+  backgroundColor: '#004A98',
   zIndex: 10,
 }));
 
@@ -59,13 +59,13 @@ const LandingPage = () => {
         {/* Buttons */}
         <Grid item xs={6} md={8} lg={4} sx={{ textAlign: 'right', pr: { xs: 2, md: 8 } }}>
           <Button component={Link} variant="text" to="/login"
-            sx={{ mr: 2, color: '#007490' }}
+            sx={{ mr: 2, color: '#004A98' }}
             aria-label="Login Button">
             Login
           </Button>
 
           <Button component={Link} variant="contained" to="/signup"
-            sx={{ backgroundImage: 'linear-gradient(45deg, #F1CC0A, #EDA61C)', color: '#FFFFFF', mr: 1, }}
+            sx={{ background: '#336FB0', color: '#FFFFFF', mr: 1, }}
             aria-label="Signup Button">
             Signup
           </Button>
@@ -88,7 +88,7 @@ const LandingPage = () => {
         <Grid item xs={12} md={isMediumScreen ? 12 : 6}>
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', textAlign: { xs: 'center', md: 'left' } }}>
             <Typography variant={isLargeScreen ? 'h2' : isMediumScreen ? 'h3' : 'h5'}
-              gutterBottom sx={{ fontWeight: 'bold', color: '#007490', mt: { xs: 5, md: 8 }, fontSize: titleFontSize, }}>
+              gutterBottom sx={{ fontWeight: 'bold', color: '#004A98', mt: { xs: 5, md: 8 }, fontSize: titleFontSize, }}>
               Turn Bold Ideas <br /> Into Startup Reality!
             </Typography>
 
