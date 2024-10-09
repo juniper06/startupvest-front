@@ -110,7 +110,7 @@ const LandingPage = () => {
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
               <Box
                 component="img"
-                src="/images/startup_illustration.png"
+                src="/images/startup_illustration new.png"
                 alt="Illustration of a Startup"
                 loading="lazy"
                 sx={{ width: isLargeScreen ? '100%' : isSmallScreen ? '100%' : 'none', height: 'auto', maxHeight: isSmallScreen ? '250px' : 'none',}}/>
