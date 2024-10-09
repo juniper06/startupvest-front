@@ -56,14 +56,14 @@ export const styles = {
     },
   },
   submitButton: {
-    mt: 2,
+    mt: 3,
     mb: 2,
     background: '#f2f2f2',
-    color: '#007490',
+    color: '#004A98',
     borderRadius: 1,
     '&:hover': {
       backgroundColor: '#f2f2f2',
-      color: '#007490',
+      color: '#004A98',
       boxShadow: '0 0 10px rgba(0,0,0,0.5)',
     },
   },
