@@ -40,7 +40,7 @@ function CreateBusinessProfileDialog({ open, onClose, hasInvestorProfile }) {
                         }}>
                         <IconButton onClick={onClose}
                             sx={{
-                                color: '#007490', 
+                                color: '#ED262A', 
                             }}>
                             <CloseIcon sx={{ fontSize: '24px' }} /> 
                         </IconButton>

@@ -15,7 +15,7 @@ const LoginStyles = {
     pt: { xs: 5, md: 6, lg: 12 },
     pb: { xs: 5, md: 6, lg: 12 },
     px: { xs: 2, md: 4 },
-    background: 'rgba(0, 116, 144, 1)',
+    background: '#004A98',
     borderRadius: '10px',
   },
   leftSideTypography: {
@@ -56,7 +56,7 @@ const LoginStyles = {
   formHeading: {
     textAlign: 'center',
     mb: 1,
-    color: 'rgba(0, 116, 144, 1)',
+    color: '#004A98',
     fontWeight: 'bold',
     fontSize: { xs: '1.25rem', md: '1.5rem', lg: '2rem' },
   },
@@ -72,29 +72,29 @@ const LoginStyles = {
   formSubmitButton: {
     marginTop: 3,
     width: '100%',
-    background: 'rgba(0, 116, 144, 1)',
+    background: '#004A98',
     fontSize: { xs: '1rem', md: '1rem' },
     '&:hover': {
       boxShadow: '0 0 10px rgba(0,0,0,0.5)',
-      backgroundColor: 'rgba(0, 116, 144, 1)',
+      backgroundColor: '#004A98',
     },
   },
   forgotPasswordText: {
     textAlign: 'right',
     cursor: 'pointer',
-    color: 'rgba(0, 116, 144, 1)',
+    color: '#004A98',
     fontSize: { xs: '0.75rem', lg: '0.85rem' },
     mt: 1,
   },
   signUpText: {
     textAlign: 'center',
-    color: 'rgba(0, 116, 144, 1)',
+    color: '#004A98',
     fontSize: { xs: '0.85rem', lg: '1rem' },
   },
   signUpLink: {
-    color: 'rgba(0, 116, 144, 1)',
+    color: '#004A98',
     fontWeight: 'bold',
-      fontSize: { xs: '0.85rem', lg: '0.9rem' },
+    fontSize: { xs: '0.85rem', lg: '0.9rem' },
   },
 };
 

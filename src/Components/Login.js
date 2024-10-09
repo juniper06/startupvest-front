@@ -119,7 +119,7 @@ function Login() {
               </Typography>
               )}
 
-              <Typography sx={{ color: '#007490', mb: -1 }}>Email</Typography>
+              <Typography sx={{ color: '#004A98', mb: -1 }}>Email</Typography>
               <TextField type="text" placeholder="johndoe@gmail.com" required value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -128,7 +128,7 @@ function Login() {
                 }}
                 onBlur={isEmailRegistered} fullWidth margin="normal" sx={LoginStyles.formInput}/>
 
-              <Typography sx={{ color: '#007490', mt: 1.5, mb: 1 }}>Password</Typography>
+              <Typography sx={{ color: '#004A98', mt: 1.5, mb: 1 }}>Password</Typography>
               <TextField type={showPassword ? 'text' : 'password'}
                 placeholder="Example123" required value={password}
                 onChange={(e) => {

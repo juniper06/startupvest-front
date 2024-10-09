@@ -16,8 +16,8 @@ const SignupDialog = ({ open, onClose, email }) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                     }} >
-                    <EmailIcon sx={{ fontSize: 50, color: '#007490', marginBottom: '10px' }} /> 
-                    <Typography variant="h6" sx={{ color: '#007490', fontWeight: 'bold' }}>
+                    <EmailIcon sx={{ fontSize: 50, color: '#336FB0', marginBottom: '10px' }} /> 
+                    <Typography variant="h6" sx={{ color: '#336FB0', fontWeight: 'bold' }}>
                         Email Confirmation Sent 
                     </Typography>
                 </Box>

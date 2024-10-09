@@ -46,8 +46,8 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
     const RequiredAsterisk = <span style={{ color: 'red' }}>*</span>;
 
     const cardTypes = [
-        { label: 'Startup Company', icon: <Business />, color: '#007490' },
-        { label: 'Investor', icon: <MonetizationOn />, color: '#007490' },
+        { label: 'Startup Company', icon: <Business />, color: '#336FB0' },
+        { label: 'Investor', icon: <MonetizationOn />, color: '#336FB0' },
     ];
     
     // Error State Variables
@@ -58,8 +58,28 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
     });
     const years = [...Array(51).keys()].map(i => new Date().getFullYear() - i);
 
+    const fetchCurrentUser = async () => {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/users/current`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          });
+          
+          // Only set specific fields for investor profile
+          setFirstName(response.data.firstName || '');
+          setLastName(response.data.lastName || '');
+          setEmailAddress(response.data.email || '');
+          setContactInformation(response.data.contactNumber || '');
+          setGender(response.data.gender || '');
+        } catch (error) {
+          console.error('Failed to fetch current user data:', error);
+        }
+      };
+
     const handleCardClick = (cardType) => {
         setSelectedProfileType(cardType);
+        if (cardType === 'Investor') {
+            fetchCurrentUser();
+        }
     };
 
     const validateFields = () => {
@@ -527,7 +547,8 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Button variant="contained" sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' }}} style={{marginLeft: '82.7%'}} onClick={handleCreateProfile}>
+                <Button variant="contained" sx={{ background: '#336FB0', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: '#336FB0' }}} 
+                style={{marginLeft: '82.7%'}} onClick={handleCreateProfile}>
                     Create Profile
                 </Button>
             </>
@@ -735,7 +756,8 @@ function CreateBusinessProfile({ onSuccess, hasInvestorProfile }) {
                     </Grid>
                 </Grid>
                 
-                <Button variant="contained" sx={{ background: 'rgba(0, 116, 144, 1)', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' }}} style={{marginLeft: '82.7%'}} 
+                <Button variant="contained" sx={{ background: '#336FB0', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: '#336FB0)' }}} 
+                style={{marginLeft: '82.7%'}} 
                     onClick={handleCreateProfile} onClose={handleCreateProfile}>
                     Create Profile
                 </Button>
