@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import {Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Typography, Stepper, Step, StepLabel, InputAdornment, LinearProgress, IconButton,Box, } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Typography, Stepper, Step, StepLabel, InputAdornment, LinearProgress, IconButton, Box } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
+import { green, red, yellow } from '@mui/material/colors';
 import CloseIcon from '@mui/icons-material/Close';
+import axios from 'axios';
 
 const steps = ['Input Email', 'Wait for OTP', 'Reset Password'];
 
@@ -40,23 +42,36 @@ function ForgotPasswordDialog({ open, onClose }) {
     return (strength / 5) * 100;
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setErrorMessage(''); 
 
     if (activeStep === 0) {
       // Simulate sending OTP
       if (email) {
-        setIsOtpSent(true);
-        setActiveStep((prevStep) => prevStep + 1);
+        try {
+          await axios.post(`${process.env.REACT_APP_API_URL}/users/forgot-password`, { email });
+          setIsOtpSent(true);
+          setActiveStep((prevStep) => prevStep + 1);
+        } catch (error) {
+          setErrorMessage('Failed to send OTP. Please try again.');
+        }
       } else {
         setErrorMessage('Please enter a valid email address.');
       }
     } else if (activeStep === 1) {
       // Simulate OTP verification
-      if (otp) {
-        setActiveStep((prevStep) => prevStep + 1);
+      if (email) {
+        try {
+          await axios.post(`${process.env.REACT_APP_API_URL}/users/verify-otp`, { 
+            email, 
+            otp: otp.join('') 
+          });
+          setActiveStep((prevStep) => prevStep + 1);
+        } catch (error) {
+          setErrorMessage('Invalid OTP. Please try again.');
+        }
       } else {
-        setErrorMessage('Please enter the 6-digit OTP sent to your email.');
+        setErrorMessage('Please enter a valid email address.');
       }
     } else if (activeStep === 2) {
       // Validate new password
@@ -64,11 +79,19 @@ function ForgotPasswordDialog({ open, onClose }) {
         setErrorMessage('New passwords do not match.');
         return;
       }
-      if (passwordMeetsRequirements()) {
-        setSuccessMessage('Password reset successfully!');
-        onClose(); // Close dialog after success
+      if (email) {
+        try {
+          await axios.post(`${process.env.REACT_APP_API_URL}/users/reset-password`, { 
+            email, 
+            newPassword
+          });
+          setSuccessMessage('Your password has been reset successfully!');
+          setActiveStep(steps.length);
+        } catch (error) {
+          setErrorMessage('Failed to reset password. Please try again.');
+        }
       } else {
-        setErrorMessage('New password does not meet requirements.');
+        setErrorMessage('Please enter a valid email address.');
       }
     }
   };
@@ -120,20 +143,22 @@ function ForgotPasswordDialog({ open, onClose }) {
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        <Stepper activeStep={activeStep} sx={{ mb: 3 }}>
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
+        {/* Show stepper only if not completed */}
+        {activeStep < steps.length && (
+          <Stepper activeStep={activeStep} sx={{ mb: 3 }}>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+        )}
 
         {activeStep === 0 && (
           <Box>
             <Typography variant="body1" align="justify" sx={{ mb: 2 }}>
-                To reset your password, please enter your email address. We'll send you a link to create a new password.
+              To reset your password, please enter your email address. We'll send you a link to create a new password.
             </Typography>
-            
             <Typography variant="body2" align="justify" sx={{ mt: 2 }}>Email</Typography>
             <TextField autoFocus margin="dense" type="email" fullWidth variant="outlined" value={email} placeholder='Enter your email'
               onChange={(e) => setEmail(e.target.value)} />
@@ -185,7 +210,6 @@ function ForgotPasswordDialog({ open, onClose }) {
                 Must contain at least one special character.
               </li>
             </ul>
-           
             <Typography variant="body2" align="justify" sx={{ mt: 2 }}>Enter your new password</Typography>
             <TextField fullWidth type="password" variant="outlined" value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -201,11 +225,14 @@ function ForgotPasswordDialog({ open, onClose }) {
                 ),
               }}
               sx={{ mb: 2 }}/>
-              
-            <LinearProgress
-              variant="determinate"
-              value={getPasswordStrength()}
-              sx={{ mb: 3, height: 8, borderRadius: 4, backgroundColor: (theme) => theme.palette.grey[300] }}/>
+
+              <LinearProgress variant="determinate"value={getPasswordStrength()}
+              sx={{
+                mb: 3, height: 8, borderRadius: 4, backgroundColor: (theme) => theme.palette.grey[300],
+                '& .MuiLinearProgress-bar': {
+                  backgroundColor: getPasswordStrength() < 40 ? red[500] : getPasswordStrength() < 80 ? yellow[500] : green[500],
+                },
+              }}/>
 
             <Typography variant="body2" align="justify" sx={{ mt: 2 }}>Confirm your new password</Typography>
             <TextField fullWidth type="password" variant="outlined" value={confirmNewPassword}
@@ -226,16 +253,34 @@ function ForgotPasswordDialog({ open, onClose }) {
         )}
 
         {successMessage && (
-          <Typography variant="body2" color="success.main" sx={{ mt: 1}}>
-            {successMessage}
-          </Typography>
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: green[50],
+            padding: '12px',
+            borderRadius: '8px',
+            marginTop: 2,
+            border: `1px solid ${green[500]}`,
+            boxShadow: `0 4px 6px rgba(0, 128, 0, 0.2)`
+          }}>
+            <CheckCircleIcon sx={{ color: green[500], marginRight: 1, fontSize: 30 }} />
+            <Typography variant="body2" color="text.primary" sx={{ fontWeight: 'bold' }}>
+              {successMessage}
+            </Typography>
+          </Box>
         )}
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={handleNext} color="primary" sx={{ mr: 1 }}>
-          {activeStep === steps.length - 1 ? 'Done' : 'Next'}
-        </Button>
+        {activeStep === steps.length ? (
+          <Button onClick={handleClose} color="primary" sx={{ mr: 1 }}>
+            Close
+          </Button>
+        ) : (
+          <Button onClick={handleNext} color="primary" sx={{ mr: 1 }}>
+            {activeStep === steps.length - 1 ? 'Done' : 'Next'}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
