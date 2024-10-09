@@ -42,12 +42,17 @@ function ForgotPasswordDialog({ open, onClose }) {
     return (strength / 5) * 100;
   };
 
+  const validateEmail = (email) => {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  };
+
   const handleNext = async () => {
     setErrorMessage(''); 
 
     if (activeStep === 0) {
       // Simulate sending OTP
-      if (email) {
+      if (email && validateEmail(email)) {
         try {
           await axios.post(`${process.env.REACT_APP_API_URL}/users/forgot-password`, { email });
           setIsOtpSent(true);
