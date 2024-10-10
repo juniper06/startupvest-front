@@ -23,7 +23,7 @@ function createData(id, transactionName, startupName, fundingType, moneyRaised, 
     closedDate,
     avatar,
     preMoneyValuation,
-    capTableInvestors,
+    capTableInvestors: capTableInvestors.filter(investor => investor.status === 'accepted'),
     minimumShare,
     startupId,
     fundingName
@@ -131,9 +131,10 @@ export default function FundingRound() {
   const [loading, setLoading] = useState(true); // Loading state
   const navigate = useNavigate();
 
+
   useEffect(() => {
     const fetchFundingRounds = async () => {
-      setLoading(true); // Start loading
+      setLoading(true);
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/funding-rounds/all`);
         const fetchedRows = response.data
@@ -149,7 +150,7 @@ export default function FundingRound() {
             new Date(fundingRound.closedDate).toLocaleDateString(),
             fundingRound.avatar || '',
             fundingRound.preMoneyValuation || '---',
-            fundingRound.capTableInvestors,
+            fundingRound.capTableInvestors || [],
             fundingRound.minimumShare || '---',
             fundingRound.startup?.id,
             fundingRound.fundingName || '---',

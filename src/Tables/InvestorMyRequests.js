@@ -7,10 +7,11 @@ function InvestorRequest() {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [profilePictures, setProfilePictures] = useState({});
 
   useEffect(() => {
     const fetchPendingRequests = async () => {
-      const investorId = localStorage.getItem('userId'); // Assuming `userId` is `investorId` in local storage
+      const investorId = localStorage.getItem('userId');
       if (!investorId) {
         setError('No investor ID found in local storage');
         setLoading(false);
@@ -18,14 +19,14 @@ function InvestorRequest() {
       }
       
       try {
-        // Use the correct route for fetching investor requests
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/cap-table-investor/investor-requests/${investorId}`);
-        console.log('API Response:', response.data); // Log the API response
+        console.log('API Response:', response.data);
 
         if (response.data.length === 0) {
           setError('No pending requests found');
         } else {
           setPendingRequests(response.data);
+          fetchAllProfilePictures(response.data);
         }
 
         setLoading(false);
@@ -39,8 +40,31 @@ function InvestorRequest() {
     fetchPendingRequests();
   }, []);
 
+  const fetchAllProfilePictures = async (requests) => {
+    const pictures = {};
+    await Promise.all(
+      requests.map(async (request) => {
+        if (!request.startupId) return;
+
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/profile-picture/startup/${request.startupId}`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            responseType: 'blob',
+          });
+          const imageUrl = URL.createObjectURL(response.data);
+          pictures[request.startupId] = imageUrl;
+        } catch (error) {
+          console.error(`Failed to fetch profile picture for startup ID ${request.startupId}:`, error);
+        }
+      })
+    );
+    setProfilePictures(pictures);
+  };
+
   const handleReject = async (capTableInvestorId) => {
-    console.log('Canceling request:', { capTableInvestorId, status: 'rejected' }); // Log payload
+    console.log('Canceling request:', { capTableInvestorId, status: 'rejected' });
     try {
       await axios.put(`${process.env.REACT_APP_API_URL}/funding-rounds/${capTableInvestorId}/status`, { status: 'rejected' });
       setPendingRequests(prevRequests => prevRequests.filter(request => request.capTableInvestorId !== capTableInvestorId));
@@ -48,7 +72,15 @@ function InvestorRequest() {
       console.error('Error canceling request:', error);
     }
   };
-  
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+  };
+
+  const formatNumber = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
 
   return (
     <Box component="main" sx={{ display: 'flex', flexDirection: 'column', height: '100%', mt: 3 }}>
@@ -82,20 +114,20 @@ function InvestorRequest() {
               pendingRequests.map((request) => (
                 <TableRow key={request.capTableInvestorId} sx={{ backgroundColor: 'white' }}>
                   <TableCell sx={tableStyles.cell}>
-                    {new Date(request.createdAt).toLocaleDateString()}
+                    {formatDate(request.createdAt)}
                   </TableCell>
                   <TableCell sx={{ ...tableStyles.cell, width: '20%' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                       <Avatar 
-                        src="https://via.placeholder.com/40" 
+                        src={profilePictures[request.startupId] || "https://via.placeholder.com/40"}
                         sx={{ mr: 2, border: '2px rgba(0, 116, 144, 1) solid', borderRadius: 1 }} 
                         variant='square' 
                       />
                       {request.startupName}
                     </Box>
                   </TableCell>
-                  <TableCell sx={tableStyles.cell}>{request.shares}</TableCell>
-                  <TableCell sx={tableStyles.cell}>{request.totalinvestment}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{formatNumber(request.shares)}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{formatNumber(request.totalinvestment)}</TableCell>
                   <TableCell sx={tableStyles.cell}>{request.status}</TableCell>
                   <TableCell sx={tableStyles.cell}>
                     {request.status === 'pending' && (
@@ -115,11 +147,6 @@ function InvestorRequest() {
             )}
           </TableBody>
         </Table>
-
-        {/* Pagination can be added here if necessary */}
-        {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2, background: 'white' }}>
-          <Pagination count={totalPageCount} page={page} onChange={handleChangePage} size="medium" />
-        </Box> */}
       </TableContainer>
     </Box>
   );

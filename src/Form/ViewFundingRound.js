@@ -203,7 +203,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
         if (fundingRoundDetails?.capTableInvestors) {
             const existingInvestors = fundingRoundDetails.capTableInvestors
-                .filter(investor => !investor.investorRemoved) 
+                .filter(investor => !investor.investorRemoved && investor.status === 'accepted')
                 .map(investor => ({
                     name: investor.investor.id, 
                     title: investor.title,

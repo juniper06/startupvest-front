@@ -21,7 +21,7 @@ const InvestmentTable = ({ filteredRows, page, rowsPerPage, handleRowClick, prof
               <Typography sx={tableStyles.typography}>Shares</Typography>
             </TableCell>
             <TableCell sx={tableStyles.head}>
-              <Typography sx={tableStyles.typography}>Total Share</Typography>
+              <Typography sx={tableStyles.typography}>Total Investment</Typography>
             </TableCell>
             <TableCell sx={tableStyles.head}>
               <Typography sx={tableStyles.typography}>Percentage</Typography>
@@ -31,43 +31,31 @@ const InvestmentTable = ({ filteredRows, page, rowsPerPage, handleRowClick, prof
 
         <TableBody>
           {filteredRows.length > 0 ? (
-            filteredRows.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((row) => (
-              <TableRow key={row.id} hover onClick={() => handleRowClick(row)} sx={{ cursor: 'pointer' }}>
-                <TableCell sx={{ ...tableStyles.cell, width: '20%' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', ml: 5 }}>
-                    <Avatar src={profilePictures[row.startupId]} sx={{ mr: 2, border: '2px rgba(0, 116, 144, 1) solid', borderRadius: 1 }} variant='square' />
-                    {row.startupName}
-                  </Box>
-                </TableCell>
-                <TableCell sx={tableStyles.cell}>{row.fundingName}</TableCell>
-                <TableCell sx={tableStyles.cell}>{row.fundingType}</TableCell>
-                <TableCell sx={tableStyles.cell}>
-                  {row.capTableInvestors.map((investor, index) => (
-                    <div key={index}>
-                      {Number(investor.shares).toLocaleString()}
-                    </div>
-                  ))}
-                </TableCell>
-                <TableCell sx={tableStyles.cell}>
-                  {row.capTableInvestors.map((investor, index) => (
-                    <div key={index}>
-                      {row.moneyRaisedCurrency} {Number(investor.totalInvestment).toLocaleString()}
-                    </div>
-                  ))}
-                </TableCell>
-                <TableCell sx={tableStyles.cell}>
-                  {row.capTableInvestors.map((investor) => {
-                    const userShares = investor.shares || 0;
-                    const percentage = row.totalShares ? ((userShares / row.totalShares) * 100).toFixed(2) : '0.00';
-                    return (
-                      <div key={investor.id}>
-                        {percentage}%
-                      </div>
-                    );
-                  })}
-                </TableCell>
-              </TableRow>
-            ))
+            filteredRows.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((row) => {
+              const acceptedInvestor = row.capTableInvestors.find(investor => investor.status === 'accepted');
+              if (!acceptedInvestor) return null;
+
+              const totalShares = row.moneyRaised / row.minimumShare;
+              const percentage = totalShares > 0 ? ((acceptedInvestor.shares / totalShares) * 100).toFixed(2) : '0.00';
+
+              return (
+                <TableRow key={row.id} hover onClick={() => handleRowClick(row)} sx={{ cursor: 'pointer' }}>
+                  <TableCell sx={{ ...tableStyles.cell, width: '20%' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', ml: 5 }}>
+                      <Avatar src={profilePictures[row.startupId]} sx={{ mr: 2, border: '2px rgba(0, 116, 144, 1) solid', borderRadius: 1 }} variant='square' />
+                      {row.startupName}
+                    </Box>
+                  </TableCell>
+                  <TableCell sx={tableStyles.cell}>{row.fundingName}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{row.fundingType}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{Number(acceptedInvestor.shares).toLocaleString()}</TableCell>
+                  <TableCell sx={tableStyles.cell}>
+                    {row.moneyRaisedCurrency} {Number(acceptedInvestor.totalInvestment).toLocaleString()}
+                  </TableCell>
+                  <TableCell sx={tableStyles.cell}>{percentage}%</TableCell>
+                </TableRow>
+              );
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={6} sx={{ textAlign: 'center' }}>
@@ -82,8 +70,12 @@ const InvestmentTable = ({ filteredRows, page, rowsPerPage, handleRowClick, prof
 
       {filteredRows.length > 0 && (
         <Stack spacing={2} sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
-          <Pagination count={Math.ceil(filteredRows.length / rowsPerPage)}
-            page={page} onChange={handleChangePage} size="medium"/>
+          <Pagination 
+            count={Math.ceil(filteredRows.length / rowsPerPage)}
+            page={page} 
+            onChange={handleChangePage} 
+            size="medium"
+          />
         </Stack>
       )}
     </TableContainer>

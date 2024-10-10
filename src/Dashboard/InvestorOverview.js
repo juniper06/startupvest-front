@@ -92,44 +92,27 @@ const InvestorOverview = () => {
       setLoading(true);
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/funding-rounds/all`);
-        const fetchedRows = response.data.map(fundingRound => {
-          const investors = fundingRound.capTableInvestors || [];
-          const totalShares = investors.reduce((sum, investor) => sum + (investor.shares || 0), 0);
-          const userInvestors = investors.filter(investor => investor.investor?.id === userData.id);
+        const fetchedRows = response.data.map(fundingRound => createData(
+          fundingRound.id,
+          fundingRound.fundingName || 'N/A',
+          fundingRound.startup?.companyName ?? 'N/A',
+          fundingRound.fundingType || 'N/A',
+          fundingRound.moneyRaised || '---',
+          fundingRound.moneyRaisedCurrency || 'USD',
+          fundingRound.announcedDate ? new Date(fundingRound.announcedDate).toLocaleDateString() : 'N/A',
+          fundingRound.closedDate ? new Date(fundingRound.closedDate).toLocaleDateString() : 'N/A',
+          fundingRound.avatar || '',
+          fundingRound.preMoneyValuation || 'N/A',
+          fundingRound.capTableInvestors || [],
+          fundingRound.minimumShare || 'N/A',
+          fundingRound.startup?.id || null,
+          fundingRound.totalShares || 0
+        ));
 
-          return createData(
-            fundingRound.id,
-            fundingRound.fundingName || 'N/A',
-            fundingRound.startup?.companyName ?? 'N/A',
-            fundingRound.fundingType || 'N/A',
-            fundingRound.moneyRaised || '---',
-            fundingRound.moneyRaisedCurrency || 'USD',
-            fundingRound.announcedDate ? new Date(fundingRound.announcedDate).toLocaleDateString() : 'N/A',
-            fundingRound.closedDate ? new Date(fundingRound.closedDate).toLocaleDateString() : 'N/A',
-            fundingRound.avatar || '',
-            fundingRound.preMoneyValuation || 'N/A',
-            userInvestors.map(investor => ({
-              id: investor.id,
-              title: investor.title,
-              shares: investor.shares,
-              totalInvestment: investor.totalInvestment || 'N/A',
-              investorDetails: {
-                firstName: investor.investor?.firstName || 'N/A',
-                lastName: investor.investor?.lastName || 'N/A',
-                email: investor.investor?.emailAddress || 'N/A',
-                contactInfo: investor.investor?.contactInformation || 'N/A',
-              },
-            })),
-            fundingRound.minimumShare || 'N/A',
-            fundingRound.startup?.id || null,
-            totalShares
-          );
-        });
-
-        const userInvestedRows = fetchedRows.filter(row => row.capTableInvestors.length > 0);
-        setRows(userInvestedRows);
-        setFilteredRows(userInvestedRows);
-        await fetchAllProfilePictures(userInvestedRows);
+        setRows(fetchedRows);
+        const acceptedRows = filterAcceptedInvestments(fetchedRows, userData.id);
+        setFilteredRows(acceptedRows);
+        await fetchAllProfilePictures(acceptedRows);
       } catch (error) {
         console.error('Error fetching funding rounds:', error);
       } finally {
@@ -142,44 +125,55 @@ const InvestorOverview = () => {
     }
   }, [userData]);
 
+  const filterAcceptedInvestments = (allRows, userId) => {
+    return allRows
+      .map(row => ({
+        ...row,
+        capTableInvestors: row.capTableInvestors.filter(investor => 
+          investor.status === 'accepted' && investor.investor?.id === userId
+        ),
+      }))
+      .filter(row => row.capTableInvestors.length > 0); // Only keep rows with accepted investors
+  };
+  
   useEffect(() => {
-    if (rows.length > 0) {
+    if (filteredRows.length > 0) {
       const investmentTotals = {};
-
-      rows.forEach(row => {
+      let totalInvestmentPHP = 0;
+      let totalInvestments = 0;
+  
+      filteredRows.forEach(row => {
         row.capTableInvestors.forEach(investor => {
+          const investmentValue = investor.totalInvestment || 0;
+          const investmentValuePHP = investmentValue * (conversionRates[row.moneyRaisedCurrency] || 1);
+  
+          totalInvestmentPHP += investmentValuePHP;
+          totalInvestments++;
+  
           if (!investmentTotals[row.startupName]) {
             investmentTotals[row.startupName] = 0;
           }
-          investmentTotals[row.startupName] += investor.totalInvestment || 0;
+          investmentTotals[row.startupName] += investmentValuePHP;
         });
       });
-
-      const topCompany = Object.entries(investmentTotals).reduce((a, b) => a[1] > b[1] ? a : b, [])[0];
-      setTopInvestedCompany(topCompany || 'None');
-    }
-  }, [rows]);
-
-  useEffect(() => {
-    if (rows.length > 0) {
-      let totalInvestmentPHP = 0;
-      let totalInvestments = 0;
-
-      rows.forEach(row => {
-        row.capTableInvestors.forEach(investor => {
-          const investmentValue = investor.shares * (row.minimumShare || 0);
-          const investmentValuePHP = investmentValue * (conversionRates[row.moneyRaisedCurrency] || 1);
-          totalInvestmentPHP += investmentValuePHP;
-          totalInvestments++;
-        });
-      });
-
+  
+      // Find top company based on investment totals
+      const topCompany = Object.entries(investmentTotals).reduce(
+        (a, b) => (a[1] > b[1] ? a : b), ['None', 0]
+      )[0];
+  
+      setTopInvestedCompany(topCompany);
+      setTotalInvestmentAmount(totalInvestmentPHP);
       const averageInvestmentPHP = totalInvestments > 0 ? totalInvestmentPHP / totalInvestments : 0;
       setAverageInvestmentSize(averageInvestmentPHP);
-      setTotalInvestmentAmount(totalInvestmentPHP);
+    } else {
+      // Reset to defaults if no investments
+      setTopInvestedCompany('None');
+      setTotalInvestmentAmount(0);
+      setAverageInvestmentSize(0);
     }
-  }, [rows]);
-
+  }, [filteredRows]);
+  
   const fetchAllProfilePictures = async (fundingRounds) => {
     const pictures = {};
     await Promise.all(
