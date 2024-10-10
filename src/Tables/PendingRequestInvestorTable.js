@@ -1,22 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, Pagination, Avatar
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, Avatar,
 } from '@mui/material';
-
-import { tableStyles } from '../styles/tables';
 import axios from 'axios';
-import { CakeOutlined } from '@mui/icons-material';
+import { tableStyles } from '../styles/tables';
+import StartupConfirmationDialog from '../Dialogs/StartupConfirmationDialog';
+import Pagination from '@mui/material/Pagination';
 
 function PendingRequestInvestor() {
   const [pendingRequests, setPendingRequests] = useState([]);
- 
-
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogType, setDialogType] = useState(null);
+  const [currentRequest, setCurrentRequest] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     const fetchPendingRequests = async () => {
       const userId = localStorage.getItem('userId');
-      console.log("userID",userId);
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/cap-table-investor/all?userId=${userId}`);
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/cap-table-investor/all?userId=${userId}`
+        );
         setPendingRequests(response.data);
       } catch (error) {
         console.error('Error fetching pending requests:', error);
@@ -25,26 +29,37 @@ function PendingRequestInvestor() {
     fetchPendingRequests();
   }, []);
 
-  const handleAccept = async (capTableInvestorId) => {
+  const handleConfirm = async () => {
+    if (!currentRequest) return;
+
+    const status = dialogType === 'accept' ? 'accepted' : 'rejected';
+
     try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/funding-rounds/${capTableInvestorId}/status`, { status: 'accepted' });
-      // Optionally refetch pending requests or update state to remove the accepted request
-      setPendingRequests(prevRequests => prevRequests.filter(request => request.capTableInvestorId !== capTableInvestorId));
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/funding-rounds/${currentRequest.capTableInvestorId}/status`,
+        { status }
+      );
+      setPendingRequests((prevRequests) =>
+        prevRequests.filter(
+          (request) => request.capTableInvestorId !== currentRequest.capTableInvestorId
+        )
+      );
     } catch (error) {
-      console.error('Error accepting request:', error);
+      console.error(
+        `Error ${status === 'accepted' ? 'accepting' : 'rejecting'} request:`,
+        error
+      );
+    } finally {
+      setDialogOpen(false);
+      setCurrentRequest(null); 
     }
   };
 
-  const handleReject = async (capTableInvestorId) => {
-    console.log('Canceling request:', { capTableInvestorId, status: 'rejected' });
-    try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/funding-rounds/${capTableInvestorId}/status`, { status: 'rejected' });
-      // Optionally refetch pending requests or update state to remove the rejected request
-      setPendingRequests(prevRequests => prevRequests.filter(request => request.capTableInvestorId !== capTableInvestorId));
-    } catch (error) {
-      console.error('Error rejecting request:', error);
-    }
-  };
+  // Calculate total number of pages
+  const totalPages = Math.ceil(pendingRequests.length / itemsPerPage);
+  const indexOfLastRequest = currentPage * itemsPerPage;
+  const indexOfFirstRequest = indexOfLastRequest - itemsPerPage;
+  const currentRequests = pendingRequests.slice(indexOfFirstRequest, indexOfLastRequest);
 
   return (
     <Box component="main" sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -61,26 +76,33 @@ function PendingRequestInvestor() {
               <TableCell sx={{ ...tableStyles.cell }}>
                 <Typography sx={tableStyles.typography}>Email</Typography>
               </TableCell>
-              <TableCell sx={{ ...tableStyles.cell}}>
+              <TableCell sx={{ ...tableStyles.cell }}>
                 <Typography sx={tableStyles.typography}>Investor</Typography>
               </TableCell>
               <TableCell sx={{ ...tableStyles.cell }}>
                 <Typography sx={tableStyles.typography}>Shares</Typography>
               </TableCell>
-              <TableCell sx={{ ...tableStyles.cell}}>
+              <TableCell sx={{ ...tableStyles.cell }}>
                 <Typography sx={tableStyles.typography}>Action</Typography>
               </TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {pendingRequests.length > 0 ? (
-              pendingRequests.map((request) => (
+            {currentRequests.length > 0 ? (
+              currentRequests.map((request) => (
                 <TableRow key={request.capTableInvestorId} sx={{ backgroundColor: 'white' }}>
                   <TableCell sx={tableStyles.cell}>{new Date(request.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell sx={{ ...tableStyles.cell, width: '20%' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', ml: 5 }}>
-                      <Avatar sx={{ mr: 2, border: '2px rgba(0, 116, 144, 1) solid', borderRadius: 1 }} variant='square' />
+                      <Avatar
+                        sx={{
+                          mr: 2,
+                          border: '2px rgba(0, 116, 144, 1) solid',
+                          borderRadius: 1,
+                        }}
+                        variant="square"
+                      />
                       {request.startupName}
                     </Box>
                   </TableCell>
@@ -88,10 +110,24 @@ function PendingRequestInvestor() {
                   <TableCell sx={tableStyles.cell}>{request.investorName}</TableCell>
                   <TableCell sx={tableStyles.cell}>{request.shares}</TableCell>
                   <TableCell sx={tableStyles.cell}>
-                    <Button variant="contained" sx={tableStyles.acceptButton} onClick={() => handleAccept(request.capTableInvestorId)}>
+                    <Button
+                      variant="contained"
+                      sx={tableStyles.acceptButton}
+                      onClick={() => {
+                        setCurrentRequest(request);
+                        setDialogType('accept');
+                        setDialogOpen(true);
+                      }}>
                       Accept
                     </Button>
-                    <Button variant="text" sx={tableStyles.rejectButton} onClick={() => handleReject(request.capTableInvestorId)}>
+                    <Button
+                      variant="text"
+                      sx={tableStyles.rejectButton}
+                      onClick={() => {
+                        setCurrentRequest(request);
+                        setDialogType('reject');
+                        setDialogOpen(true);
+                      }}>
                       Reject
                     </Button>
                   </TableCell>
@@ -100,19 +136,40 @@ function PendingRequestInvestor() {
             ) : (
               <TableRow>
                 <TableCell colSpan={6} sx={{ textAlign: 'center' }}>
-                  <Typography>No pending requests found</Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    No pending requests found.
+                  </Typography>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
 
+          {/* Pagination Row */}
+          {currentRequests.length > 0 && (
+              <TableRow>
+                <TableCell colSpan={6} sx={{ textAlign: 'center', background: 'white' }}>
+                  <Pagination count={totalPages} size="medium" page={currentPage}onChange={(event, value) => setCurrentPage(value)} sx={{ display: 'inline-block' }}/>
+                </TableCell>
+              </TableRow>
+          )}
         </Table>
-
-        {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2, background: 'white' }}>
-          <Pagination count={totalPageCount} page={page} onChange={handleChangePage} size="medium" />
-        </Box> */}
-
       </TableContainer>
+
+      {/* Request Dialog */}
+      <StartupConfirmationDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onConfirm={handleConfirm}
+        title={dialogType === 'accept' ? 'Confirm Accept' : 'Confirm Reject'}
+        message={
+          <>
+            Are you sure you want to {dialogType === 'accept' ? 'accept' : 'reject'} the investment request from{' '}
+            <strong>{currentRequest?.investorName}</strong>?
+          </>
+        }
+        success={
+          <>
+            You have successfully {dialogType === 'accept' ? 'accepted' : 'rejected'} the investment request!
+          </>
+        }
+      />
     </Box>
   );
 }

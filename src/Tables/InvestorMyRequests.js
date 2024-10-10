@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, Avatar } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, Avatar, Pagination } from '@mui/material';
 import axios from 'axios';
 import { tableStyles } from '../styles/tables';
+import InvestorConfirmationDialog from '../Dialogs/InvestorConfirmationDialog';
 
 function InvestorRequest() { 
   const [pendingRequests, setPendingRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedRequest, setSelectedRequest] = useState(null); 
+  const [dialogOpen, setDialogOpen] = useState(false); 
+  const [page, setPage] = useState(1); 
+  const requestsPerPage = 5; 
 
   useEffect(() => {
     const fetchPendingRequests = async () => {
-      const investorId = localStorage.getItem('userId'); // Assuming `userId` is `investorId` in local storage
+      const investorId = localStorage.getItem('userId'); 
       if (!investorId) {
         setError('No investor ID found in local storage');
         setLoading(false);
@@ -18,9 +23,7 @@ function InvestorRequest() {
       }
       
       try {
-        // Use the correct route for fetching investor requests
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/cap-table-investor/investor-requests/${investorId}`);
-        console.log('API Response:', response.data); // Log the API response
 
         if (response.data.length === 0) {
           setError('No pending requests found');
@@ -30,7 +33,6 @@ function InvestorRequest() {
 
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching pending requests:', error);
         setError('Failed to fetch pending requests');
         setLoading(false);
       }
@@ -39,16 +41,40 @@ function InvestorRequest() {
     fetchPendingRequests();
   }, []);
 
-  const handleReject = async (capTableInvestorId) => {
-    console.log('Canceling request:', { capTableInvestorId, status: 'rejected' }); // Log payload
+  const handleOpenDialog = (request) => {
+    setSelectedRequest(request); 
+    setDialogOpen(true); 
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false); 
+  };
+
+  // Handle confirm cancel action
+  const handleConfirmCancel = async () => {
+    const capTableInvestorId = selectedRequest?.capTableInvestorId;
+
+    if (!capTableInvestorId) return;
+
     try {
+      // Call the API to reject the request
       await axios.put(`${process.env.REACT_APP_API_URL}/funding-rounds/${capTableInvestorId}/status`, { status: 'rejected' });
+
+      // Update the local state to remove the canceled request
       setPendingRequests(prevRequests => prevRequests.filter(request => request.capTableInvestorId !== capTableInvestorId));
+
+      // Close the dialog after cancellation
+      handleCloseDialog();
     } catch (error) {
       console.error('Error canceling request:', error);
     }
   };
-  
+
+  // Pagination
+  const currentPageRequests = pendingRequests.slice((page - 1) * requestsPerPage, page * requestsPerPage);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
   return (
     <Box component="main" sx={{ display: 'flex', flexDirection: 'column', height: '100%', mt: 3 }}>
@@ -78,8 +104,8 @@ function InvestorRequest() {
           </TableHead>
 
           <TableBody>
-            {pendingRequests.length > 0 ? (
-              pendingRequests.map((request) => (
+            {currentPageRequests.length > 0 ? (
+              currentPageRequests.map((request) => (
                 <TableRow key={request.capTableInvestorId} sx={{ backgroundColor: 'white' }}>
                   <TableCell sx={tableStyles.cell}>
                     {new Date(request.createdAt).toLocaleDateString()}
@@ -99,7 +125,7 @@ function InvestorRequest() {
                   <TableCell sx={tableStyles.cell}>{request.status}</TableCell>
                   <TableCell sx={tableStyles.cell}>
                     {request.status === 'pending' && (
-                      <Button variant="text" sx={tableStyles.rejectButton} onClick={() => handleReject(request.capTableInvestorId)}>
+                      <Button variant="text" sx={tableStyles.rejectButton} onClick={() => handleOpenDialog(request)}>
                         Cancel
                       </Button>
                     )}
@@ -108,19 +134,26 @@ function InvestorRequest() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} sx={{ textAlign: 'center' }}>
-                  <Typography>No pending requests found.</Typography>
+                <TableCell colSpan={6} sx={{ textAlign: 'center', background: 'white'}}>
+                  <Typography variant='body2' color="textSecondary">No pending requests found.</Typography>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
 
-        {/* Pagination can be added here if necessary */}
-        {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2, background: 'white' }}>
-          <Pagination count={totalPageCount} page={page} onChange={handleChangePage} size="medium" />
-        </Box> */}
+        {/* Pagination */}
+        {currentPageRequests.length > 0 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2, background: 'white' }}>
+          <Pagination  count={Math.ceil(pendingRequests.length / requestsPerPage)} page={page} onChange={handleChangePage} size="medium" />
+        </Box>
+        )}
       </TableContainer>
+
+      {/* Cancel Confirmation Dialog */}
+      {selectedRequest && (
+        <InvestorConfirmationDialog open={dialogOpen} onClose={handleCloseDialog} onConfirm={handleConfirmCancel} companyName={selectedRequest.startupName} />
+      )}
     </Box>
   );
 }
