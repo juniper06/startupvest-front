@@ -1,16 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, Typography, Box, IconButton } from '@mui/material';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Grid,
+  Typography,
+  Box,
+  IconButton,
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import axios from 'axios'; // Import Axios for making HTTP requests
 
 const InvestNowDialog = ({
   open,
   onClose,
   pricePerShare = 0,
   companyName = '',
-  fundingRound = '', 
+  fundingRound = '',
+  fundingRoundId, // Add this prop to get the fundingRoundId
+  investorId, // Add this prop to get the investorId
 }) => {
   const [shareAmount, setShareAmount] = useState('');
-  const [title, setTitle] = useState('');
   const [totalCost, setTotalCost] = useState(0);
   const [errors, setErrors] = useState({});
 
@@ -22,7 +35,6 @@ const InvestNowDialog = ({
   // Clear state when dialog closes
   const handleClose = () => {
     setShareAmount('');
-    setTitle('');
     setErrors({});
     onClose();
   };
@@ -37,43 +49,69 @@ const InvestNowDialog = ({
     setShareAmount(shares);
   };
 
-  const handleTitleChange = (e) => {
-    const inputTitle = e.target.value;
-    if (inputTitle.trim() === '') {
-      setErrors((prev) => ({ ...prev, title: 'Title is required.' }));
-    } else {
-      setErrors((prev) => ({ ...prev, title: '' }));
-    }
-    setTitle(inputTitle);
-  };
-
-  const handleConfirm = () => {
-    if (!title.trim()) {
-      setErrors((prev) => ({ ...prev, title: 'Title is required.' }));
-      return;
-    }
+  const handleConfirm = async () => {
     if (shareAmount <= 0) {
       setErrors((prev) => ({ ...prev, shareAmount: 'Please enter a valid number.' }));
       return;
     }
 
-    console.log('Investing:', { title, shareAmount, totalCost });
-    handleClose();
+    try {
+      // Make the PUT request to update the funding round with the investment details
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/funding-rounds/${fundingRoundId}/investment`,
+        {
+          shares: shareAmount,
+          investorId: investorId, // Use the passed investor ID
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Assuming you store token in localStorage
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log('Investment successful', response.data);
+        // Optionally, you can show a success message here
+      } else {
+        console.error('Investment failed', response);
+        // Optionally, show an error message
+      }
+    } catch (error) {
+      console.error('Error during investment:', error);
+      // Optionally, show an error message
+    }
+
+    handleClose(); // Close dialog after confirmation
   };
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'justify', position: 'relative', mt: 2, ml: 3 }}>
+      <DialogTitle
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'justify',
+          position: 'relative',
+          mt: 2,
+          ml: 3,
+        }}
+      >
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           Invest in {companyName}
         </Typography>
-        <IconButton edge="end" color="inherit" aria-label="close" sx={{ position: 'absolute', right: 15, top: -12 }}
-          onClick={handleClose}>
+        <IconButton
+          edge="end"
+          color="inherit"
+          aria-label="close"
+          sx={{ position: 'absolute', right: 15, top: -12 }}
+          onClick={handleClose}
+        >
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
-      <DialogContent sx={{ pl: 6, pr: 6}}>
+      <DialogContent sx={{ pl: 6, pr: 6 }}>
         <Grid container spacing={1}>
           {/* Investment Information */}
           <Grid item xs={12}>
@@ -84,27 +122,24 @@ const InvestNowDialog = ({
             </Typography>
           </Grid>
 
-          {/* Title Input */}
-          <Grid item xs={12} sm={7}>
-            <Typography>Title</Typography>
-              <TextField autoFocus margin="dense" id="title" type="text" fullWidth variant="outlined"
-                placeholder="e.g., President" value={title}
-                onChange={handleTitleChange}
-                error={!!errors.title}
-                helperText={errors.title}/>
-          </Grid>
-
           {/* Shares Input */}
-          <Grid item xs={12} sm={5}>
+          <Grid item xs={12}>
             <Typography>Shares</Typography>
-            <TextField margin="dense" id="share" type="number" fullWidth variant="outlined"
-              placeholder="e.g., 2" value={shareAmount}
+            <TextField
+              margin="dense"
+              id="share"
+              type="number"
+              fullWidth
+              variant="outlined"
+              placeholder="e.g., 2"
+              value={shareAmount}
               onChange={handleShareAmountChange}
               helperText={errors.shareAmount}
               InputProps={{
                 inputProps: { min: 1 },
               }}
-              error={!!errors.shareAmount} />
+              error={!!errors.shareAmount}
+            />
           </Grid>
 
           {/* Investment Summary */}
@@ -125,7 +160,7 @@ const InvestNowDialog = ({
 
           {/* Disclaimer */}
           <Grid item xs={12}>
-            <Typography variant="caption" align='justify' color="textSecondary" sx={{ mt: 2 }}>
+            <Typography variant="caption" align="justify" color="textSecondary" sx={{ mt: 2 }}>
               * By confirming this investment, you agree to the terms and conditions of the funding round. Please note
               that investments are subject to risk, and you should only invest what you can afford to lose.
             </Typography>
@@ -135,8 +170,13 @@ const InvestNowDialog = ({
 
       {/* Dialog Actions */}
       <DialogActions sx={{ p: 3, justifyContent: 'center' }}>
-        <Button onClick={handleConfirm} variant="contained" color="primary" sx={{ px: 8 }}
-          disabled={!shareAmount || shareAmount <= 0 || !title.trim()}>
+        <Button
+          onClick={handleConfirm}
+          variant="contained"
+          color="primary"
+          sx={{ px: 8 }}
+          disabled={!shareAmount || shareAmount <= 0}
+        >
           Confirm Investment
         </Button>
       </DialogActions>
