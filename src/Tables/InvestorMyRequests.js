@@ -4,14 +4,14 @@ import axios from 'axios';
 import { tableStyles } from '../styles/tables';
 import InvestorConfirmationDialog from '../Dialogs/InvestorConfirmationDialog';
 
-function InvestorRequest() { 
+function InvestorRequest() {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedRequest, setSelectedRequest] = useState(null); 
-  const [dialogOpen, setDialogOpen] = useState(false); 
-  const [page, setPage] = useState(1); 
-  const requestsPerPage = 5; 
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const requestsPerPage = 5;
   const [profilePictures, setProfilePictures] = useState({});
 
   useEffect(() => {
@@ -22,12 +22,12 @@ function InvestorRequest() {
         setLoading(false);
         return;
       }
-      
+
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/cap-table-investor/investor-requests/${investorId}`);
         console.log('API Response:', response.data);
 
-        if (response.data.length === 0) {
+        if (response.data && response.data.length === 0) {
           setError('No pending requests found');
         } else {
           setPendingRequests(response.data);
@@ -67,16 +67,13 @@ function InvestorRequest() {
     setProfilePictures(pictures);
   };
 
-  const handleReject = async (capTableInvestorId) => {
-    console.log('Canceling request:', { capTableInvestorId, status: 'rejected' });
-    try {
   const handleOpenDialog = (request) => {
-    setSelectedRequest(request); 
-    setDialogOpen(true); 
+    setSelectedRequest(request);
+    setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
-    setDialogOpen(false); 
+    setDialogOpen(false);
   };
 
   // Handle confirm cancel action
@@ -114,6 +111,14 @@ function InvestorRequest() {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
+  if (loading) {
+    return <Typography>Loading...</Typography>; // Add loading indicator
+  }
+
+  if (error) {
+    return <Typography color="error">{error}</Typography>; // Display error message
+  }
+
   return (
     <Box component="main" sx={{ display: 'flex', flexDirection: 'column', height: '100%', mt: 3 }}>
       <TableContainer sx={tableStyles.container}>
@@ -123,7 +128,7 @@ function InvestorRequest() {
               <TableCell sx={{ ...tableStyles.head }}>
                 <Typography sx={tableStyles.typography}>Date</Typography>
               </TableCell>
-              <TableCell sx={{}}>
+              <TableCell>
                 <Typography sx={tableStyles.typography}>Company Name</Typography>
               </TableCell>
               <TableCell sx={{ ...tableStyles.head }}>
@@ -150,10 +155,10 @@ function InvestorRequest() {
                   </TableCell>
                   <TableCell sx={{ ...tableStyles.cell, width: '20%' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                      <Avatar 
+                      <Avatar
                         src={profilePictures[request.startupId] || "https://via.placeholder.com/40"}
-                        sx={{ mr: 2, border: '2px rgba(0, 116, 144, 1) solid', borderRadius: 1 }} 
-                        variant='square' 
+                        sx={{ mr: 2, border: '2px rgba(0, 116, 144, 1) solid', borderRadius: 1 }}
+                        variant='square'
                       />
                       {request.startupName}
                     </Box>
@@ -172,7 +177,7 @@ function InvestorRequest() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} sx={{ textAlign: 'center', background: 'white'}}>
+                <TableCell colSpan={6} sx={{ textAlign: 'center', background: 'white' }}>
                   <Typography variant='body2' color="textSecondary">No pending requests found.</Typography>
                 </TableCell>
               </TableRow>
@@ -182,9 +187,9 @@ function InvestorRequest() {
 
         {/* Pagination */}
         {currentPageRequests.length > 0 && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2, background: 'white' }}>
-          <Pagination  count={Math.ceil(pendingRequests.length / requestsPerPage)} page={page} onChange={handleChangePage} size="medium" />
-        </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2, background: 'white' }}>
+            <Pagination count={Math.ceil(pendingRequests.length / requestsPerPage)} page={page} onChange={handleChangePage} size="medium" />
+          </Box>
         )}
       </TableContainer>
 
