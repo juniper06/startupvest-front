@@ -245,11 +245,11 @@ const InvestorOverview = () => {
 
       {/* Tabs Section */}
       <Box sx={{ width: '100%', pl: '285px', pr: '50px', pt: 3 }}>
-        <Tabs value={tabIndex} onChange={handleChangeTab} aria-label="Investor Profile Tabs" TabIndicatorProps={{ style: { backgroundColor: '#007490' } }}>
+        <Tabs value={tabIndex} onChange={handleChangeTab} aria-label="Investor Profile Tabs" TabIndicatorProps={{ style: { backgroundColor: '#004A98' } }}>
           <Tab label="Pending Request" 
-              sx={{ color: tabIndex === 0 ? "#007490" : "text.secondary", "&.Mui-selected": { color: "#007490",},}}/>
+              sx={{ color: tabIndex === 0 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E",},}}/>
           <Tab label="My Investments" 
-              sx={{ color: tabIndex === 1 ? "#007490" : "text.secondary", "&.Mui-selected": { color: "#007490",},}}/>
+              sx={{ color: tabIndex === 1 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E",},}}/>
         </Tabs>
 
         {tabIndex === 0 && (

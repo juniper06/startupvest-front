@@ -514,15 +514,15 @@ return (
 
             <Grid item xs={12}>
                 <Tabs value={tabValue} onChange={handleTabChange} aria-label="tabs"
-                    sx={{ mt: 2, "& .MuiTabs-indicator": { backgroundColor: "#007490" }, }}>
+                    sx={{ mt: 2, "& .MuiTabs-indicator": { backgroundColor: "#004A98" }, }}>
                 <Tab label="Investor Requests" 
-                    sx={{ color: tabValue === 0 ? "#007490" : "text.secondary", "&.Mui-selected": { color: "#007490",},}}/>
+                    sx={{ color: tabValue === 0 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E",},}}/>
                 <Tab label="My Profile" 
-                    sx={{ color: tabValue === 1 ? "#007490" : "text.secondary", "&.Mui-selected": { color: "#007490",},}}/>
+                    sx={{ color: tabValue === 1 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E",},}}/>
                 <Tab label="My Funding Round"
-                    sx={{color: tabValue === 2 ? "#007490" : "text.secondary", "&.Mui-selected": {color: "#007490",},}}/>
+                    sx={{color: tabValue === 2 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": {color: "#1E1E1E",},}}/>
                 <Tab label="My Captable"
-                    sx={{ color: tabValue === 3 ? "#007490" : "text.secondary", "&.Mui-selected": { color: "#007490", },}}/>
+                    sx={{ color: tabValue === 3 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E", },}}/>
                 </Tabs>
 
                 <Box sx={{ pt: 3}}>
