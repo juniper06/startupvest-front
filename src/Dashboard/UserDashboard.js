@@ -368,6 +368,7 @@ function UserDashboard() {
             });
             setCapTables(response.data);
             setFilteredCapTables(response.data);
+            console.log("captable status",response);
         } catch (error) {
             console.error('Error fetching funding rounds:', error);
         }
