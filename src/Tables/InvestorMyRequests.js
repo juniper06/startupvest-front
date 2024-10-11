@@ -23,13 +23,17 @@ function InvestorRequest({ onPendingRequestsCountChange }) {
 
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/cap-table-investor/investor-requests/${investorId}`);
-        onPendingRequestsCountChange(response.data.length);
-        // Check if response data is empty
-        if (response.data && response.data.length === 0) {
-          setPendingRequests([]); // Ensure it's set to an empty array
+        
+        // Filter pending requests
+        const pending = response.data.filter(request => request.status === 'pending');
+        
+        onPendingRequestsCountChange(pending.length);
+        
+        if (pending.length === 0) {
+          setPendingRequests([]); 
         } else {
-          setPendingRequests(response.data);
-          fetchAllProfilePictures(response.data);
+          setPendingRequests(pending);
+          fetchAllProfilePictures(pending);
         }
 
         setLoading(false);
@@ -86,7 +90,6 @@ function InvestorRequest({ onPendingRequestsCountChange }) {
       // Update the local state to remove the canceled request
       setPendingRequests(prevRequests => prevRequests.filter(request => request.capTableInvestorId !== capTableInvestorId));
       onPendingRequestsCountChange(pendingRequests.length - 1);
-      // Close the dialog after cancellation
       handleCloseDialog();
     } catch (error) {
       console.error('Error canceling request:', error);
@@ -117,24 +120,12 @@ function InvestorRequest({ onPendingRequestsCountChange }) {
         <Table>
           <TableHead sx={tableStyles.head}>
             <TableRow>
-              <TableCell sx={{ ...tableStyles.head }}>
-                <Typography sx={tableStyles.typography}>Date</Typography>
-              </TableCell>
-              <TableCell>
-                <Typography sx={tableStyles.typography}>Company Name</Typography>
-              </TableCell>
-              <TableCell sx={{ ...tableStyles.head }}>
-                <Typography sx={tableStyles.typography}>Shares</Typography>
-              </TableCell>
-              <TableCell sx={{ ...tableStyles.head }}>
-                <Typography sx={tableStyles.typography}>Total Shares</Typography>
-              </TableCell>
-              <TableCell sx={{ ...tableStyles.head }}>
-                <Typography sx={tableStyles.typography}>Status</Typography>
-              </TableCell>
-              <TableCell sx={{ ...tableStyles.head }}>
-                <Typography sx={tableStyles.typography}>Action</Typography>
-              </TableCell>
+              <TableCell sx={{ ...tableStyles.head }}><Typography sx={tableStyles.typography}>Date</Typography></TableCell>
+              <TableCell><Typography sx={tableStyles.typography}>Company Name</Typography></TableCell>
+              <TableCell sx={{ ...tableStyles.head }}><Typography sx={tableStyles.typography}>Shares</Typography></TableCell>
+              <TableCell sx={{ ...tableStyles.head }}><Typography sx={tableStyles.typography}>Total Shares</Typography></TableCell>
+              <TableCell sx={{ ...tableStyles.head }}><Typography sx={tableStyles.typography}>Status</Typography>
+              </TableCell><TableCell sx={{ ...tableStyles.head }}><Typography sx={tableStyles.typography}>Action</Typography></TableCell>
             </TableRow>
           </TableHead>
 
@@ -147,11 +138,9 @@ function InvestorRequest({ onPendingRequestsCountChange }) {
                   </TableCell>
                   <TableCell sx={{ ...tableStyles.cell, width: '20%' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                      <Avatar
+                      <Avatar variant='square'
                         src={profilePictures[request.startupId] || "https://via.placeholder.com/40"}
-                        sx={{ mr: 2, border: '2px rgba(0, 116, 144, 1) solid', borderRadius: 1 }}
-                        variant='square'
-                      />
+                        sx={{ mr: 2, border: '2px rgba(0, 116, 144, 1) solid', borderRadius: 1 }}/>
                       {request.startupName}
                     </Box>
                   </TableCell>
@@ -160,9 +149,7 @@ function InvestorRequest({ onPendingRequestsCountChange }) {
                   <TableCell sx={tableStyles.cell}>{request.status}</TableCell>
                   <TableCell sx={tableStyles.cell}>
                     {request.status === 'pending' && (
-                      <Button variant="text" sx={tableStyles.rejectButton} onClick={() => handleOpenDialog(request)}>
-                        Cancel
-                      </Button>
+                      <Button variant="text" sx={tableStyles.rejectButton} onClick={() => handleOpenDialog(request)}>Cancel</Button>
                     )}
                   </TableCell>
                 </TableRow>

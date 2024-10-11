@@ -58,20 +58,20 @@ const MonthlyFundingChart = ({ userId, companyId }) => {
             {
               label: `Monthly Funding for ${year}`,
               data: totals,
-              borderColor: 'rgba(75, 192, 192, 1)',
+              borderColor: '#336FB0', // Updated border color
               backgroundColor: (ctx) => {
                 const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 400);
-                gradient.addColorStop(0, 'rgba(75, 192, 192, 0.5)');
-                gradient.addColorStop(1, 'rgba(75, 192, 192, 0)');
+                gradient.addColorStop(0, 'rgba(51, 111, 176, 0.5)'); // Updated gradient start
+                gradient.addColorStop(1, 'rgba(51, 111, 176, 0)');   // Updated gradient end
                 return gradient;
               },
               borderWidth: 2,
               fill: true,
               tension: 0.4,
               pointRadius: 4,
-              pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+              pointBackgroundColor: '#336FB0', // Updated point color
               pointHoverRadius: 7,
-              pointHoverBorderColor: 'rgba(75, 192, 192, 1)',
+              pointHoverBorderColor: '#336FB0', // Updated hover border color
               pointHoverBackgroundColor: '#fff',
             },
           ],
@@ -97,7 +97,6 @@ const MonthlyFundingChart = ({ userId, companyId }) => {
     <Box
       sx={{
         backgroundColor: '#fff',
-        mt: 1,
         minHeight: '480px',
         maxHeight: '100%',
         display: 'flex',
@@ -144,16 +143,7 @@ const MonthlyFundingChart = ({ userId, companyId }) => {
               },
             },
             tooltip: {
-              callbacks: {
-                label: function(tooltipItem) {
-                  const value = tooltipItem.raw.toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: 'PHP',
-                  });
-                  return ` ${tooltipItem.dataset.label}: ${value}`;
-                },
-              },
-              backgroundColor: 'rgba(75, 192, 192, 0.8)',
+              backgroundColor: 'rgba(51, 111, 176, 0.8)',
               titleFont: {
                 size: 14,
               },

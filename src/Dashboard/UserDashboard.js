@@ -18,7 +18,7 @@ import MonthlyFundingChart from "../Components/Chart";
 import { Container, HeaderBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle,   CreateButton, GraphTitle, RecentActivityTitle } from "../styles/UserDashboard";
 
 function UserDashboard() {
-    const [tabValue, setTabValue] = useState(2);
+    const [tabValue, setTabValue] = useState(0);
         
     // PROFILE
     const [openCreateBusinessProfile, setCreateBusinessProfile] = useState(false);
@@ -72,11 +72,6 @@ function UserDashboard() {
         fetchRecentActivities();
         fetchCountInvestor();
         fetchTopInvestorContributor();
-
-        const timer = setTimeout(() => {
-            setTabValue(0);
-        }, 1500);
-        return () => clearTimeout(timer);
     }, []);
 
     const handleTabChange = (event, newValue) => {
@@ -368,7 +363,6 @@ function UserDashboard() {
             });
             setCapTables(response.data);
             setFilteredCapTables(response.data);
-            console.log("captable status",response);
         } catch (error) {
             console.error('Error fetching funding rounds:', error);
         }
@@ -379,6 +373,19 @@ function UserDashboard() {
     setSelectedStartupCapTable(selectedCompanyId);
     fetchAllInvestorsByEachUsersCompany(selectedCompanyId);
   };
+
+  useEffect(() => {
+    const fetchPendingRequestsCount = async () => {
+        const userId = localStorage.getItem('userId');
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/cap-table-investor/all?userId=${userId}`);
+            setPendingRequestsCount(response.data.length);
+        } catch (error) {
+            console.error('Error fetching pending requests count:', error);
+        }
+    };
+    fetchPendingRequestsCount();
+  }, []);
 
 return (
     <>
@@ -517,20 +524,33 @@ return (
             <Grid item xs={12}>
                 <Tabs value={tabValue} onChange={handleTabChange} aria-label="tabs"
                     sx={{ mt: 2, "& .MuiTabs-indicator": { backgroundColor: "#004A98" }, }}>
-                <Tab label={`Investor Requests (${pendingRequestsCount})`} 
+                <Tab label="My Funding Round"
                     sx={{ color: tabValue === 0 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E" },}}/>
                 <Tab label="My Profile" 
                     sx={{ color: tabValue === 1 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E",},}}/>
-                <Tab label="My Funding Round"
+                <Tab label="My Cap Table"
                     sx={{color: tabValue === 2 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": {color: "#1E1E1E",},}}/>
-                <Tab label="My Captable"
+                <Tab label={`Investor Requests (${pendingRequestsCount})`} 
                     sx={{ color: tabValue === 3 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E", },}}/>
                 </Tabs>
 
                 <Box sx={{ pt: 3}}>
                     {tabValue === 0 && (
-                        <PendingRequestInvestor onPendingRequestsCountChange={setPendingRequestsCount} />
-                    )}
+                        <FundingRoundTable 
+                            filteredFundingRounds={filteredFundingRounds}
+                            fundingRounds={fundingRounds}
+                            handleViewFundingRound={handleViewFundingRound}
+                            handleSoftDeleteFundingRound={handleSoftDeleteFundingRound}
+                            selectedFundingRoundDetails={selectedFundingRoundDetails}
+                            openViewFundingRound={openViewFundingRound}
+                            handleCloseFundingRound={handleCloseFundingRound}
+                            handleCloseFundingProfile={handleCloseFundingProfile}
+                            businessProfiles={businessProfiles}
+                            onTotalAmountFundedChange={handleTotalAmountFundedChange}
+                            onFundingRoundsCountChange={handleFundingRoundsCountChange}
+                            onMoneyRaisedCountChange={handleMoneyRaisedCountChange}
+                            onHighestMoneyRaisedCompanyChange={handleHighestMoneyRaisedCompanyChange} />
+                        )}
 
                     {tabValue === 1 && (
                         <BusinessProfileTable 
@@ -548,31 +568,18 @@ return (
                             handleSoftDelete={handleSoftDelete}
                             profileToDelete={profileToDelete}/>                            
                         )}
-                                
-                    {tabValue === 2 && (
-                        <FundingRoundTable 
-                            filteredFundingRounds={filteredFundingRounds}
-                            fundingRounds={fundingRounds}
-                            handleViewFundingRound={handleViewFundingRound}
-                            handleSoftDeleteFundingRound={handleSoftDeleteFundingRound}
-                            selectedFundingRoundDetails={selectedFundingRoundDetails}
-                            openViewFundingRound={openViewFundingRound}
-                            handleCloseFundingRound={handleCloseFundingRound}
-                            handleCloseFundingProfile={handleCloseFundingProfile}
-                            businessProfiles={businessProfiles}
-                            onTotalAmountFundedChange={handleTotalAmountFundedChange}
-                            onFundingRoundsCountChange={handleFundingRoundsCountChange}
-                            onMoneyRaisedCountChange={handleMoneyRaisedCountChange}
-                            onHighestMoneyRaisedCompanyChange={handleHighestMoneyRaisedCompanyChange} />
-                        )}
 
-                    {tabValue === 3 && (
+                    {tabValue === 2 && (
                         <CapTable 
                             filteredCapTables={filteredCapTables}
                             businessProfiles={businessProfiles} 
                             selectedStartupCapTable={selectedStartupCapTable} 
                             handleStartupChangeCapTable={handleStartupChangeCapTable}
                             fundingRound={fundingRound} />
+                        )}
+
+                    {tabValue === 3 && (
+                        <PendingRequestInvestor onPendingRequestsCountChange={setPendingRequestsCount} />
                         )}
                     </Box>
                 </Grid>  
