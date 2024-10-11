@@ -290,34 +290,34 @@ function FundingRoundView() {
                     </TableRow>
                   </StyledTableHead>
                   <TableBody>
-    {loading ? (
-      <TableRow>
-        <TableCell colSpan={4} align="center">
-          <Skeleton variant="text" />
-        </TableCell>
-      </TableRow>
-    ) : (
-      combineInvestors(fundinground.capTableInvestors)
-        .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
-        .map((investor, index) => (
-          <TableRow key={index}>
-            <TableCell sx={{ textAlign: 'center' }}>
-              {investor.name}
-            </TableCell>
-            <TableCell sx={{ textAlign: 'center' }}>
-              {investor.title}
-            </TableCell>
-            <TableCell sx={{ textAlign: 'center' }}>
-              {Number(investor.shares).toLocaleString()}
-            </TableCell>
-            <TableCell sx={{ textAlign: 'center' }}>
-              {fundinground.moneyRaisedCurrency}{' '}
-              {Number(investor.totalInvestment).toLocaleString()}
-            </TableCell>
-          </TableRow>
-        ))
-    )}
-  </TableBody>
+                    {loading ? (
+                      <TableRow>
+                        <TableCell colSpan={4} align="center">
+                          <Skeleton variant="text" />
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      combineInvestors(fundinground.capTableInvestors)
+                        .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+                        .map((investor, index) => (
+                          <TableRow key={index}>
+                            <TableCell sx={{ textAlign: 'center' }}>
+                              {investor.name}
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center' }}>
+                              {investor.title}
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center' }}>
+                              {Number(investor.shares).toLocaleString()}
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center' }}>
+                              {fundinground.moneyRaisedCurrency}{' '}
+                              {Number(investor.totalInvestment).toLocaleString()}
+                            </TableCell>
+                          </TableRow>
+                        ))
+                    )}
+                  </TableBody>
                 </StyledTable>
 
                 {fundinground.capTableInvestors && fundinground.capTableInvestors.length > rowsPerPage && (
