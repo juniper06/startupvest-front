@@ -37,7 +37,12 @@ export const OverviewBox = styled(Box)(({ theme }) => ({
 
 export const OverviewTitle = styled(Typography)(({ theme }) => ({
     fontWeight: 'bold',
-    color: 'rgba(0, 116, 144, 1)',
+    color: '#336FB0',
+}));
+
+export const InvestorTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 'bold',
+  color: '#336FB0',
 }));
 
 // Styles for Icons Container
@@ -56,7 +61,7 @@ export const StyledTable = styled(Table)(({ theme }) => ({
 }));
   
 export const StyledTableHead = styled(TableHead)(({ theme }) => ({
-    backgroundColor: 'rgba(0, 116, 144, 1)',
+    backgroundColor: '#336FB0',
 }));
   
 export const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -102,7 +107,7 @@ export const CardStyled = styled(Card)(({ theme }) => ({
     marginBottom: theme.spacing(1),
     fontSize: '1.25rem',
     fontWeight: 'bold',
-    color: 'rgba(0, 116, 144, 1)',
+    color: '#1E1E1E',
   }));
   
   export const FundingDescription = styled(Typography)(({ theme }) => ({

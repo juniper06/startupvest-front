@@ -4,7 +4,7 @@ import axios from 'axios';
 import { tableStyles } from '../styles/tables';
 import StartupConfirmationDialog from '../Dialogs/StartupConfirmationDialog';
 
-function PendingRequestInvestor() {
+function PendingRequestInvestor({ onPendingRequestsCountChange }) {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState(null);
@@ -21,12 +21,13 @@ function PendingRequestInvestor() {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/cap-table-investor/all?userId=${userId}`);
         setPendingRequests(response.data);
         fetchAllProfilePictures(response.data);
+        onPendingRequestsCountChange(response.data.length);
       } catch (error) {
         console.error('Error fetching pending requests:', error);
       }
     };
     fetchPendingRequests();
-  }, []);
+  }, [onPendingRequestsCountChange]);
 
   const fetchAllProfilePictures = async (requests) => {
     const pictures = {};
@@ -71,7 +72,7 @@ function PendingRequestInvestor() {
     try {
       await axios.put(`${process.env.REACT_APP_API_URL}/funding-rounds/${capTableInvestorId}/status`, { status: 'accepted' });
       setPendingRequests((prevRequests) => prevRequests.filter((request) => request.capTableInvestorId !== capTableInvestorId));
-      window.location.reload();  // Refresh the entire browser
+      onPendingRequestsCountChange(pendingRequests.length - 1);
     } catch (error) {
       console.error('Error accepting request:', error);
     } finally {
@@ -84,7 +85,7 @@ function PendingRequestInvestor() {
     try {
       await axios.put(`${process.env.REACT_APP_API_URL}/funding-rounds/${capTableInvestorId}/status`, { status: 'rejected' });
       setPendingRequests((prevRequests) => prevRequests.filter((request) => request.capTableInvestorId !== capTableInvestorId));
-      window.location.reload();  // Refresh the entire browser
+      onPendingRequestsCountChange(pendingRequests.length - 1);
     } catch (error) {
       console.error('Error rejecting request:', error);
     } finally {
@@ -178,7 +179,7 @@ function PendingRequestInvestor() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} sx={{ textAlign: 'center' }}>
+                <TableCell colSpan={6} sx={{ textAlign: 'center', background: 'white' }}>
                   <Typography variant="body2" color="textSecondary">
                     No pending requests found.
                   </Typography>

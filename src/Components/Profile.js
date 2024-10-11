@@ -9,7 +9,7 @@ import { Box, Typography, Toolbar, TextField, Avatar, Button, Select, MenuItem, 
 
 const drawerWidth = 240;
 
-function Profile( hasInvestorProfile ) {
+function Profile() {
   const [isEditable, setIsEditable] = useState(false);
   const [openCreateBusinessProfile, setCreateBusinessProfile] = useState(false);
   const [businessProfiles, setBusinessProfiles] = useState([]);
@@ -23,8 +23,10 @@ function Profile( hasInvestorProfile ) {
         contactNumber: '',
         gender: '',
         avatar: '',
+        role: '',
     });
 
+    console.log(userData);  
     // New state for the profile picture URL
     const [profilePicUrl, setProfilePicUrl] = useState('');
 
@@ -162,12 +164,12 @@ function Profile( hasInvestorProfile ) {
       <Navbar />
       <Toolbar />
       <Box component="main" sx={{ flexGrow: 1, p: 4, mt: 3, paddingLeft: `${drawerWidth}px`, width: '100%', overflowX: 'hidden' }}>
-        <Typography variant="h5" sx={{ paddingLeft: 8, color: 'rgba(0, 116, 144, 1)', fontWeight: 'bold' }}>
+        <Typography variant="h5" sx={{ paddingLeft: 8, color: '#1E1E1E', fontWeight: 'bold' }}>
           Account Information
         </Typography>
 
         <Box component="main" sx={{ mr: 5, borderRadius: 2, ml: 8, pb: 6, mt: 3, boxShadow: '0 0 10px rgba(0,0,0,0.25)' }}>
-          <Typography sx={{ color: 'white', background: 'rgba(0, 116, 144, 1)', fontWeight: '500', pl: 8, pt: 1.5, pb: 1.5, mb: 3, fontSize: '20px' }}>
+          <Typography sx={{ color: 'white', background: '#336FB0', fontWeight: '500', pl: 8, pt: 1.5, pb: 1.5, mb: 3, fontSize: '20px' }}>
             Personal Information
           </Typography>
 
@@ -210,10 +212,10 @@ function Profile( hasInvestorProfile ) {
               </Grid>
             </Grid>
           ) : (
-            <Grid container spacing={2} sx={{ ml: 7 }}>
+            <Grid container  sx={{ ml: 7 }}>
               <Grid item xs={12} sm={2.5}>
                 <label htmlFor="avatar-upload">
-                  <Avatar sx={{ width: 200, height: 200, mt: 4, cursor: 'pointer', border: '5px rgba(0, 116, 144, 1) solid' }} src={profilePicUrl} />
+                  <Avatar sx={{ width: 240, height: 240, mt: 2, cursor: 'pointer', border: '5px #336FB0 solid' }} src={profilePicUrl} />
                 </label>
 
                 <input type="file" accept="image/*" id="avatar-upload" style={{ display: 'none' }}
@@ -224,17 +226,18 @@ function Profile( hasInvestorProfile ) {
                     }
                   }}
                   disabled={!isEditable} />
-                <Typography sx={{ mt: 1, ml: 6.5, color: 'rgba(0, 116, 144, 1)' }}>Upload Photo</Typography>
+                <Typography sx={{ mt: 1, ml: 7.5, color: '#336FB0' }}>Upload Photo</Typography>
               </Grid>
 
               <Grid item xs={12} sm={7.8}>
-                <Grid container spacing={2}>
-                  <Grid item xs={2}>
+                <Grid container spacing={3}>
+                  <Grid item xs={1.2}>
                     <label>Role</label>
-                    <TextField fullWidth variant="outlined" disabled InputProps={{ sx: { height: '45px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' } }} />
+                    <TextField fullWidth variant="outlined" value={userData.role} disabled 
+                    InputProps={{ sx: { height: '45px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' } }} />
                   </Grid>
 
-                  <Grid item xs={4}>
+                  <Grid item xs={4.8}>
                     <label>First Name</label>
                     <TextField fullWidth variant="outlined" value={userData.firstName}
                       onChange={(e) => setUserData((prevData) => ({ ...prevData, firstName: e.target.value }))}
@@ -268,7 +271,7 @@ function Profile( hasInvestorProfile ) {
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <label>Password</label>
                       {isEditable ? (
-                        <Typography variant="caption" sx={{ color: '#007490', ml: 1, textDecoration: 'underline', cursor: 'pointer' }}
+                        <Typography variant="caption" sx={{ color: '#336FB0', ml: 1, textDecoration: 'underline', cursor: 'pointer' }}
                           onClick={() => setOpenChangePassword(true)}>
                           Change Password
                         </Typography>
@@ -314,8 +317,8 @@ function Profile( hasInvestorProfile ) {
                   <Grid container justifyContent="flex-end">
                     <Grid item>
                       <Button variant="contained" sx={{ mt: 3, width: 150,
-                          background: 'rgba(0, 116, 144, 1)',
-                          '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'rgba(0, 116, 144, 1)' },
+                          background: '#336FB0',
+                          '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: '#336FB0' },
                         }}
                         onClick={isEditable ? handleSaveChanges : handleEditClick}>
                         {isEditable ? 'Save Changes' : 'Edit Profile'}
@@ -329,13 +332,13 @@ function Profile( hasInvestorProfile ) {
         </Box>
 
         <Box component="main" sx={{ display: 'flex', flexDirection: 'column', mt: 8, mb: 4 }}>
-          <Typography variant="h5" sx={{ pl: 8, color: 'rgba(0, 116, 144, 1)', fontWeight: 'bold' }}>
+          <Typography variant="h5" sx={{ pl: 8, color: '#1E1E1E', fontWeight: 'bold' }}>
             Business Profile
           </Typography>
 
           <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mt: 4, ml: 8, mr: 5 }}>
-            <Box sx={{ borderRadius: 2, p: 4, display: 'flex', alignItems: 'center', boxShadow: '0 0 10px rgba(0,0,0,0.25)', width: '70%' }}>
-              <Avatar src="/images/prof.jpg" variant="square" sx={{ mr: 3, width: 200, height: 250, border: '4px rgba(0, 116, 144, 1) solid', borderRadius: 2 }}></Avatar>
+            <Box sx={{ borderRadius: 2, p: 4, display: 'flex', alignItems: 'center', boxShadow: '0 0 10px rgba(0,0,0,0.25)', width: '75%' }}>
+              <Avatar src="/images/prof.jpg" variant="square" sx={{ mr: 3, width: 200, height: 250, border: '4px #336FB0 solid', borderRadius: 2 }}></Avatar>
               <Typography align="justify" sx={{ color: '#414a4c', fontWeight: '500' }}>
                 <b>Why Create a Business Profile?</b>
                 <br />Establishing a business profile on Startup Vest offers significant advantages for both startups and investors.
@@ -343,13 +346,13 @@ function Profile( hasInvestorProfile ) {
               </Typography>
             </Box>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, p: 4, display: 'flex', alignItems: 'center', boxShadow: '0 0 10px rgba(0,0,0,0.5)', width: '28%', backgroundColor: '#007490' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, p: 4, display: 'flex', alignItems: 'center', boxShadow: '0 0 10px rgba(0,0,0,0.5)', width: '22%', backgroundColor: '#336FB0' }}>
               <Typography align="justify" sx={{ color: 'white', fontWeight: '500', mb: 2, mt: 5 }}>
                 <b>Don’t miss out on opportunities.</b><br /><br /> Create your business profile today and unlock limitless potential for growth and success!
               </Typography>
 
               <Button variant="contained" fullWidth
-                sx={{ color: '#007490', background: 'white', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'white' } }}
+                sx={{ color: '#336FB0', background: 'white', '&:hover': { boxShadow: '0 0 10px rgba(0,0,0,0.5)', backgroundColor: 'white' } }}
                 onClick={handleOpenBusinessProfile}>
                 Create Profile
               </Button>
@@ -357,7 +360,7 @@ function Profile( hasInvestorProfile ) {
           </Box>
         </Box>
 
-        <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} hasInvestorProfile={hasInvestorProfile} />
+        <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} />
         <ChangePasswordDialog open={openChangePassword} onClose={() => setOpenChangePassword(false)} onSave={handleSavePassword} />
       </Box>
     </>

@@ -44,6 +44,7 @@ const InvestorOverview = () => {
   const [averageInvestmentSize, setAverageInvestmentSize] = useState(0);
   const [totalInvestmentAmount, setTotalInvestmentAmount] = useState(0);
   const [tabIndex, setTabIndex] = useState(0);
+  const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
 
   const conversionRates = {
     USD: 50.0,
@@ -246,14 +247,14 @@ const InvestorOverview = () => {
       {/* Tabs Section */}
       <Box sx={{ width: '100%', pl: '285px', pr: '50px', pt: 3 }}>
         <Tabs value={tabIndex} onChange={handleChangeTab} aria-label="Investor Profile Tabs" TabIndicatorProps={{ style: { backgroundColor: '#004A98' } }}>
-          <Tab label="Pending Request" 
+          <Tab label={`Pending Request (${pendingRequestsCount})`} 
               sx={{ color: tabIndex === 0 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E",},}}/>
           <Tab label="My Investments" 
               sx={{ color: tabIndex === 1 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E",},}}/>
         </Tabs>
 
         {tabIndex === 0 && (
-          <InvestorRequest />
+          <InvestorRequest onPendingRequestsCountChange={setPendingRequestsCount}/>
         )}
 
         {tabIndex === 1 && (

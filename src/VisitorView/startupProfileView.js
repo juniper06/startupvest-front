@@ -95,9 +95,26 @@ function StartUpView() {
           ) : (
             <>
               {/* Summary Button */}
-              <ListItem button selected={selectedPage === 'summary'} onClick={() => handlePageChange('summary')}
-                sx={{ '&.Mui-selected': { backgroundColor: '#C3DDD6' }, '&:hover': { backgroundColor: '#C3DDD6 !important' },
-                  mr: 1, borderRadius: 1, cursor: 'pointer',}}>
+              <ListItem  button  selected={selectedPage === 'summary'} onClick={() => handlePageChange('summary')}
+                sx={{ 
+                  '&.Mui-selected': { 
+                    backgroundColor: '#336FB0', 
+                    color: 'white', 
+                    '& .MuiListItemIcon-root': {
+                      color: 'white',
+                    }
+                  },
+                  '&:hover': { 
+                    backgroundColor: '#336FB0 !important', 
+                    color: 'white', 
+                    '& .MuiListItemIcon-root': {
+                      color: 'white', 
+                    }
+                  }, 
+                  mr: 1, 
+                  borderRadius: 1, 
+                  cursor: 'pointer',
+                }}>
                 <ListItemIcon>
                   <StoreIcon />
                 </ListItemIcon>
@@ -105,9 +122,25 @@ function StartUpView() {
               </ListItem>
 
               {/* Financial Button */}
-              <ListItem button selected={selectedPage === 'financial'} onClick={() => handlePageChange('financial')}
-                sx={{ '&.Mui-selected': { backgroundColor: '#C3DDD6' }, '&:hover': { backgroundColor: '#C3DDD6 !important' },
-                  borderRadius: 1, cursor: 'pointer', }}>
+              <ListItem  button  selected={selectedPage === 'financial'} onClick={() => handlePageChange('financial')}
+                sx={{ 
+                  '&.Mui-selected': { 
+                    backgroundColor: '#336FB0', 
+                    color: 'white',
+                    '& .MuiListItemIcon-root': {
+                      color: 'white',
+                    }
+                  },
+                  '&:hover': { 
+                    backgroundColor: '#336FB0 !important', 
+                    color: 'white', 
+                    '& .MuiListItemIcon-root': {
+                      color: 'white', 
+                    }
+                  }, 
+                  borderRadius: 1, 
+                  cursor: 'pointer',
+                }}>
                 <ListItemIcon>
                   <PaidIcon />
                 </ListItemIcon>
@@ -325,16 +358,13 @@ function StartUpView() {
                       </strong>
                     </FundingNote>
                   </CardStyled>
-
                 </FundingBox>
               </Grid>
 
               {/* Graph Section */}
               <Grid item xs={12} md={8}>
                 <FundingChartCard>
-                  <Typography sx={{ ml: 3, fontSize: '1.2rem', fontWeight: 'bold', color: 'rgba(0, 116, 144, 1)' }}>
-                    Funding Progress Chart
-                  </Typography>
+                  <FundingTitle>Funding Progress Chart</FundingTitle>
                   <Box sx={{ width: '100%' }}>
                     {companyId && <MonthlyFundingChart companyId={companyId} />}
                   </Box>

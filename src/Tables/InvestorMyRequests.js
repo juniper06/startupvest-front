@@ -4,10 +4,9 @@ import axios from 'axios';
 import { tableStyles } from '../styles/tables';
 import InvestorConfirmationDialog from '../Dialogs/InvestorConfirmationDialog';
 
-function InvestorRequest() {
+function InvestorRequest({ onPendingRequestsCountChange }) {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -18,17 +17,16 @@ function InvestorRequest() {
     const fetchPendingRequests = async () => {
       const investorId = localStorage.getItem('userId');
       if (!investorId) {
-        setError('No investor ID found in local storage');
         setLoading(false);
         return;
       }
 
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/cap-table-investor/investor-requests/${investorId}`);
-        console.log('API Response:', response.data);
-
+        onPendingRequestsCountChange(response.data.length);
+        // Check if response data is empty
         if (response.data && response.data.length === 0) {
-          setError('No pending requests found');
+          setPendingRequests([]); // Ensure it's set to an empty array
         } else {
           setPendingRequests(response.data);
           fetchAllProfilePictures(response.data);
@@ -36,13 +34,13 @@ function InvestorRequest() {
 
         setLoading(false);
       } catch (error) {
-        setError('Failed to fetch pending requests');
+        console.error('Failed to fetch pending requests', error);
         setLoading(false);
       }
     };
 
     fetchPendingRequests();
-  }, []);
+  }, [onPendingRequestsCountChange]);
 
   const fetchAllProfilePictures = async (requests) => {
     const pictures = {};
@@ -76,7 +74,6 @@ function InvestorRequest() {
     setDialogOpen(false);
   };
 
-  // Handle confirm cancel action
   const handleConfirmCancel = async () => {
     const capTableInvestorId = selectedRequest?.capTableInvestorId;
 
@@ -88,7 +85,7 @@ function InvestorRequest() {
 
       // Update the local state to remove the canceled request
       setPendingRequests(prevRequests => prevRequests.filter(request => request.capTableInvestorId !== capTableInvestorId));
-
+      onPendingRequestsCountChange(pendingRequests.length - 1);
       // Close the dialog after cancellation
       handleCloseDialog();
     } catch (error) {
@@ -96,7 +93,6 @@ function InvestorRequest() {
     }
   };
 
-  // Pagination
   const currentPageRequests = pendingRequests.slice((page - 1) * requestsPerPage, page * requestsPerPage);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -112,11 +108,7 @@ function InvestorRequest() {
   };
 
   if (loading) {
-    return <Typography>Loading...</Typography>; // Add loading indicator
-  }
-
-  if (error) {
-    return <Typography color="error">{error}</Typography>; // Display error message
+    return <Typography>Loading...</Typography>; 
   }
 
   return (
@@ -185,7 +177,6 @@ function InvestorRequest() {
           </TableBody>
         </Table>
 
-        {/* Pagination */}
         {currentPageRequests.length > 0 && (
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2, background: 'white' }}>
             <Pagination count={Math.ceil(pendingRequests.length / requestsPerPage)} page={page} onChange={handleChangePage} size="medium" />
@@ -193,7 +184,6 @@ function InvestorRequest() {
         )}
       </TableContainer>
 
-      {/* Cancel Confirmation Dialog */}
       {selectedRequest && (
         <InvestorConfirmationDialog open={dialogOpen} onClose={handleCloseDialog} onConfirm={handleConfirmCancel} companyName={selectedRequest.startupName} />
       )}

@@ -51,6 +51,7 @@ function UserDashboard() {
     const [moneyRaisedCount, setMoneyRaisedCount] = useState(0);
     const [highestMoneyRaisedCompany, setHighestMoneyRaisedCompany] = useState({ companyName: '', totalMoneyRaised: 0 });
     const [topInvestor, setTopInvestor] = useState({ topInvestorName: '' });
+    const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [recentActivities, setRecentActivities] = useState([]);
@@ -515,8 +516,8 @@ return (
             <Grid item xs={12}>
                 <Tabs value={tabValue} onChange={handleTabChange} aria-label="tabs"
                     sx={{ mt: 2, "& .MuiTabs-indicator": { backgroundColor: "#004A98" }, }}>
-                <Tab label="Investor Requests" 
-                    sx={{ color: tabValue === 0 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E",},}}/>
+                <Tab label={`Investor Requests (${pendingRequestsCount})`} 
+                    sx={{ color: tabValue === 0 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E" },}}/>
                 <Tab label="My Profile" 
                     sx={{ color: tabValue === 1 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E",},}}/>
                 <Tab label="My Funding Round"
@@ -527,8 +528,8 @@ return (
 
                 <Box sx={{ pt: 3}}>
                     {tabValue === 0 && (
-                        <PendingRequestInvestor />
-                        )}
+                        <PendingRequestInvestor onPendingRequestsCountChange={setPendingRequestsCount} />
+                    )}
 
                     {tabValue === 1 && (
                         <BusinessProfileTable 

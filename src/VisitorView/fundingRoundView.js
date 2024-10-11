@@ -15,6 +15,7 @@ import {
   StyledTableHead,
   StyledTableCell,
   PaginationBox,
+  InvestorTitle,
 } from '../styles/VisitorView';
 
 const drawerWidth = 240;
@@ -136,7 +137,7 @@ function FundingRoundView() {
             {/* Left Box. Investor Information */}
             <Grid item xs={10} md={10}>
               <OverviewBox>
-                <OverviewTitle variant="h5">Overview</OverviewTitle>
+              < OverviewTitle variant="h5" sx={{ mb: 3 }}>{loading? <Skeleton width={100} /> : 'Overview' }</OverviewTitle>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <Grid container spacing={3}>
@@ -253,9 +254,7 @@ function FundingRoundView() {
 
                 <Divider sx={{ mt: 5 }} />
 
-                <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'rgba(0, 116, 144, 1)', mt: 5, mb: 3 }}>
-                  Investors
-                </Typography>
+                <InvestorTitle variant="h5" sx={{ mt: 5, mb: 3 }}>{loading? <Skeleton width={100} /> : 'Investors' }</InvestorTitle>
                 <StyledTable>
                   <StyledTableHead>
                     <TableRow>

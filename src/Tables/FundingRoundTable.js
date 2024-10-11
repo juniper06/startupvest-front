@@ -201,7 +201,7 @@ function FundingRoundTable({
               })
             ) : (
               <TableRow sx={{ background: 'white' }}>
-                <TableCell colSpan={5} sx={{ textAlign: 'center' }}>
+                <TableCell colSpan={6} sx={{ textAlign: 'center' }}>
                   <Typography variant="body2" color="textSecondary">
                     No funding rounds available for your startups.
                   </Typography>
