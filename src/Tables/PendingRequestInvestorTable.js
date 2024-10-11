@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, Avatar, CircularProgress, Pagination } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography, Avatar, Pagination } from '@mui/material';
 import axios from 'axios';
 import { tableStyles } from '../styles/tables';
 import StartupConfirmationDialog from '../Dialogs/StartupConfirmationDialog';
@@ -68,7 +68,7 @@ function PendingRequestInvestor({ onPendingRequestsCountChange }) {
   };
 
   const handleAccept = async (capTableInvestorId) => {
-    setLoading(prev => ({ ...prev, [capTableInvestorId]: true }));
+    setLoading((prev) => ({ ...prev, [capTableInvestorId]: true }));
     try {
       await axios.put(`${process.env.REACT_APP_API_URL}/funding-rounds/${capTableInvestorId}/status`, { status: 'accepted' });
       setPendingRequests((prevRequests) => prevRequests.filter((request) => request.capTableInvestorId !== capTableInvestorId));
@@ -76,12 +76,12 @@ function PendingRequestInvestor({ onPendingRequestsCountChange }) {
     } catch (error) {
       console.error('Error accepting request:', error);
     } finally {
-      setLoading(prev => ({ ...prev, [capTableInvestorId]: false }));
+      setLoading((prev) => ({ ...prev, [capTableInvestorId]: false }));
     }
   };
 
   const handleReject = async (capTableInvestorId) => {
-    setLoading(prev => ({ ...prev, [capTableInvestorId]: true }));
+    setLoading((prev) => ({ ...prev, [capTableInvestorId]: true }));
     try {
       await axios.put(`${process.env.REACT_APP_API_URL}/funding-rounds/${capTableInvestorId}/status`, { status: 'rejected' });
       setPendingRequests((prevRequests) => prevRequests.filter((request) => request.capTableInvestorId !== capTableInvestorId));
@@ -89,7 +89,7 @@ function PendingRequestInvestor({ onPendingRequestsCountChange }) {
     } catch (error) {
       console.error('Error rejecting request:', error);
     } finally {
-      setLoading(prev => ({ ...prev, [capTableInvestorId]: false }));
+      setLoading((prev) => ({ ...prev, [capTableInvestorId]: false }));
     }
   };
 
@@ -103,7 +103,7 @@ function PendingRequestInvestor({ onPendingRequestsCountChange }) {
   };
 
   // Calculate total number of pages
-  const totalPages = Math.ceil(pendingRequests.length / itemsPerPage);
+  const totalPages = Math.max(Math.ceil(pendingRequests.length / itemsPerPage)); 
   const indexOfLastRequest = currentPage * itemsPerPage;
   const indexOfFirstRequest = indexOfLastRequest - itemsPerPage;
   const currentRequests = pendingRequests.slice(indexOfFirstRequest, indexOfLastRequest);
@@ -145,8 +145,7 @@ function PendingRequestInvestor({ onPendingRequestsCountChange }) {
                       <Avatar
                         src={profilePictures[request.startupId]}
                         sx={{ mr: 2, border: '2px rgba(0, 116, 144, 1) solid', borderRadius: 1 }}
-                        variant='square'
-                      />
+                        variant="square"/>
                       {request.startupName}
                     </Box>
                   </TableCell>
@@ -188,14 +187,16 @@ function PendingRequestInvestor({ onPendingRequestsCountChange }) {
             )}
           </TableBody>
 
-          {/* Pagination Row */}
-          {currentRequests.length > 0 && (
-            <TableRow>
-              <TableCell colSpan={6} sx={{ textAlign: 'center', background: 'white' }}>
-                <Pagination count={totalPages} size="medium" page={currentPage} onChange={(event, value) => setCurrentPage(value)} sx={{ display: 'inline-block' }} />
-              </TableCell>
-            </TableRow>
-          )}
+          <TableRow>
+            <TableCell colSpan={6} sx={{ textAlign: 'center', background: 'white' }}>
+              <Pagination
+                count={totalPages}
+                size="medium"
+                page={currentPage}
+                onChange={(event, value) => setCurrentPage(value)}
+                sx={{ display: 'inline-block' }}/>
+            </TableCell>
+          </TableRow>
         </Table>
       </TableContainer>
 
