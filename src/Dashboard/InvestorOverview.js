@@ -37,6 +37,7 @@ const InvestorOverview = () => {
   const [filteredRows, setFilteredRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [investmentCount, setInvestmentCount] = useState(0);
 
   const [userData, setUserData] = useState(null);
   const [profilePictures, setProfilePictures] = useState({});
@@ -142,6 +143,7 @@ const InvestorOverview = () => {
       const investmentTotals = {};
       let totalInvestmentPHP = 0;
       let totalInvestments = 0;
+      let actualInvestmentCount = 0;
   
       filteredRows.forEach(row => {
         row.capTableInvestors.forEach(investor => {
@@ -150,6 +152,7 @@ const InvestorOverview = () => {
   
           totalInvestmentPHP += investmentValuePHP;
           totalInvestments++;
+          actualInvestmentCount++;
   
           if (!investmentTotals[row.startupName]) {
             investmentTotals[row.startupName] = 0;
@@ -167,11 +170,13 @@ const InvestorOverview = () => {
       setTotalInvestmentAmount(totalInvestmentPHP);
       const averageInvestmentPHP = totalInvestments > 0 ? totalInvestmentPHP / totalInvestments : 0;
       setAverageInvestmentSize(averageInvestmentPHP);
+      setInvestmentCount(actualInvestmentCount);
     } else {
       // Reset to defaults if no investments
       setTopInvestedCompany('None');
       setTotalInvestmentAmount(0);
       setAverageInvestmentSize(0);
+      setInvestmentCount(0);
     }
   }, [filteredRows]);
   
@@ -223,11 +228,11 @@ const InvestorOverview = () => {
         </Grid>
 
         <Grid item xs={12} sm={3}>
-          <TopInfoBox>
-            <TopInfoText>Investment Count</TopInfoText>
-            <TopInfoTitle>{rows.length}</TopInfoTitle>
-          </TopInfoBox>
-        </Grid>
+        <TopInfoBox>
+          <TopInfoText>Investment Count</TopInfoText>
+          <TopInfoTitle>{investmentCount}</TopInfoTitle>
+        </TopInfoBox>
+      </Grid>
 
         <Grid item xs={12} sm={3}>
           <TopInfoBox>
