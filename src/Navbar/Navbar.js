@@ -12,7 +12,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import NavigationIcon from '@mui/icons-material/Navigation';
 
-import InfoDialog from '../Dialogs/InfoDialog'; 
+import UserGuideDialog from '../Dialogs/UserGuideDialog'; 
 
 const drawerWidth = 240;
 
@@ -122,10 +122,10 @@ export default function Navbar() {
               `${firstName[0]}${lastName[0]}`
             )}
           </Avatar>
-          <Typography variant="h6" noWrap component="div" sx={{ marginRight: 2 }}>
+          <Typography variant="h6" noWrap component="div">
             {lastName}, {firstName}
           </Typography>
-          <IconButton size="medium" aria-label="show 17 new notifications" color="inherit" sx={{ marginRight: 5 }}>
+          <IconButton size="medium" aria-label="show 17 new notifications" color="inherit">
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -225,7 +225,7 @@ export default function Navbar() {
         </Box>
       </Drawer>
 
-      <InfoDialog open={openDialog} onClose={handleCloseDialog} activeStep={activeStep} setActiveStep={setActiveStep} />
+      <UserGuideDialog open={openDialog} onClose={handleCloseDialog} activeStep={activeStep} setActiveStep={setActiveStep} />
     </Box>
   );
 }

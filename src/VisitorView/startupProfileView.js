@@ -287,7 +287,7 @@ function StartUpView() {
 
                     <Divider sx={{ mb: 2 }} />
 
-                    <FundingDescription>Total Funds Raised: <strong>{startup.fundingRounds.length > 0 ? <span>{startup.fundingRounds[0].moneyRaisedCurrency} {totalMoneyRaised.toLocaleString()}</span> : <span>No funding rounds available</span>}</strong></FundingDescription>
+                    <FundingDescription>Total Funds Raised: <strong>{startup.fundingRounds.length > 0 ? <span>{startup.fundingRounds[0].moneyRaisedCurrency} {totalMoneyRaised.toLocaleString()}</span> : <span>None</span>}</strong></FundingDescription>
                     <FundingNote>*Funds raised through various funding rounds.</FundingNote>
                   </CardStyled>
 
