@@ -27,6 +27,7 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const [formattedTargetFunding, setFormattedTargetFunding] = useState('');
     const [formattedPreMoneyValuation, setFormattedPreMoneyValuation] = useState('');
     const [formattedMinimumShare, setFormattedMinimumShare] = useState('');
+    const [combinedInvestors, setCombinedInvestors] = useState([]);
     const [isEditMode, setIsEditMode] = useState(false);
 
     //CAP TABLE
@@ -283,6 +284,31 @@ function ViewFundingRound({ fundingRoundDetails }) {
         setIsEditMode(!isEditMode);
     };
 
+    
+    const combineInvestors = (investorsList) => {
+        const investorMap = new Map();
+
+        investorsList.forEach(investor => {
+            const key = investor.name;
+            if (investorMap.has(key)) {
+                const existingInvestor = investorMap.get(key);
+                existingInvestor.shares = (parseInt(existingInvestor.shares) + parseInt(investor.shares)).toString();
+                existingInvestor.formattedShares = formatNumber(existingInvestor.shares);
+            } else {
+                investorMap.set(key, { ...investor });
+            }
+        });
+
+        return Array.from(investorMap.values());
+    };
+
+    useEffect(() => {
+        if (investors.length > 0) {
+            const combined = combineInvestors(investors);
+            setCombinedInvestors(combined);
+        }
+    }, [investors]);
+
     return (
         <Box component="main" sx={{ flexGrow: 1, width: '100%', overflowX: 'hidden', maxWidth: '1000px', background: '#F2F2F2' }}>
             <Typography variant="h5" sx={{ color: '#414a4c', fontWeight: '500', pl: 5, pb: 3 }}>
@@ -506,20 +532,22 @@ function ViewFundingRound({ fundingRoundDetails }) {
             </Typography>
 
             <Grid container spacing={3} sx={{ ml: 2 }}>
-                {investors.map((investor, index) => (
+                {combinedInvestors.map((investor, index) => (
                     <Grid item xs={12} sm={11} key={index}>
                         <Grid container spacing={2}>
                             <Grid item xs={4}>
                                 <label>Shareholder Name</label>
                                 <FormControl fullWidth variant="outlined" error={!!(errors.investors && errors.investors[index] && errors.investors[index].name)}>
-                                    <Autocomplete disablePortal options={allInvestors}
+                                    <Autocomplete
+                                        disablePortal
+                                        options={allInvestors}
                                         sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
                                         getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
                                         value={allInvestors.find(inv => inv.id === investor.name) || null}
                                         onChange={(event, newValue) => handleInvestorChange(index, 'name', newValue ? newValue.id : '')}
                                         disabled={!isEditMode}
                                         renderInput={(params) => (
-                                        <TextField {...params} variant="outlined" error={!!(errors.investors && errors.investors[index] && errors.investors[index].name)} />
+                                            <TextField {...params} variant="outlined" error={!!(errors.investors && errors.investors[index] && errors.investors[index].name)} />
                                         )}
                                         isOptionEqualToValue={(option, value) => option.id === value.id}
                                     />
@@ -528,45 +556,61 @@ function ViewFundingRound({ fundingRoundDetails }) {
                             </Grid>
                             
                             <Grid item xs={4}>
-                                <formControl fullWidth variant="outlined">
-                                <label>Title</label>
-                                <TextField fullWidth variant="outlined" value={investor.title}
-                                    onChange={(e) => handleInvestorChange(index, 'title', e.target.value)}
-                                    disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                    error={!!(errors.investors && errors.investors[index] && errors.investors[index].title)}
-                                />
-                                </formControl>
+                                <FormControl fullWidth variant="outlined">
+                                    <label>Title</label>
+                                    <TextField
+                                        fullWidth
+                                        variant="outlined"
+                                        value={investor.title}
+                                        onChange={(e) => handleInvestorChange(index, 'title', e.target.value)}
+                                        disabled={!isEditMode}
+                                        sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                        error={!!(errors.investors && errors.investors[index] && errors.investors[index].title)}
+                                    />
+                                </FormControl>
                                 {errors.investors && errors.investors[index] && errors.investors[index].title && <FormHelperText sx={{ color: 'red' }}>{errors.investors[index].title}</FormHelperText>}
                             </Grid>
 
                             <Grid item xs={3.5}>
-                                <formControl fullWidth variant="outlined">
-                                <label>Shares</label>
-                                <TextField fullWidth variant="outlined" value={investor.formattedShares}
-                                    onChange={(e) => handleSharesChange(index, e.target.value)} disabled={!isEditMode}
-                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                    error={!!(errors.investors && errors.investors[index] && errors.investors[index].shares)}
-                                />
-                                </formControl>
+                                <FormControl fullWidth variant="outlined">
+                                    <label>Shares</label>
+                                    <TextField
+                                        fullWidth
+                                        variant="outlined"
+                                        value={investor.formattedShares}
+                                        onChange={(e) => handleSharesChange(index, e.target.value)}
+                                        disabled={!isEditMode}
+                                        sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                        error={!!(errors.investors && errors.investors[index] && errors.investors[index].shares)}
+                                    />
+                                </FormControl>
                                 {errors.investors && errors.investors[index] && errors.investors[index].shares && <FormHelperText sx={{ color: 'red' }}>{errors.investors[index].shares}</FormHelperText>}
                             </Grid>
 
                             <Grid item xs={.5}>
-                            {investors.length > 0 && (
-                                <IconButton sx={{ mt: 3}} color="error" aria-label="remove"
-                                    disabled={!isEditMode} value={investor.id}
-                                    onClick={() => handleRemoveInvestor(index)}>
-                                    <CloseIcon />
-                                </IconButton>
-                            )}
+                                {combinedInvestors.length > 0 && (
+                                    <IconButton
+                                        sx={{ mt: 3 }}
+                                        color="error"
+                                        aria-label="remove"
+                                        disabled={!isEditMode}
+                                        value={investor.id}
+                                        onClick={() => handleRemoveInvestor(index)}
+                                    >
+                                        <CloseIcon />
+                                    </IconButton>
+                                )}
                             </Grid>
                         </Grid>
                     </Grid>
                 ))}
                 <Grid item xs={12} sm={11}>
-                    <Button variant="outlined" sx={{ color: '#336FB0', borderColor: '#336FB0', '&:hover': { color: '#336FB0)', borderColor: '#336FB0' } }} 
-                    onClick={handleAddInvestor} disabled={!isEditMode}>
+                    <Button
+                        variant="outlined"
+                        sx={{ color: '#336FB0', borderColor: '#336FB0', '&:hover': { color: '#336FB0)', borderColor: '#336FB0' } }}
+                        onClick={handleAddInvestor}
+                        disabled={!isEditMode}
+                    >
                         Add Investor
                     </Button>
                 </Grid>

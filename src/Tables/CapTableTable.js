@@ -95,7 +95,7 @@ function CapTable({
                 <TableRow key={table.id} sx={{ background: 'white' }}>
                   <TableCell sx={tableStyles.cell}>{table.name}</TableCell>
                   <TableCell sx={tableStyles.cell}>{table.title}</TableCell>
-                  <TableCell sx={tableStyles.cell}>{table.shares}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{Number(table.shares).toLocaleString()}</TableCell>
                   <TableCell sx={tableStyles.cell}>
                     {fundingRound.moneyRaisedCurrency} {Number(table.totalShares).toLocaleString()}
                   </TableCell>

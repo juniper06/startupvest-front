@@ -96,6 +96,31 @@ function FundingRoundView() {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  const combineInvestors = (investors) => {
+    const combinedInvestors = {};
+    
+    investors.forEach((investorDetail) => {
+      const investor = investorDetail.investor || {};
+      if (investor.isDeleted || investorDetail.investorRemoved) return;
+
+      const fullName = `${investor.firstName || ''} ${investor.lastName || ''}`.trim();
+      
+      if (fullName in combinedInvestors) {
+        combinedInvestors[fullName].shares += Number(investorDetail.shares || 0);
+        combinedInvestors[fullName].totalInvestment += Number(investorDetail.totalInvestment || 0);
+      } else {
+        combinedInvestors[fullName] = {
+          name: fullName,
+          title: investorDetail.title || 'N/A',
+          shares: Number(investorDetail.shares || 0),
+          totalInvestment: Number(investorDetail.totalInvestment || 0),
+        };
+      }
+    });
+
+    return Object.values(combinedInvestors);
+  };
+
   return (
     <>
       <Navbar />
@@ -265,48 +290,34 @@ function FundingRoundView() {
                     </TableRow>
                   </StyledTableHead>
                   <TableBody>
-                    {loading ? (
-                      <TableRow>
-                        <TableCell colSpan={4} align="center">
-                          <Skeleton variant="text" />
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      paginatedInvestors &&
-                      paginatedInvestors
-                        .filter((investorDetail) => {
-                          const investor = investorDetail.investor || {};
-                          return !investor.isDeleted && !investorDetail.investorRemoved;
-                        })
-                        .map((investorDetail, index) => {
-                          const investor = investorDetail.investor || {};
-                          return (
-                            <TableRow key={index}>
-                              <TableCell sx={{ textAlign: 'center' }}>
-                                {investor.firstName ||
-                                  fundinground.capTableInvestors[0]?.investorDetails.firstName ||
-                                  'N/A'}{' '}
-                                {investor.lastName ||
-                                  fundinground.capTableInvestors[0]?.investorDetails.lastName ||
-                                  'N/A'}
-                              </TableCell>
-                              <TableCell sx={{ textAlign: 'center' }}>
-                                {investorDetail.title || 'N/A'}
-                              </TableCell>
-                              <TableCell sx={{ textAlign: 'center' }}>
-                                {Number(investorDetail.shares || 0).toLocaleString()}
-                              </TableCell>
-                              <TableCell sx={{ textAlign: 'center' }}>
-                                {fundinground.moneyRaisedCurrency}{' '}
-                                {investorDetail.totalInvestment
-                                  ? Number(investorDetail.totalInvestment).toLocaleString()
-                                  : 'N/A'}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })
-                    )}
-                  </TableBody>
+    {loading ? (
+      <TableRow>
+        <TableCell colSpan={4} align="center">
+          <Skeleton variant="text" />
+        </TableCell>
+      </TableRow>
+    ) : (
+      combineInvestors(fundinground.capTableInvestors)
+        .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+        .map((investor, index) => (
+          <TableRow key={index}>
+            <TableCell sx={{ textAlign: 'center' }}>
+              {investor.name}
+            </TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>
+              {investor.title}
+            </TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>
+              {Number(investor.shares).toLocaleString()}
+            </TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>
+              {fundinground.moneyRaisedCurrency}{' '}
+              {Number(investor.totalInvestment).toLocaleString()}
+            </TableCell>
+          </TableRow>
+        ))
+    )}
+  </TableBody>
                 </StyledTable>
 
                 {fundinground.capTableInvestors && fundinground.capTableInvestors.length > rowsPerPage && (
