@@ -122,10 +122,10 @@ export default function Navbar() {
               `${firstName[0]}${lastName[0]}`
             )}
           </Avatar>
-          <Typography variant="h6" noWrap component="div" sx={{ marginRight: 2 }}>
+          <Typography variant="h6" noWrap component="div">
             {lastName}, {firstName}
           </Typography>
-          <IconButton size="medium" aria-label="show 17 new notifications" color="inherit" sx={{ marginRight: 5 }}>
+          <IconButton size="medium" aria-label="show 17 new notifications" color="inherit">
           </IconButton>
         </Toolbar>
       </AppBar>
