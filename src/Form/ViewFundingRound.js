@@ -27,7 +27,6 @@ function ViewFundingRound({ fundingRoundDetails }) {
     const [formattedTargetFunding, setFormattedTargetFunding] = useState('');
     const [formattedPreMoneyValuation, setFormattedPreMoneyValuation] = useState('');
     const [formattedMinimumShare, setFormattedMinimumShare] = useState('');
-    const [combinedInvestors, setCombinedInvestors] = useState([]);
     const [isEditMode, setIsEditMode] = useState(false);
 
     //CAP TABLE
@@ -78,39 +77,32 @@ function ViewFundingRound({ fundingRoundDetails }) {
     }, []);
 
     const handleInvestorChange = (index, field, value) => {
-        setInvestors(prevInvestors => {
-            const updatedInvestors = [...prevInvestors];
-            if (!updatedInvestors[index]) {
-                updatedInvestors[index] = {};
-            }
-            updatedInvestors[index][field] = value;
-            return updatedInvestors;
-        });
-    
+        const updatedInvestors = [...investors];
+        updatedInvestors[index][field] = value;
+        setInvestors(updatedInvestors);
+
         // Clear the error for this field
-        setErrors(prevErrors => {
-            const newErrors = { ...prevErrors };
-            if (newErrors.investors && newErrors.investors[index]) {
-                newErrors.investors[index][field] = '';
-            }
-            return newErrors;
-        });
+        const newErrors = { ...errors };
+        if (newErrors.investors && newErrors.investors[index]) {
+            newErrors.investors[index][field] = '';
+        }
+        setErrors(newErrors);
     };
 
     const validateForm = () => {
         const newErrors = {};
         const emptyFieldError = 'This field cannot be empty';
-    
+
         // Validate closed date
         if (!closedMonth) newErrors.closedMonth = "Closed month is required.";
         if (!closedDay) newErrors.closedDay = 'Closed day is required.';
         if (!closedYear) newErrors.closedYear = 'Closed year is required.';
-    
+
         // Check if closedYear is earlier than announcedYear
         if (announcedYear && closedYear && parseInt(closedYear) < parseInt(announcedYear)) {
             newErrors.closedYear = 'Closed year can\'t be before announced year.';
         }
-    
+
         // If the years are the same, check the months and days
         if (announcedYear && closedYear && parseInt(closedYear) === parseInt(announcedYear)) {
             if (closedMonth < announcedMonth) {
@@ -119,37 +111,28 @@ function ViewFundingRound({ fundingRoundDetails }) {
                 newErrors.closedDay = 'Closed day can\'t be before announced day.';
             }
         }
-    
+
         // Validate target funding and pre-money valuation
         if (!formattedTargetFunding) newErrors.targetFunding = emptyFieldError;
         if (!formattedPreMoneyValuation) newErrors.preMoneyValuation = emptyFieldError;
-    
-        // Validate investors only if there are any
-        if (investors.length > 0) {
-            const investorErrors = investors.map(investor => {
-                const errors = {};
-                const hasAnyInput = investor.name || investor.title || investor.shares;
-                
-                if (hasAnyInput) {
-                    if (!investor.name) errors.name = emptyFieldError;
-                    if (!investor.title) errors.title = emptyFieldError;
-                    if (!investor.shares) errors.shares = emptyFieldError;
-                }
-                
-                return errors;
-            });
-    
-            if (investorErrors.some(error => Object.keys(error).length > 0)) {
-                newErrors.investors = investorErrors;
-            }
+
+        // Validate investors
+        const investorErrors = investors.map(investor => ({
+            name: !investor.name ? emptyFieldError : '',
+            title: !investor.title ? emptyFieldError : '',
+            shares: !investor.shares ? emptyFieldError : ''
+        }));
+
+        if (investorErrors.some(error => error.name || error.title || error.shares)) {
+            newErrors.investors = investorErrors;
         }
-    
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleAddInvestor = () => {
-        setInvestors(prevInvestors => [...prevInvestors, { name: null, title: '', shares: '', investorRemoved: false }]);
+        setInvestors([...investors, { name: '', title: '', shares: '', investorRemoved: false }]);
     };
 
     const formatNumber = (num) => {
@@ -237,13 +220,11 @@ function ViewFundingRound({ fundingRoundDetails }) {
         }
     
         try {
-            const updatedInvestors = investors
-                .filter(investor => investor.name !== null)
-                .map(investor => ({
-                    id: investor.name, 
-                    title: investor.title,
-                    shares: parseInt(unformatNumber(investor.shares))
-                }));
+            const updatedInvestors = investors.map(investor => ({
+                id: investor.name, 
+                title: investor.title,
+                shares: parseInt(unformatNumber(investor.shares))
+            }));
     
             const updatePayload = {
                 updateData: {
@@ -270,26 +251,6 @@ function ViewFundingRound({ fundingRoundDetails }) {
             console.log('Funding round updated successfully:', response.data);
             setIsEditMode(false);
     
-            // Refresh the component state with the latest data from the server
-            const refreshedData = await axios.get(`${process.env.REACT_APP_API_URL}/funding-rounds/${fundingRoundDetails.id}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-    
-            // Update the local state with the refreshed data
-            const refreshedInvestors = refreshedData.data.capTableInvestors
-                .filter(investor => !investor.investorRemoved && investor.status === 'accepted')
-                .map(investor => ({
-                    name: investor.investor.id, 
-                    title: investor.title,
-                    shares: investor.shares.toString(),
-                    formattedShares: formatNumber(investor.shares.toString())
-                }));
-    
-            setInvestors(refreshedInvestors.length > 0 ? refreshedInvestors : [{ name: null, title: '', shares: '', investorRemoved: false }]);
-            setCombinedInvestors(refreshedInvestors.length > 0 ? refreshedInvestors : [{ name: null, title: '', shares: '', formattedShares: '' }]);
-    
             // Add a small delay before refreshing to ensure the server has processed the update
             setTimeout(() => {
                 window.location.reload();
@@ -303,32 +264,16 @@ function ViewFundingRound({ fundingRoundDetails }) {
         try {
             const investorToRemove = investors[index];
             
-            // Remove the investor from the UI
-            setInvestors(prevInvestors => {
-                const updatedInvestors = prevInvestors.filter((_, i) => i !== index);
-                // If this was the last investor, add an empty one to maintain the form
-                return updatedInvestors.length === 0 ? [{ name: null, title: '', shares: '', investorRemoved: false }] : updatedInvestors;
-            });
-    
-            // Update the combined investors state
-            setCombinedInvestors(prevCombined => {
-                const updatedCombined = prevCombined.filter((_, i) => i !== index);
-                return updatedCombined.length === 0 ? [{ name: null, title: '', shares: '', formattedShares: '' }] : updatedCombined;
-            });
+            // Remove the investor from the UI first
+            const updatedInvestors = investors.filter((_, i) => i !== index);
+            setInvestors(updatedInvestors);
     
             // Send a request to the backend to mark the investor as removed
-            if (investorToRemove.name) {
-                const response = await axios.put(`${process.env.REACT_APP_API_URL}/cap-table-investor/${investorToRemove.name}/${fundingRoundDetails.id}`, {
-                    investorRemoved: true, 
-                });
-                console.log('Investor removed successfully:', response.data);
-            }
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/cap-table-investor/${investorToRemove.name}/${fundingRoundDetails.id}`, {
+                investorRemoved: true, 
+            });
     
-            // If this was the last investor, update the UI to show an empty form
-            if (investors.length === 1) {
-                setInvestors([{ name: null, title: '', shares: '', investorRemoved: false }]);
-                setCombinedInvestors([{ name: null, title: '', shares: '', formattedShares: '' }]);
-            }
+            console.log('Investor removed successfully:', response.data);
         } catch (error) {
             console.error('Error removing investor:', error);
         }
@@ -336,38 +281,6 @@ function ViewFundingRound({ fundingRoundDetails }) {
 
     const toggleEditMode = () => {
         setIsEditMode(!isEditMode);
-    };
-
-    
-    const combineInvestors = (investorsList) => {
-        const investorMap = new Map();
-
-        investorsList.forEach(investor => {
-            const key = investor.name;
-            if (investorMap.has(key)) {
-                const existingInvestor = investorMap.get(key);
-                existingInvestor.shares = (parseInt(existingInvestor.shares) + parseInt(investor.shares)).toString();
-                existingInvestor.formattedShares = formatNumber(existingInvestor.shares);
-            } else {
-                investorMap.set(key, { ...investor });
-            }
-        });
-
-        return Array.from(investorMap.values());
-    };
-
-    useEffect(() => {
-        if (investors.length > 0) {
-            const combined = combineInvestors(investors);
-            setCombinedInvestors(combined);
-        }
-    }, [investors]);
-
-    // Add this function to your component
-    const isInvestorNameTaken = (currentIndex, name) => {
-        return combinedInvestors.some((investor, index) => 
-            index !== currentIndex && investor.name === name
-        );
     };
 
     return (
@@ -593,97 +506,67 @@ function ViewFundingRound({ fundingRoundDetails }) {
             </Typography>
 
             <Grid container spacing={3} sx={{ ml: 2 }}>
-            {combinedInvestors.map((investor, index) => (
-            <Grid item xs={12} sm={11} key={index}>
-                <Grid container spacing={2}>
-                    <Grid item xs={4}>
-                        <label>Shareholder Name</label>
-                        <FormControl fullWidth variant="outlined" error={!!(errors.investors && errors.investors[index] && errors.investors[index].name)}>
-                            <Autocomplete
-                                disablePortal
-                                options={allInvestors.filter(inv => !isInvestorNameTaken(index, inv.id))}
-                                sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
-                                value={allInvestors.find(inv => inv.id === investor.name) || null}
-                                onChange={(event, newValue) => {
-                                    if (newValue && !isInvestorNameTaken(index, newValue.id)) {
-                                        handleInvestorChange(index, 'name', newValue ? newValue.id : '');
-                                    }
-                                }}
-                                disabled={!isEditMode || (investor.name !== null && isInvestorNameTaken(index, investor.name))}
-                                renderInput={(params) => (
-                                    <TextField 
-                                        {...params} 
-                                        variant="outlined" 
-                                        error={!!(errors.investors && errors.investors[index] && errors.investors[index].name)}
-                                        InputProps={{
-                                            ...params.InputProps,
-                                            readOnly: investor.name !== null && isInvestorNameTaken(index, investor.name),
-                                        }}
+                {investors.map((investor, index) => (
+                    <Grid item xs={12} sm={11} key={index}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={4}>
+                                <label>Shareholder Name</label>
+                                <FormControl fullWidth variant="outlined" error={!!(errors.investors && errors.investors[index] && errors.investors[index].name)}>
+                                    <Autocomplete disablePortal options={allInvestors}
+                                        sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                        getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
+                                        value={allInvestors.find(inv => inv.id === investor.name) || null}
+                                        onChange={(event, newValue) => handleInvestorChange(index, 'name', newValue ? newValue.id : '')}
+                                        disabled={!isEditMode}
+                                        renderInput={(params) => (
+                                        <TextField {...params} variant="outlined" error={!!(errors.investors && errors.investors[index] && errors.investors[index].name)} />
+                                        )}
+                                        isOptionEqualToValue={(option, value) => option.id === value.id}
                                     />
-                                )}
-                                isOptionEqualToValue={(option, value) => option.id === value.id}
-                            />
-                        </FormControl>
-                        {errors.investors && errors.investors[index] && errors.investors[index].name && <FormHelperText sx={{ color: 'red' }}>{errors.investors[index].name}</FormHelperText>}
+                                </FormControl>
+                                {errors.investors && errors.investors[index] && errors.investors[index].name && <FormHelperText sx={{ color: 'red' }}>{errors.investors[index].name}</FormHelperText>}
                             </Grid>
                             
                             <Grid item xs={4}>
-                                <FormControl fullWidth variant="outlined">
-                                    <label>Title</label>
-                                    <TextField
-                                        fullWidth
-                                        variant="outlined"
-                                        value={investor.title}
-                                        onChange={(e) => handleInvestorChange(index, 'title', e.target.value)}
-                                        disabled={!isEditMode}
-                                        sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                        error={!!(errors.investors && errors.investors[index] && errors.investors[index].title)}
-                                    />
-                                </FormControl>
+                                <formControl fullWidth variant="outlined">
+                                <label>Title</label>
+                                <TextField fullWidth variant="outlined" value={investor.title}
+                                    onChange={(e) => handleInvestorChange(index, 'title', e.target.value)}
+                                    disabled={!isEditMode}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                    error={!!(errors.investors && errors.investors[index] && errors.investors[index].title)}
+                                />
+                                </formControl>
                                 {errors.investors && errors.investors[index] && errors.investors[index].title && <FormHelperText sx={{ color: 'red' }}>{errors.investors[index].title}</FormHelperText>}
                             </Grid>
 
                             <Grid item xs={3.5}>
-                                <FormControl fullWidth variant="outlined">
-                                    <label>Shares</label>
-                                    <TextField
-                                        fullWidth
-                                        variant="outlined"
-                                        value={investor.formattedShares}
-                                        onChange={(e) => handleSharesChange(index, e.target.value)}
-                                        disabled={!isEditMode}
-                                        sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
-                                        error={!!(errors.investors && errors.investors[index] && errors.investors[index].shares)}
-                                    />
-                                </FormControl>
+                                <formControl fullWidth variant="outlined">
+                                <label>Shares</label>
+                                <TextField fullWidth variant="outlined" value={investor.formattedShares}
+                                    onChange={(e) => handleSharesChange(index, e.target.value)} disabled={!isEditMode}
+                                    sx={{ height: '45px', '& .MuiInputBase-root': { height: '45px' } }}
+                                    error={!!(errors.investors && errors.investors[index] && errors.investors[index].shares)}
+                                />
+                                </formControl>
                                 {errors.investors && errors.investors[index] && errors.investors[index].shares && <FormHelperText sx={{ color: 'red' }}>{errors.investors[index].shares}</FormHelperText>}
                             </Grid>
 
                             <Grid item xs={.5}>
-                                {combinedInvestors.length > 0 && (
-                                    <IconButton
-                                        sx={{ mt: 3 }}
-                                        color="error"
-                                        aria-label="remove"
-                                        disabled={!isEditMode}
-                                        value={investor.id}
-                                        onClick={() => handleRemoveInvestor(index)}
-                                    >
-                                        <CloseIcon />
-                                    </IconButton>
-                                )}
+                            {investors.length > 0 && (
+                                <IconButton sx={{ mt: 3}} color="error" aria-label="remove"
+                                    disabled={!isEditMode} value={investor.id}
+                                    onClick={() => handleRemoveInvestor(index)}>
+                                    <CloseIcon />
+                                </IconButton>
+                            )}
                             </Grid>
                         </Grid>
                     </Grid>
                 ))}
                 <Grid item xs={12} sm={11}>
-                    <Button
-                        variant="outlined"
-                        sx={{ color: '#336FB0', borderColor: '#336FB0', '&:hover': { color: '#336FB0)', borderColor: '#336FB0' } }}
-                        onClick={handleAddInvestor}
-                        disabled={!isEditMode}
-                    >
+                    <Button variant="outlined" sx={{ color: '#336FB0', borderColor: '#336FB0', '&:hover': { color: '#336FB0)', borderColor: '#336FB0' } }} 
+                    onClick={handleAddInvestor} disabled={!isEditMode}>
                         Add Investor
                     </Button>
                 </Grid>
