@@ -3,6 +3,16 @@ import { Typography, Table, TableBody, TableCell, TableHead, TableRow, Avatar, T
 import { tableStyles } from '../styles/tables';
 
 const InvestmentTable = ({ filteredRows, page, rowsPerPage, handleRowClick, profilePictures, handleChangePage }) => {
+  const calculateInvestmentData = (row) => {
+    const acceptedInvestors = row.capTableInvestors.filter(investor => investor.status === 'accepted');
+    const totalShares = acceptedInvestors.reduce((sum, investor) => sum + Number(investor.shares), 0);
+    const totalInvestment = acceptedInvestors.reduce((sum, investor) => sum + Number(investor.totalInvestment), 0);
+    const overallTotalShares = row.moneyRaised / row.minimumShare;
+    const percentage = overallTotalShares > 0 ? ((totalShares / overallTotalShares) * 100).toFixed(2) : '0.00';
+
+    return { totalShares, totalInvestment, percentage };
+  };
+
   return (
     <TableContainer component={Paper} sx={{ mt: 3 }}>
       <Table sx={tableStyles} aria-label="investments table">
@@ -32,11 +42,7 @@ const InvestmentTable = ({ filteredRows, page, rowsPerPage, handleRowClick, prof
         <TableBody>
           {filteredRows.length > 0 ? (
             filteredRows.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((row) => {
-              const acceptedInvestor = row.capTableInvestors.find(investor => investor.status === 'accepted');
-              if (!acceptedInvestor) return null;
-
-              const totalShares = row.moneyRaised / row.minimumShare;
-              const percentage = totalShares > 0 ? ((acceptedInvestor.shares / totalShares) * 100).toFixed(2) : '0.00';
+              const { totalShares, totalInvestment, percentage } = calculateInvestmentData(row);
 
               return (
                 <TableRow key={row.id} hover onClick={() => handleRowClick(row)} sx={{ cursor: 'pointer' }}>
@@ -48,9 +54,9 @@ const InvestmentTable = ({ filteredRows, page, rowsPerPage, handleRowClick, prof
                   </TableCell>
                   <TableCell sx={tableStyles.cell}>{row.fundingName}</TableCell>
                   <TableCell sx={tableStyles.cell}>{row.fundingType}</TableCell>
-                  <TableCell sx={tableStyles.cell}>{Number(acceptedInvestor.shares).toLocaleString()}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{Number(totalShares).toLocaleString()}</TableCell>
                   <TableCell sx={tableStyles.cell}>
-                    {row.moneyRaisedCurrency} {Number(acceptedInvestor.totalInvestment).toLocaleString()}
+                    {row.moneyRaisedCurrency} {Number(totalInvestment).toLocaleString()}
                   </TableCell>
                   <TableCell sx={tableStyles.cell}>{percentage}%</TableCell>
                 </TableRow>
