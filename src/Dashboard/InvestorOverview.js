@@ -132,7 +132,7 @@ const InvestorOverview = () => {
       .map(row => ({
         ...row,
         capTableInvestors: row.capTableInvestors.filter(investor => 
-          investor.status === 'accepted' && investor.investor?.id === userId
+          investor.status === 'accepted' && investor.investor?.id === userId && !investor.investorRemoved
         ),
       }))
       .filter(row => row.capTableInvestors.length > 0); // Only keep rows with accepted investors
