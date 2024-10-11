@@ -18,7 +18,6 @@ function ViewInvestorProfileDialog({ open, profile, onClose }) {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    borderRadius: '8px'
                 }}>
                 <Box
                     sx={{
@@ -30,6 +29,7 @@ function ViewInvestorProfileDialog({ open, profile, onClose }) {
                         overflow: 'hidden',
                         boxShadow: '0 0 20px rgba(0, 0, 0, 0.5)',
                         position: 'relative',
+                        borderRadius: '8px'
                     }}>
                     <Box
                         sx={{

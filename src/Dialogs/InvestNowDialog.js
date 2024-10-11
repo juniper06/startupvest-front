@@ -95,18 +95,15 @@ const InvestNowDialog = ({
           position: 'relative',
           mt: 2,
           ml: 3,
-        }}
-      >
+        }}>
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           Invest in {companyName}
         </Typography>
         <IconButton
           edge="end"
-          color="inherit"
           aria-label="close"
-          sx={{ position: 'absolute', right: 15, top: -12 }}
-          onClick={handleClose}
-        >
+          sx={{ position: 'absolute', right: 15, top: -12, color: '#ED262A' }}
+          onClick={handleClose}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>

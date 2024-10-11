@@ -12,7 +12,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import NavigationIcon from '@mui/icons-material/Navigation';
 
-import InfoDialog from '../Dialogs/InfoDialog'; 
+import UserGuideDialog from '../Dialogs/UserGuideDialog'; 
 
 const drawerWidth = 240;
 
@@ -225,7 +225,7 @@ export default function Navbar() {
         </Box>
       </Drawer>
 
-      <InfoDialog open={openDialog} onClose={handleCloseDialog} activeStep={activeStep} setActiveStep={setActiveStep} />
+      <UserGuideDialog open={openDialog} onClose={handleCloseDialog} activeStep={activeStep} setActiveStep={setActiveStep} />
     </Box>
   );
 }
