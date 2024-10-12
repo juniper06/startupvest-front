@@ -91,11 +91,11 @@ function UserProfileView() {
                         {loading ? (
                           <Skeleton variant="text" width="100%" height={100} />
                         ) : (
-                          <Typography variant="body1" textAlign="justify">{profile.biography}</Typography>
+                          <Typography variant="body1" textAlign="justify" sx={{ whiteSpace: 'pre-wrap' }}>{profile.biography}</Typography>
                         )}
                       </Grid>
 
-                      <Grid item xs={10} lg={4}>
+                      <Grid item xs={10} lg={5}>
                         <Typography><strong>Email Address</strong></Typography>
                         {loading ? (
                           <Skeleton variant="text" width="100%" />
@@ -113,7 +113,7 @@ function UserProfileView() {
                         )}
                       </Grid>
 
-                      <Grid item xs={10} lg={4}>
+                      <Grid item xs={10} lg={3}>
                         <Typography><strong>Gender</strong></Typography>
                         {loading ? (
                           <Skeleton variant="text" width="100%" />

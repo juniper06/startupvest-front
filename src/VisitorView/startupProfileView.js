@@ -170,7 +170,7 @@ function StartUpView() {
                           {loading ? (
                             <Skeleton variant="text" width="100%" height={80} />
                           ) : (
-                            <Typography variant="body1">{startup.companyDescription}</Typography>
+                            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{startup.companyDescription}</Typography>
                           )}
                         </Grid>
 
