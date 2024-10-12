@@ -25,7 +25,9 @@ function FundingRoundView() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(5);
   const [openDialog, setOpenDialog] = useState(false);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
+  const [hasInvestorProfile, setHasInvestorProfile] = useState(false);
+  const [investorProfileChecked, setInvestorProfileChecked] = useState(false);
   const location = useLocation();
   const { fundinground } = location.state || {};
 
@@ -66,6 +68,57 @@ function FundingRoundView() {
 
     fetchProfilePicture();
   }, [fundinground]);
+
+  useEffect(() => {
+    const checkInvestorProfile = async () => {
+      const userId = localStorage.getItem('userId');
+      console.log('Checking investor profile for userId:', userId);
+      
+      if (!userId) {
+        console.log('No userId found in localStorage');
+        setHasInvestorProfile(false);
+        setInvestorProfileChecked(true);
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/investors/all`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        console.log('Investor profile API response:', response.data);
+        
+        // Log each investor's ID for debugging
+        response.data.forEach((investor, index) => {
+          console.log(`Investor ${index}: id = ${investor.id}, type = ${typeof investor.id}`);
+        });
+        
+        // Convert userId to a number for comparison
+        const userIdNumber = Number(userId);
+        console.log('Converted userId:', userIdNumber, 'type:', typeof userIdNumber);
+        
+        // Check if there's an investor with an ID matching the user's ID
+        const hasProfile = response.data.some(investor => {
+          const match = investor.id === userIdNumber;
+          console.log(`Comparing investor id ${investor.id} (${typeof investor.id}) with userId ${userIdNumber} (${typeof userIdNumber}): ${match}`);
+          return match;
+        });
+        
+        console.log('Final hasProfile value:', hasProfile);
+        setHasInvestorProfile(hasProfile);
+      } catch (error) {
+        console.error('Error checking investor profile:', error);
+        setHasInvestorProfile(false);
+      } finally {
+        setInvestorProfileChecked(true);
+      }
+    };
+
+    checkInvestorProfile();
+  }, []);
+
+  console.log('Render - hasInvestorProfile:', hasInvestorProfile, 'investorProfileChecked:', investorProfileChecked);
 
   const handlePageChange = (event, newPage) => {
     setCurrentPage(newPage);
@@ -145,12 +198,16 @@ function FundingRoundView() {
               </Typography>
             )}
 
-            {loading ? (
-              <Skeleton variant="rectangular" width={150} height={40} /> 
-            ) : (
+        {loading || !investorProfileChecked ? (
+              <Skeleton variant="rectangular" width={150} height={40} />
+            ) : hasInvestorProfile ? (
               <Button variant="outlined" sx={{ width: '150px' }} onClick={handleOpenDialog}>
                 Invest Now
               </Button>
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                You need an investor profile to invest.
+              </Typography>
             )}
           </Grid>
         </Grid>
@@ -337,14 +394,15 @@ function FundingRoundView() {
         </Box>
 
         {/* Invest Now Dialog */}
-        <InvestNowDialog 
-        open={openDialog} 
-        onClose={handleCloseDialog} 
-        pricePerShare={fundinground.minimumShare}
-        companyName={fundinground.startupName} 
-        fundingRound={fundinground.fundingType}
-        fundingRoundId={fundinground.id} // Pass fundingRoundID
-        investorId={investorId} />
+        <InvestNowDialog
+          open={openDialog}
+          onClose={handleCloseDialog}
+          pricePerShare={fundinground.minimumShare}
+          companyName={fundinground.startupName}
+          fundingRound={fundinground.fundingType}
+          fundingRoundId={fundinground.id}
+          investorId={localStorage.getItem('userId')}
+        />
       </Box>
     </>
   );
