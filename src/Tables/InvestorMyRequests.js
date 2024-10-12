@@ -145,7 +145,7 @@ function InvestorRequest({ onPendingRequestsCountChange }) {
                     </Box>
                   </TableCell>
                   <TableCell sx={tableStyles.cell}>{formatNumber(request.shares)}</TableCell>
-                  <TableCell sx={tableStyles.cell}>{formatNumber(request.totalinvestment)}</TableCell>
+                  <TableCell sx={tableStyles.cell}>{request.currency} {formatNumber(request.totalinvestment)}</TableCell>
                   <TableCell sx={tableStyles.cell}>{request.status}</TableCell>
                   <TableCell sx={tableStyles.cell}>
                     {request.status === 'pending' && (
