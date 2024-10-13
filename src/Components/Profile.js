@@ -4,15 +4,17 @@ import Navbar from '../Navbar/Navbar';
 import CreateBusinessProfileDialog from '../Dialogs/CreateBusinessProfileDialog';
 import genderOptions from '../static/genderOptions';
 import ChangePasswordDialog from '../Dialogs/ChangePasswordDialog';
+import { useProfile } from '../Context/ProfileContext';
 
 import { Box, Typography, Toolbar, TextField, Avatar, Button, Select, MenuItem, Grid, Skeleton} from '@mui/material';
 
 const drawerWidth = 240;
 
 function Profile() {
+  const { hasInvestorProfile, businessProfiles, setBusinessProfiles } = useProfile();
+
   const [isEditable, setIsEditable] = useState(false);
   const [openCreateBusinessProfile, setCreateBusinessProfile] = useState(false);
-  const [businessProfiles, setBusinessProfiles] = useState([]);
   const [openChangePassword, setOpenChangePassword] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -360,7 +362,7 @@ function Profile() {
           </Box>
         </Box>
 
-        <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} />
+        <CreateBusinessProfileDialog open={openCreateBusinessProfile} onClose={handleCloseBusinessProfile} hasInvestorProfile={hasInvestorProfile} />
         <ChangePasswordDialog open={openChangePassword} onClose={() => setOpenChangePassword(false)} onSave={handleSavePassword} />
       </Box>
     </>

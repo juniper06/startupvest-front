@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Divider, Toolbar, Typography, Grid, Button, Pagination, PaginationItem, TableRow, TableBody, TableCell, Skeleton,
-} from '@mui/material';
+import { Box, Divider, Toolbar, Typography, Grid, Button, Pagination, PaginationItem, TableRow, TableBody, TableCell, Skeleton, Tooltip } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 import axios from 'axios';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import InvestNowDialog from '../Dialogs/InvestNowDialog';
-import {
-  StyledAvatar,
-  OverviewBox,
-  OverviewTitle,
-  StyledTable,
-  StyledTableHead,
-  StyledTableCell,
-  PaginationBox,
-  InvestorTitle,
-} from '../styles/VisitorView';
+import { useProfile } from '../Context/ProfileContext';
+
+import { StyledAvatar, OverviewBox, OverviewTitle, StyledTable, StyledTableHead, StyledTableCell, PaginationBox, InvestorTitle } from '../styles/VisitorView';
 
 const drawerWidth = 240;
 
@@ -26,10 +18,9 @@ function FundingRoundView() {
   const [rowsPerPage] = useState(5);
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [hasInvestorProfile, setHasInvestorProfile] = useState(false);
-  const [investorProfileChecked, setInvestorProfileChecked] = useState(false);
   const location = useLocation();
   const { fundinground } = location.state || {};
+  const { hasInvestorProfile, businessProfiles, setBusinessProfiles } = useProfile();
 
   useEffect(() => {
     const fetchProfilePicture = async () => {
@@ -69,57 +60,6 @@ function FundingRoundView() {
     fetchProfilePicture();
   }, [fundinground]);
 
-  useEffect(() => {
-    const checkInvestorProfile = async () => {
-      const userId = localStorage.getItem('userId');
-      console.log('Checking investor profile for userId:', userId);
-      
-      if (!userId) {
-        console.log('No userId found in localStorage');
-        setHasInvestorProfile(false);
-        setInvestorProfileChecked(true);
-        return;
-      }
-
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/investors/all`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        console.log('Investor profile API response:', response.data);
-        
-        // Log each investor's ID for debugging
-        response.data.forEach((investor, index) => {
-          console.log(`Investor ${index}: id = ${investor.id}, type = ${typeof investor.id}`);
-        });
-        
-        // Convert userId to a number for comparison
-        const userIdNumber = Number(userId);
-        console.log('Converted userId:', userIdNumber, 'type:', typeof userIdNumber);
-        
-        // Check if there's an investor with an ID matching the user's ID
-        const hasProfile = response.data.some(investor => {
-          const match = investor.id === userIdNumber;
-          console.log(`Comparing investor id ${investor.id} (${typeof investor.id}) with userId ${userIdNumber} (${typeof userIdNumber}): ${match}`);
-          return match;
-        });
-        
-        console.log('Final hasProfile value:', hasProfile);
-        setHasInvestorProfile(hasProfile);
-      } catch (error) {
-        console.error('Error checking investor profile:', error);
-        setHasInvestorProfile(false);
-      } finally {
-        setInvestorProfileChecked(true);
-      }
-    };
-
-    checkInvestorProfile();
-  }, []);
-
-  console.log('Render - hasInvestorProfile:', hasInvestorProfile, 'investorProfileChecked:', investorProfileChecked);
-
   const handlePageChange = (event, newPage) => {
     setCurrentPage(newPage);
   };
@@ -132,17 +72,9 @@ function FundingRoundView() {
     setOpenDialog(false);
   };
 
-  const investorId = localStorage.getItem('userId');
-
   if (!fundinground) {
     return <div>No funding round data available</div>;
   }
-
-  // Pagination logic
-  const paginatedInvestors = fundinground.capTableInvestors.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -198,16 +130,20 @@ function FundingRoundView() {
               </Typography>
             )}
 
-        {loading || !investorProfileChecked ? (
+            {loading ? (
               <Skeleton variant="rectangular" width={150} height={40} />
             ) : hasInvestorProfile ? (
               <Button variant="outlined" sx={{ width: '150px' }} onClick={handleOpenDialog}>
                 Invest Now
               </Button>
             ) : (
-              <Typography variant="body2" color="text.secondary">
-                You need an investor profile to invest.
-              </Typography>
+              <Tooltip title="You need an investor profile to invest.">
+                <span>
+                  <Button variant="outlined" sx={{ width: '150px' }} disabled>
+                    Invest Now
+                  </Button>
+                </span>
+              </Tooltip>
             )}
           </Grid>
         </Grid>
@@ -410,14 +346,8 @@ function FundingRoundView() {
         </Box>
 
         {/* Invest Now Dialog */}
-        <InvestNowDialog
-          open={openDialog}
-          onClose={handleCloseDialog}
-          pricePerShare={fundinground.minimumShare}
-          companyName={fundinground.startupName}
-          fundingRound={fundinground.fundingType}
-          fundingRoundId={fundinground.id}
-          investorId={localStorage.getItem('userId')}
+        <InvestNowDialog open={openDialog} onClose={handleCloseDialog} pricePerShare={fundinground.minimumShare} companyName={fundinground.startupName}
+          fundingRound={fundinground.fundingType} fundingRoundId={fundinground.id} investorId={localStorage.getItem('userId')}
         />
       </Box>
     </>
