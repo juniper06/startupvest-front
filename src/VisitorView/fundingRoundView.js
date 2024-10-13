@@ -303,6 +303,22 @@ function FundingRoundView() {
                         ) : (
                           <>
                             <Typography>
+                              <strong>Target Funding</strong>
+                            </Typography>
+                            {fundinground.moneyRaisedCurrency}{' '}
+                            {fundinground.targetFunding
+                              ? Number(fundinground.targetFunding).toLocaleString()
+                              : 'N/A'}
+                          </>
+                        )}
+                      </Grid>
+
+                      <Grid item xs={3}>
+                        {loading ? (
+                          <Skeleton variant="text" />
+                        ) : (
+                          <>
+                            <Typography>
                               <strong>Money Raised</strong>
                             </Typography>
                             {fundinground.moneyRaisedCurrency}{' '}
