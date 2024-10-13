@@ -181,12 +181,12 @@ function FundingRoundView() {
                         {loading ? (
                           <Skeleton variant="text" />
                         ) : (
-                          <>
+                          <Box>
                             <Typography>
                               <strong>Funding Name</strong>
                             </Typography>
                             <Typography variant="body1">{fundinground.fundingName}</Typography>
-                          </>
+                          </Box>
                         )}
                       </Grid>
 
@@ -194,42 +194,12 @@ function FundingRoundView() {
                         {loading ? (
                           <Skeleton variant="text" />
                         ) : (
-                          <>
-                            <Typography>
-                              <strong>Announced Date</strong>
-                            </Typography>
-                            <Typography variant="body1">
-                              {formatDate(fundinground.announcedDate)}
-                            </Typography>
-                          </>
-                        )}
-                      </Grid>
-
-                      <Grid item xs={6}>
-                        {loading ? (
-                          <Skeleton variant="text" />
-                        ) : (
-                          <>
-                            <Typography>
-                              <strong>Closed on Date</strong>
-                            </Typography>
-                            <Typography variant="body1">
-                              {formatDate(fundinground.closedDate)}
-                            </Typography>
-                          </>
-                        )}
-                      </Grid>
-
-                      <Grid item xs={3}>
-                        {loading ? (
-                          <Skeleton variant="text" />
-                        ) : (
-                          <>
+                          <Box>
                             <Typography>
                               <strong>Funding Type</strong>
                             </Typography>
-                            {fundinground.fundingType}
-                          </>
+                            <Typography variant="body1">{fundinground.fundingType}</Typography>
+                          </Box>
                         )}
                       </Grid>
 
@@ -237,15 +207,44 @@ function FundingRoundView() {
                         {loading ? (
                           <Skeleton variant="text" />
                         ) : (
-                          <>
+                          <Box>
+                            <Typography>
+                              <strong>Announced Date</strong>
+                            </Typography>
+                            <Typography variant="body1">{formatDate(fundinground.announcedDate)}</Typography>
+                          </Box>
+                        )}
+                      </Grid>
+
+                      <Grid item xs={3}>
+                        {loading ? (
+                          <Skeleton variant="text" />
+                        ) : (
+                          <Box>
+                            <Typography>
+                              <strong>Closed on Date</strong>
+                            </Typography>
+                            <Typography variant="body1">{formatDate(fundinground.closedDate)}</Typography>
+                          </Box>
+                        )}
+                      </Grid>
+
+                      {/* Additional Information */}
+                      <Grid item xs={3}>
+                        {loading ? (
+                          <Skeleton variant="text" />
+                        ) : (
+                          <Box>
                             <Typography>
                               <strong>Target Funding</strong>
                             </Typography>
-                            {fundinground.moneyRaisedCurrency}{' '}
-                            {fundinground.targetFunding
-                              ? Number(fundinground.targetFunding).toLocaleString()
-                              : 'N/A'}
-                          </>
+                            <Typography variant="body1">
+                              {fundinground.moneyRaisedCurrency}{' '}
+                              {fundinground.targetFunding
+                                ? Number(fundinground.targetFunding).toLocaleString()
+                                : 'N/A'}
+                            </Typography>
+                          </Box>
                         )}
                       </Grid>
 
@@ -253,15 +252,17 @@ function FundingRoundView() {
                         {loading ? (
                           <Skeleton variant="text" />
                         ) : (
-                          <>
+                          <Box>
                             <Typography>
                               <strong>Money Raised</strong>
                             </Typography>
-                            {fundinground.moneyRaisedCurrency}{' '}
-                            {fundinground.moneyRaised
-                              ? Number(fundinground.moneyRaised).toLocaleString()
-                              : 'N/A'}
-                          </>
+                            <Typography variant="body1">
+                              {fundinground.moneyRaisedCurrency}{' '}
+                              {fundinground.moneyRaised
+                                ? Number(fundinground.moneyRaised).toLocaleString()
+                                : 'N/A'}
+                            </Typography>
+                          </Box>
                         )}
                       </Grid>
 
@@ -269,7 +270,7 @@ function FundingRoundView() {
                         {loading ? (
                           <Skeleton variant="text" />
                         ) : (
-                          <>
+                          <Box>
                             <Typography>
                               <strong>Pre-Money Valuation</strong>
                             </Typography>
@@ -279,7 +280,7 @@ function FundingRoundView() {
                                 ? Number(fundinground.preMoneyValuation).toLocaleString()
                                 : 'N/A'}
                             </Typography>
-                          </>
+                          </Box>
                         )}
                       </Grid>
                     </Grid>
