@@ -7,7 +7,7 @@ export const styles = {
   },
   sideBar: {
     background: '#004A98',
-    borderRadius: '10px',
+    borderRadius: '3px 10px 10px 3px',
     boxShadow: '10px 3px 8px rgba(0,0,0,.15)',
   },
   titleContainer: {

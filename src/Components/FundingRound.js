@@ -11,7 +11,7 @@ import { StyledPaper, StyledAvatar, StyledTableRow, StyledTableCell, StyledStack
 const drawerWidth = 240;
 
 function createData(id, transactionName, startupName, fundingType, moneyRaised, moneyRaisedCurrency, announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, 
-  minimumShare, startupId, fundingName ) {
+  minimumShare, startupId, fundingName, targetFunding ) {
   return {
     id,
     transactionName,
@@ -26,7 +26,8 @@ function createData(id, transactionName, startupName, fundingType, moneyRaised, 
     capTableInvestors: capTableInvestors.filter(investor => investor.status === 'accepted'),
     minimumShare,
     startupId,
-    fundingName
+    fundingName,
+    targetFunding: isNaN(targetFunding) ? '---' : targetFunding
   };
 }
 
@@ -154,6 +155,7 @@ export default function FundingRound() {
             fundingRound.minimumShare || '---',
             fundingRound.startup?.id,
             fundingRound.fundingName || '---',
+            fundingRound.targetFunding || '---'  // Fixed: Accessing targetFunding directly from fundingRound
           ));
           
         setRows(fetchedRows);

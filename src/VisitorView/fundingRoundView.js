@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Divider, Toolbar, Typography, Grid, Button, Pagination, PaginationItem, TableRow, TableBody, TableCell, Skeleton,
-} from '@mui/material';
+import { Box, Divider, Toolbar, Typography, Grid, Button, Pagination, PaginationItem, TableRow, TableBody, TableCell, Skeleton, Tooltip } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 import axios from 'axios';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import InvestNowDialog from '../Dialogs/InvestNowDialog';
-import {
-  StyledAvatar,
-  OverviewBox,
-  OverviewTitle,
-  StyledTable,
-  StyledTableHead,
-  StyledTableCell,
-  PaginationBox,
-  InvestorTitle,
-} from '../styles/VisitorView';
+import { useProfile } from '../Context/ProfileContext';
+
+import { StyledAvatar, OverviewBox, OverviewTitle, StyledTable, StyledTableHead, StyledTableCell, PaginationBox, InvestorTitle } from '../styles/VisitorView';
 
 const drawerWidth = 240;
 
@@ -25,9 +17,10 @@ function FundingRoundView() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(5);
   const [openDialog, setOpenDialog] = useState(false);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const { fundinground } = location.state || {};
+  const { hasInvestorProfile } = useProfile();
 
   useEffect(() => {
     const fetchProfilePicture = async () => {
@@ -79,17 +72,9 @@ function FundingRoundView() {
     setOpenDialog(false);
   };
 
-  const investorId = localStorage.getItem('userId');
-
   if (!fundinground) {
     return <div>No funding round data available</div>;
   }
-
-  // Pagination logic
-  const paginatedInvestors = fundinground.capTableInvestors.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -146,11 +131,19 @@ function FundingRoundView() {
             )}
 
             {loading ? (
-              <Skeleton variant="rectangular" width={150} height={40} /> 
-            ) : (
+              <Skeleton variant="rectangular" width={150} height={40} />
+            ) : hasInvestorProfile ? (
               <Button variant="outlined" sx={{ width: '150px' }} onClick={handleOpenDialog}>
                 Invest Now
               </Button>
+            ) : (
+              <Tooltip title="You need an investor profile to invest.">
+                <span>
+                  <Button variant="outlined" sx={{ width: '150px' }} disabled>
+                    Invest Now
+                  </Button>
+                </span>
+              </Tooltip>
             )}
           </Grid>
         </Grid>
@@ -188,12 +181,12 @@ function FundingRoundView() {
                         {loading ? (
                           <Skeleton variant="text" />
                         ) : (
-                          <>
+                          <Box>
                             <Typography>
                               <strong>Funding Name</strong>
                             </Typography>
                             <Typography variant="body1">{fundinground.fundingName}</Typography>
-                          </>
+                          </Box>
                         )}
                       </Grid>
 
@@ -201,42 +194,12 @@ function FundingRoundView() {
                         {loading ? (
                           <Skeleton variant="text" />
                         ) : (
-                          <>
-                            <Typography>
-                              <strong>Announced Date</strong>
-                            </Typography>
-                            <Typography variant="body1">
-                              {formatDate(fundinground.announcedDate)}
-                            </Typography>
-                          </>
-                        )}
-                      </Grid>
-
-                      <Grid item xs={6}>
-                        {loading ? (
-                          <Skeleton variant="text" />
-                        ) : (
-                          <>
-                            <Typography>
-                              <strong>Closed on Date</strong>
-                            </Typography>
-                            <Typography variant="body1">
-                              {formatDate(fundinground.closedDate)}
-                            </Typography>
-                          </>
-                        )}
-                      </Grid>
-
-                      <Grid item xs={3}>
-                        {loading ? (
-                          <Skeleton variant="text" />
-                        ) : (
-                          <>
+                          <Box>
                             <Typography>
                               <strong>Funding Type</strong>
                             </Typography>
-                            {fundinground.fundingType}
-                          </>
+                            <Typography variant="body1">{fundinground.fundingType}</Typography>
+                          </Box>
                         )}
                       </Grid>
 
@@ -244,15 +207,62 @@ function FundingRoundView() {
                         {loading ? (
                           <Skeleton variant="text" />
                         ) : (
-                          <>
+                          <Box>
+                            <Typography>
+                              <strong>Announced Date</strong>
+                            </Typography>
+                            <Typography variant="body1">{formatDate(fundinground.announcedDate)}</Typography>
+                          </Box>
+                        )}
+                      </Grid>
+
+                      <Grid item xs={3}>
+                        {loading ? (
+                          <Skeleton variant="text" />
+                        ) : (
+                          <Box>
+                            <Typography>
+                              <strong>Closed on Date</strong>
+                            </Typography>
+                            <Typography variant="body1">{formatDate(fundinground.closedDate)}</Typography>
+                          </Box>
+                        )}
+                      </Grid>
+
+                      {/* Additional Information */}
+                      <Grid item xs={3}>
+                        {loading ? (
+                          <Skeleton variant="text" />
+                        ) : (
+                          <Box>
+                            <Typography>
+                              <strong>Target Funding</strong>
+                            </Typography>
+                            <Typography variant="body1">
+                              {fundinground.moneyRaisedCurrency}{' '}
+                              {fundinground.targetFunding
+                                ? Number(fundinground.targetFunding).toLocaleString()
+                                : 'N/A'}
+                            </Typography>
+                          </Box>
+                        )}
+                      </Grid>
+
+                      <Grid item xs={3}>
+                        {loading ? (
+                          <Skeleton variant="text" />
+                        ) : (
+                          <Box>
                             <Typography>
                               <strong>Money Raised</strong>
                             </Typography>
-                            {fundinground.moneyRaisedCurrency}{' '}
-                            {fundinground.moneyRaised
-                              ? Number(fundinground.moneyRaised).toLocaleString()
-                              : 'N/A'}
-                          </>
+                            <Typography variant="body1">
+                              {fundinground.moneyRaisedCurrency}{' '}
+                              {fundinground.moneyRaised
+                                ? Number(fundinground.moneyRaised).toLocaleString()
+                                : 'N/A'}
+                            </Typography>
+                          </Box>
                         )}
                       </Grid>
 
@@ -260,7 +270,7 @@ function FundingRoundView() {
                         {loading ? (
                           <Skeleton variant="text" />
                         ) : (
-                          <>
+                          <Box>
                             <Typography>
                               <strong>Pre-Money Valuation</strong>
                             </Typography>
@@ -270,7 +280,7 @@ function FundingRoundView() {
                                 ? Number(fundinground.preMoneyValuation).toLocaleString()
                                 : 'N/A'}
                             </Typography>
-                          </>
+                          </Box>
                         )}
                       </Grid>
                     </Grid>
@@ -337,14 +347,8 @@ function FundingRoundView() {
         </Box>
 
         {/* Invest Now Dialog */}
-        <InvestNowDialog 
-        open={openDialog} 
-        onClose={handleCloseDialog} 
-        pricePerShare={fundinground.minimumShare}
-        companyName={fundinground.startupName} 
-        fundingRound={fundinground.fundingType}
-        fundingRoundId={fundinground.id} // Pass fundingRoundID
-        investorId={investorId} />
+        <InvestNowDialog open={openDialog} onClose={handleCloseDialog} pricePerShare={fundinground.minimumShare} companyName={fundinground.startupName}
+          fundingRound={fundinground.fundingType} fundingRoundId={fundinground.id} investorId={localStorage.getItem('userId')}/>
       </Box>
     </>
   );

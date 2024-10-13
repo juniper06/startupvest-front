@@ -24,6 +24,7 @@ const InvestNowDialog = ({
   investorId, // Add this prop to get the investorId
 }) => {
   const [shareAmount, setShareAmount] = useState('');
+  const [displayShareAmount, setDisplayShareAmount] = useState('');
   const [totalCost, setTotalCost] = useState(0);
   const [errors, setErrors] = useState({});
 
@@ -35,18 +36,27 @@ const InvestNowDialog = ({
   // Clear state when dialog closes
   const handleClose = () => {
     setShareAmount('');
+    setDisplayShareAmount('');
     setErrors({});
     onClose();
   };
 
+  const formatNumber = (num) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   const handleShareAmountChange = (e) => {
-    const shares = e.target.value;
-    if (shares < 1) {
+    const inputValue = e.target.value.replace(/,/g, '');
+    const shares = parseInt(inputValue, 10);
+
+    if (isNaN(shares) || shares < 1) {
       setErrors((prev) => ({ ...prev, shareAmount: 'Please enter a valid number.' }));
     } else {
       setErrors((prev) => ({ ...prev, shareAmount: '' }));
     }
-    setShareAmount(shares);
+
+    setShareAmount(inputValue);
+    setDisplayShareAmount(formatNumber(inputValue));
   };
 
   const handleConfirm = async () => {
@@ -125,16 +135,13 @@ const InvestNowDialog = ({
             <TextField
               margin="dense"
               id="share"
-              type="number"
+              type="text"
               fullWidth
               variant="outlined"
-              placeholder="e.g., 2"
-              value={shareAmount}
+              placeholder="e.g., 1,000"
+              value={displayShareAmount}
               onChange={handleShareAmountChange}
               helperText={errors.shareAmount}
-              InputProps={{
-                inputProps: { min: 1 },
-              }}
               error={!!errors.shareAmount}
             />
           </Grid>
