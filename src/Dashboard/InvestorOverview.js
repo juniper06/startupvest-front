@@ -10,7 +10,7 @@ import { TopInfoBox, TopInfoText, TopInfoTitle } from '../styles/UserDashboard';
 const drawerWidth = 285;
 
 function createData(id, fundingName, startupName, fundingType, moneyRaised, moneyRaisedCurrency,
-  announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, minimumShare, startupId, totalShares) {
+  announcedDate, closedDate, avatar, preMoneyValuation, capTableInvestors, minimumShare, startupId, totalShares, targetFunding) {
   return {
     id,
     fundingName,
@@ -25,7 +25,8 @@ function createData(id, fundingName, startupName, fundingType, moneyRaised, mone
     capTableInvestors,
     minimumShare,
     startupId,
-    totalShares
+    totalShares,
+    targetFunding
   };
 }
 
@@ -108,7 +109,8 @@ const InvestorOverview = () => {
           fundingRound.capTableInvestors || [],
           fundingRound.minimumShare || 'N/A',
           fundingRound.startup?.id || null,
-          fundingRound.totalShares || 0
+          fundingRound.totalShares || 0,
+          fundingRound.targetFunding || '---',
         ));
 
         setRows(fetchedRows);
