@@ -20,7 +20,7 @@ function FundingRoundView() {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   const { fundinground } = location.state || {};
-  const { hasInvestorProfile, businessProfiles, setBusinessProfiles } = useProfile();
+  const { hasInvestorProfile } = useProfile();
 
   useEffect(() => {
     const fetchProfilePicture = async () => {
@@ -331,8 +331,7 @@ function FundingRoundView() {
 
         {/* Invest Now Dialog */}
         <InvestNowDialog open={openDialog} onClose={handleCloseDialog} pricePerShare={fundinground.minimumShare} companyName={fundinground.startupName}
-          fundingRound={fundinground.fundingType} fundingRoundId={fundinground.id} investorId={localStorage.getItem('userId')}
-        />
+          fundingRound={fundinground.fundingType} fundingRoundId={fundinground.id} investorId={localStorage.getItem('userId')}/>
       </Box>
     </>
   );
