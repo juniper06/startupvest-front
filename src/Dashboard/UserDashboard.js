@@ -15,6 +15,8 @@ import ActivitiesDialog from "../Dialogs/AcitivtiesDialog";
 
 import { logActivity } from '../utils/activityUtils';
 import MonthlyFundingChart from "../Components/Chart";
+import { useProfile } from '../Context/ProfileContext';
+
 import { Container, HeaderBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle,   CreateButton, GraphTitle, RecentActivityTitle } from "../styles/UserDashboard";
 
 function UserDashboard() {
@@ -22,13 +24,12 @@ function UserDashboard() {
         
     // PROFILE
     const [openCreateBusinessProfile, setCreateBusinessProfile] = useState(false);
-    const [businessProfiles, setBusinessProfiles] = useState([]);
     const [selectedBusinessProfile, setSelectedBusinessProfile] = useState(null);
     const [openViewStartup, setOpenViewStartup] = useState(false);
     const [openViewInvestor, setOpenViewInvestor] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [profileToDelete, setProfileToDelete] = useState(null);
-    const hasInvestorProfile = businessProfiles.some(profile => profile.type === "Investor");
+    const { hasInvestorProfile, businessProfiles, setBusinessProfiles } = useProfile();
 
     // FUNDING ROUND
     const [openCreateFundingRound, setOpenCreateFundingRound] = useState(false);

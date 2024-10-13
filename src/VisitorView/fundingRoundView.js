@@ -8,13 +8,11 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import InvestNowDialog from '../Dialogs/InvestNowDialog';
 import { useProfile } from '../Context/ProfileContext';
 
-import { StyledAvatar, OverviewBox, OverviewTitle, StyledTable, StyledTableHead, StyledTableCell, PaginationBox, InvestorTitle, } from '../styles/VisitorView';
+import { StyledAvatar, OverviewBox, OverviewTitle, StyledTable, StyledTableHead, StyledTableCell, PaginationBox, InvestorTitle } from '../styles/VisitorView';
 
 const drawerWidth = 240;
 
 function FundingRoundView() {
-  const { hasInvestorProfile } = useProfile();
-
   const [avatarUrl, setAvatarUrl] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(5);
@@ -22,6 +20,7 @@ function FundingRoundView() {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   const { fundinground } = location.state || {};
+  const { hasInvestorProfile, businessProfiles, setBusinessProfiles } = useProfile();
 
   useEffect(() => {
     const fetchProfilePicture = async () => {
@@ -332,7 +331,8 @@ function FundingRoundView() {
 
         {/* Invest Now Dialog */}
         <InvestNowDialog open={openDialog} onClose={handleCloseDialog} pricePerShare={fundinground.minimumShare} companyName={fundinground.startupName}
-          fundingRound={fundinground.fundingType} fundingRoundId={fundinground.id} investorId={localStorage.getItem('userId')} />
+          fundingRound={fundinground.fundingType} fundingRoundId={fundinground.id} investorId={localStorage.getItem('userId')}
+        />
       </Box>
     </>
   );
