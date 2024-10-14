@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Box, Typography, Toolbar, Grid, Menu, MenuItem, Tabs, Tab, ListItemText, ListItem, Button, Divider } from "@mui/material";
+import { Box, Typography, Toolbar, Grid, Menu, MenuItem, Tabs, Tab, ListItemText, ListItem, Button, Divider, Skeleton } from "@mui/material";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import { History, AddCircle, MonetizationOnRounded, Person2, Business} from '@mui/icons-material';
 
@@ -20,7 +20,8 @@ import { useProfile } from '../Context/ProfileContext';
 import { Container, HeaderBox, RecentActivityBox, RecentActivityList, TopInfoBox, TopInfoIcon, TopInfoText, TopInfoTitle,   CreateButton, GraphTitle, RecentActivityTitle } from "../styles/UserDashboard";
 
 function UserDashboard() {
-    const [tabValue, setTabValue] = useState(0);
+    const [tabValue, setTabValue] = useState(1);
+    const [loading, setLoading] = useState(true);
         
     // PROFILE
     const [openCreateBusinessProfile, setCreateBusinessProfile] = useState(false);
@@ -67,12 +68,29 @@ function UserDashboard() {
     };
 
     useEffect(() => {
-        fetchBusinessProfiles();
-        fetchFundingRounds();
-        fetchAllInvestorsByEachUsersCompany();
-        fetchRecentActivities();
-        fetchCountInvestor();
-        fetchTopInvestorContributor();
+        const fetchData = async () => {
+            setLoading(true); 
+
+            try {
+                await Promise.all([
+                    fetchBusinessProfiles(),
+                    fetchFundingRounds(),
+                    fetchAllInvestorsByEachUsersCompany(),
+                    fetchRecentActivities(),
+                    fetchCountInvestor(),
+                    fetchTopInvestorContributor(),
+                ]);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false); 
+                setTimeout(() => {
+                    setTabValue(0);
+                }, 1000);
+            }
+        };
+
+        fetchData();
     }, []);
 
     const handleTabChange = (event, newValue) => {
@@ -397,11 +415,19 @@ return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
                 <HeaderBox>
-                    <Typography variant="h5">User Dashboard</Typography>
-                    <PopupState variant="popover" popupId="demo-popup-menu">
+                    {loading ? (
+                        <Skeleton variant="text" width="15%" height={40} />
+                        ) : (
+                        <Typography variant="h5">User Dashboard</Typography>
+                        )}                    
+                        <PopupState variant="popover" popupId="demo-popup-menu">
                         {(popupState) => (
                         <>
+                        {loading ? (
+                            <Skeleton variant="rectangular" width="10%" height={40} />
+                            ) : (
                             <CreateButton {...bindTrigger(popupState)}><AddCircle sx={{ mr: 1}} />Create</CreateButton>
+                        )}
                             <Menu {...bindMenu(popupState)}>
                             <MenuItem onClick={() => { handleOpenBusinessProfile(); popupState.close(); }}> 
                                 <Person2 sx={{ mr: 1, color: "#336FB0" }} /> Business Profile
@@ -419,110 +445,149 @@ return (
 
             {/* Top Row - 5 Boxes */}
             <Grid item xs={12} sm={6}>
-                <TopInfoBox>
-                    <TopInfoIcon><Business sx={{ color: '#f5f5f5' }} /></TopInfoIcon>
-                    <TopInfoText>Highest-Funded Company</TopInfoText>
-                    <TopInfoTitle>{highestMoneyRaisedCompany.companyName || 'None'}</TopInfoTitle>
-                </TopInfoBox>
+                {loading ? (
+                    <Skeleton variant="rectangular" height={100} width="100%" />
+                ) : (
+                    <TopInfoBox>
+                        <TopInfoIcon><Business sx={{ color: '#f5f5f5' }} /></TopInfoIcon>
+                        <TopInfoText>Highest-Funded Company</TopInfoText>
+                        <TopInfoTitle>{highestMoneyRaisedCompany.companyName || 'None'}</TopInfoTitle>
+                    </TopInfoBox>
+                )}
             </Grid>
 
             <Grid item xs={12} sm={6}>
-                <TopInfoBox>
-                    <TopInfoIcon><Person2 sx={{ color: '#f5f5f5' }} /></TopInfoIcon>
-                    <TopInfoText>Top Investment Contributor</TopInfoText>
-                    <TopInfoTitle>{topInvestor.topInvestorName || 'None'}</TopInfoTitle>
-                </TopInfoBox>
-            </Grid>
-
-            <Grid item xs={12} sm={3}>
-                <TopInfoBox>
-                    <TopInfoText>Funded Companies</TopInfoText>
-                    <TopInfoTitle>{moneyRaisedCount} out of {companyCount}</TopInfoTitle>
-                </TopInfoBox>
-            </Grid>
-
-            <Grid item xs={12} sm={2}>
-                <TopInfoBox>
-                    <TopInfoText>Company Count</TopInfoText>
-                    <TopInfoTitle>{companyCount}</TopInfoTitle>
-                </TopInfoBox>
-            </Grid>
-
-            <Grid item xs={12} sm={2}>
-                <TopInfoBox>
-                    <TopInfoText>Investor Count</TopInfoText>
-                    <TopInfoTitle>{investorCount}</TopInfoTitle>
-                </TopInfoBox>
-            </Grid>
-
-            <Grid item xs={12} sm={2}>
-                <TopInfoBox>
-                    <TopInfoText>Funding Rounds</TopInfoText>
-                    <TopInfoTitle>{fundingRoundsCount}</TopInfoTitle>
-                </TopInfoBox>
-            </Grid>
-
-            <Grid item xs={12} sm={3}>
-                <TopInfoBox>
-                    <TopInfoText>Total Amount Funded</TopInfoText>
-                    <TopInfoTitle>{totalAmountFunded.toLocaleString()}</TopInfoTitle>
-                </TopInfoBox>
-            </Grid>
-
-          {/* Middle Row - Two Boxes */}
-          <Grid item xs={12} sm={9}>
-            <RecentActivityBox>
-              <GraphTitle>Monthly Funding Overview</GraphTitle>
-              <MonthlyFundingChart userId={userId} />
-            </RecentActivityBox>
-          </Grid>
-
-          <Grid item xs={12} sm={3}>
-            <RecentActivityBox>
-                <RecentActivityTitle><History sx={{ mr: 1 }} />Recent Activity</RecentActivityTitle>
-                <Divider />
-                <RecentActivityList>
-                {recentActivities.length === 0 ? (
-                    <ListItem>
-                    <ListItemText primary="No recent activity" />
-                    </ListItem>
+                {loading ? (
+                    <Skeleton variant="rectangular" height={100} width="100%" />
                 ) : (
-                    recentActivities
-                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-                    .slice(0, 10)
-                    .map((activity, index) => {
-                        const formattedTimestamp = new Date(activity.timestamp).toLocaleString('en-US', {
-                        year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true,
-                        });
+                    <TopInfoBox>
+                        <TopInfoIcon><Person2 sx={{ color: '#f5f5f5' }} /></TopInfoIcon>
+                        <TopInfoText>Top Investment Contributor</TopInfoText>
+                        <TopInfoTitle>{topInvestor.topInvestorName || 'None'}</TopInfoTitle>
+                    </TopInfoBox>
+                )}
+            </Grid>
 
-                        return (
-                        <div key={index}>
+            <Grid item xs={12} sm={3}>
+                {loading ? (
+                    <Skeleton variant="rectangular" height={100} width="100%" />
+                ) : (
+                    <TopInfoBox>
+                        <TopInfoText>Funded Companies</TopInfoText>
+                        <TopInfoTitle>{moneyRaisedCount} out of {companyCount}</TopInfoTitle>
+                    </TopInfoBox>
+                )}
+            </Grid>
+
+            <Grid item xs={12} sm={2}>
+                {loading ? (
+                    <Skeleton variant="rectangular" height={100} width="100%" />
+                ) : (
+                    <TopInfoBox>
+                        <TopInfoText>Company Count</TopInfoText>
+                        <TopInfoTitle>{companyCount}</TopInfoTitle>
+                    </TopInfoBox>
+                )}
+            </Grid>
+
+            <Grid item xs={12} sm={2}>
+                {loading ? (
+                    <Skeleton variant="rectangular" height={100} width="100%" />
+                ) : (
+                    <TopInfoBox>
+                        <TopInfoText>Investor Count</TopInfoText>
+                        <TopInfoTitle>{investorCount}</TopInfoTitle>
+                    </TopInfoBox>
+                )}
+            </Grid>
+
+            <Grid item xs={12} sm={2}>
+                {loading ? (
+                    <Skeleton variant="rectangular" height={100} width="100%" />
+                ) : (
+                    <TopInfoBox>
+                        <TopInfoText>Funding Rounds</TopInfoText>
+                        <TopInfoTitle>{fundingRoundsCount}</TopInfoTitle>
+                    </TopInfoBox>
+                )}
+            </Grid>
+
+            <Grid item xs={12} sm={3}>
+                {loading ? (
+                    <Skeleton variant="rectangular" height={100} width="100%" />
+                ) : (
+                    <TopInfoBox>
+                        <TopInfoText>Total Amount Funded</TopInfoText>
+                        <TopInfoTitle>{totalAmountFunded.toLocaleString()}</TopInfoTitle>
+                    </TopInfoBox>
+                )}
+            </Grid>
+
+            {/* Middle Row - Two Boxes */}
+            <Grid item xs={12} sm={9}>
+                {loading ? (
+                    <Skeleton variant="rectangular" height={500} width="100%" />
+                ) : (
+                    <RecentActivityBox>
+                        <GraphTitle>Monthly Funding Overview</GraphTitle>
+                        <MonthlyFundingChart userId={userId} />
+                    </RecentActivityBox>
+                )}
+            </Grid>
+
+            <Grid item xs={12} sm={3}>
+            {loading ? (
+                <Skeleton variant="rectangular" height={500} width="100%" />
+            ) : (
+                <RecentActivityBox>
+                    <RecentActivityTitle><History sx={{ mr: 1 }} />Recent Activity</RecentActivityTitle>
+                    <Divider />
+                    <RecentActivityList>
+                        {recentActivities.length === 0 ? (
                             <ListItem>
-                            <ListItemText
-                                primary={activity.action}
-                                secondary={
-                                <div>
-                                    <div>{activity.details}</div>
-                                    <div style={{ fontSize: '0.875rem', color: '#757575' }}>{formattedTimestamp}</div>
-                                </div>
-                                } />
+                                <ListItemText primary="No recent activity" />
                             </ListItem>
-                        </div>
-                        );
-                    })
+                        ) : (
+                            recentActivities
+                                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                                .slice(0, 10)
+                                .map((activity, index) => {
+                                    const formattedTimestamp = new Date(activity.timestamp).toLocaleString('en-US', {
+                                        year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true,
+                                    });
+
+                                    return (
+                                        <div key={index}>
+                                            <ListItem>
+                                                <ListItemText
+                                                    primary={activity.action}
+                                                    secondary={
+                                                        <div>
+                                                            <div>{activity.details}</div>
+                                                            <div style={{ fontSize: '0.875rem', color: '#757575' }}>
+                                                                {formattedTimestamp}
+                                                            </div>
+                                                        </div>
+                                                    }/>
+                                            </ListItem>
+                                        </div>
+                                    );
+                                })
+                            )}
+                            {recentActivities.length > 10 && (
+                                <Box display="flex" justifyContent="center" mt={2}>
+                                    <Button size="small" variant="text" color="primary" onClick={handleViewHistoryClick}>View History</Button>
+                                </Box>
+                            )}
+                        </RecentActivityList>
+                    </RecentActivityBox>
                 )}
-                {recentActivities.length > 10 && (
-                    <Box display="flex" justifyContent="center" mt={2}>
-                    <Button size="small" variant="text" color="primary" onClick={handleViewHistoryClick}>
-                        View History
-                    </Button>
-                    </Box>
-                )}
-                </RecentActivityList>
-            </RecentActivityBox>
             </Grid>
 
             <Grid item xs={12}>
+                {loading ? (
+                    <Skeleton variant="rectangular" height={48} width="100%" />
+                ) : (
                 <Tabs value={tabValue} onChange={handleTabChange} aria-label="tabs"
                     sx={{ mt: 2, "& .MuiTabs-indicator": { backgroundColor: "#004A98" }, }}>
                 <Tab label="My Funding Round"
@@ -534,9 +599,13 @@ return (
                 <Tab label={`Investor Requests (${pendingRequestsCount})`} 
                     sx={{ color: tabValue === 3 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E", },}}/>
                 </Tabs>
+                )}
 
                 <Box sx={{ pt: 3}}>
                     {tabValue === 0 && (
+                        loading ? (
+                            <Skeleton variant="rectangular" height={400} width="100%" />
+                        ) : (
                         <FundingRoundTable 
                             filteredFundingRounds={filteredFundingRounds}
                             fundingRounds={fundingRounds}
@@ -551,7 +620,8 @@ return (
                             onFundingRoundsCountChange={handleFundingRoundsCountChange}
                             onMoneyRaisedCountChange={handleMoneyRaisedCountChange}
                             onHighestMoneyRaisedCompanyChange={handleHighestMoneyRaisedCompanyChange} />
-                        )}
+                        )
+                    )}
 
                     {tabValue === 1 && (
                         <BusinessProfileTable 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Toolbar, Grid, Box, Tabs, Tab } from "@mui/material";
+import { Typography, Toolbar, Grid, Box, Tabs, Tab, Skeleton } from "@mui/material";
 import Navbar from "../Navbar/Navbar";
 import InvestmentTable from '../Tables/InvestorMyInvestments';
 import InvestorRequest from '../Tables/InvestorMyRequests';
@@ -217,54 +217,78 @@ const InvestorOverview = () => {
 
       <Grid container spacing={2} sx={{ paddingLeft: `${drawerWidth}px`, pt: 8, pr: 6 }}>
         <Grid item xs={12}>
-          <Typography variant="h5" color='#232023'>
-            Investor Dashboard
-          </Typography>
+          {loading ? (
+            <Skeleton variant="text" width={200} height={40} />
+          ) : (
+            <Typography variant="h5" color='#232023'>
+              Investor Dashboard
+            </Typography>
+          )}
         </Grid>
 
         <Grid item xs={12} sm={3}>
-          <TopInfoBox>
-            <TopInfoText>Top Company Invested</TopInfoText>
-            <TopInfoTitle>{topInvestedCompany}</TopInfoTitle>
-          </TopInfoBox>
+          {loading ? (
+            <Skeleton variant="rectangular" width="100%" height={80} />
+          ) : (
+            <TopInfoBox>
+              <TopInfoText>Top Company Invested</TopInfoText>
+              <TopInfoTitle>{topInvestedCompany}</TopInfoTitle>
+            </TopInfoBox>
+          )}
         </Grid>
 
         <Grid item xs={12} sm={3}>
-        <TopInfoBox>
-          <TopInfoText>Investment Count</TopInfoText>
-          <TopInfoTitle>{investmentCount}</TopInfoTitle>
-        </TopInfoBox>
-      </Grid>
-
-        <Grid item xs={12} sm={3}>
-          <TopInfoBox>
-            <TopInfoText>Average Investment Size</TopInfoText>
-            <TopInfoTitle>₱{averageInvestmentSize.toLocaleString('en-PH', { maximumFractionDigits: 2 })}</TopInfoTitle>
-          </TopInfoBox>
+          {loading ? (
+            <Skeleton variant="rectangular" width="100%" height={80} />
+          ) : (
+            <TopInfoBox>
+              <TopInfoText>Investment Count</TopInfoText>
+              <TopInfoTitle>{investmentCount}</TopInfoTitle>
+            </TopInfoBox>
+          )}
         </Grid>
 
         <Grid item xs={12} sm={3}>
-          <TopInfoBox>
-            <TopInfoText>Total Investment Amount</TopInfoText>
-            <TopInfoTitle>₱{totalInvestmentAmount.toLocaleString('en-PH', { maximumFractionDigits: 2 })}</TopInfoTitle>
-          </TopInfoBox>
+          {loading ? (
+            <Skeleton variant="rectangular" width="100%" height={80} />
+          ) : (
+            <TopInfoBox>
+              <TopInfoText>Average Investment Size</TopInfoText>
+              <TopInfoTitle>{averageInvestmentSize.toLocaleString('en-PH', { maximumFractionDigits: 2 })}</TopInfoTitle>
+            </TopInfoBox>
+          )}
+        </Grid>
+
+        <Grid item xs={12} sm={3}>
+          {loading ? (
+            <Skeleton variant="rectangular" width="100%" height={80} />
+          ) : (
+            <TopInfoBox>
+              <TopInfoText>Total Investment Amount</TopInfoText>
+              <TopInfoTitle>{totalInvestmentAmount.toLocaleString('en-PH', { maximumFractionDigits: 2 })}</TopInfoTitle>
+            </TopInfoBox>
+          )}
         </Grid>
       </Grid>
 
       {/* Tabs Section */}
       <Box sx={{ width: '100%', pl: '285px', pr: '50px', pt: 3 }}>
-        <Tabs value={tabIndex} onChange={handleChangeTab} aria-label="Investor Profile Tabs" TabIndicatorProps={{ style: { backgroundColor: '#004A98' } }}>
-          <Tab label={`Pending Request (${pendingRequestsCount})`} 
-              sx={{ color: tabIndex === 0 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E",},}}/>
-          <Tab label="My Investments" 
-              sx={{ color: tabIndex === 1 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E",},}}/>
-        </Tabs>
-
-        {tabIndex === 0 && (
-          <InvestorRequest onPendingRequestsCountChange={setPendingRequestsCount}/>
+      {loading ? (
+          <Skeleton variant="rectangular" width="100%" height={50} sx={{ mb: 3 }} />
+        ) : (
+          <Tabs value={tabIndex} onChange={handleChangeTab} aria-label="Investor Profile Tabs" TabIndicatorProps={{ style: { backgroundColor: '#004A98' } }}>
+            <Tab label={`Pending Request (${pendingRequestsCount})`}
+                sx={{ color: tabIndex === 0 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E", }, }} />
+            <Tab label="My Investments"
+                sx={{ color: tabIndex === 1 ? "#1E1E1E" : "text.secondary", "&.Mui-selected": { color: "#1E1E1E", }, }} />
+          </Tabs>
         )}
 
-        {tabIndex === 1 && (
+        {loading ? (
+          <Skeleton variant="rectangular" width="100%" height={300} />
+        ) : tabIndex === 0 ? (
+          <InvestorRequest onPendingRequestsCountChange={setPendingRequestsCount} />
+        ) : (
           <InvestmentTable 
             filteredRows={filteredRows}
             page={page}

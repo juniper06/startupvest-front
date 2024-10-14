@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; 
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, Typography, Box, IconButton, Checkbox, FormControlLabel } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, Typography, Box, IconButton, Checkbox } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import TermsAndConditionsDialog from './TermsAndConditionsDialog';
 
 const InvestNowDialog = ({
   open,
@@ -19,6 +20,7 @@ const InvestNowDialog = ({
   const [successDialogOpen, setSuccessDialogOpen] = useState(false); 
   const [isChecked, setIsChecked] = useState(false);
   const [investmentError, setInvestmentError] = useState('');
+  const [termsDialogOpen, setTermsDialogOpen] = useState(false);
 
   const handleCheckboxChange = (e) => {
     setIsChecked(e.target.checked);
@@ -33,7 +35,7 @@ const InvestNowDialog = ({
   const handleClose = () => {
     setShareAmount('');
     setDisplayShareAmount('');
-    setIsChecked('');
+    setIsChecked(false);
     setErrors({});
     onClose();
   };
@@ -92,6 +94,14 @@ const InvestNowDialog = ({
     handleClose(); 
   };
 
+  const handleTermsOpen = () => {
+    setTermsDialogOpen(true);
+  };
+
+  const handleTermsClose = () => {
+    setTermsDialogOpen(false);
+  };
+
   return (
     <>
       {/* Main Investment Dialog */}
@@ -140,16 +150,16 @@ const InvestNowDialog = ({
               </Box>
             </Grid>
 
-            {/* Terms and Conditions Checkbox */}
+            {/* Terms and Conditions */}
             <Grid item xs={12}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <FormControlLabel
-                  control={
-                    <Checkbox checked={isChecked} onChange={handleCheckboxChange} sx={{ color: '#1976d2' }}/>
-                  }
-                  label={
-                    <Typography variant="body2" sx={{ color: '#555' }}>I agree to the <strong>Terms and Conditions</strong>.</Typography>
-                  }/>
+                <Checkbox checked={isChecked} onChange={handleCheckboxChange} sx={{ color: '#1976d2' }}/>
+                <Typography variant="body2" sx={{ color: '#555'}}>
+                  I agree to the 
+                  <strong style={{ cursor: 'pointer', color: '#1976d2', marginLeft: '5px' }} onClick={handleTermsOpen}>
+                    Terms and Conditions
+                  </strong>.
+                </Typography>
               </Box>
             </Grid>
 
@@ -191,6 +201,8 @@ const InvestNowDialog = ({
           </Button>
         </DialogActions>
       </Dialog>
+
+      <TermsAndConditionsDialog open={termsDialogOpen} onClose={handleTermsClose} />
     </>
   );
 };
