@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Paper, Typography, Toolbar, CssBaseline, AppBar, Box, IconButton, Avatar, Table,
-  TableBody, TableCell, TableContainer, TableHead, TableRow, Select, MenuItem, 
-  TextField} from '@mui/material';
+  TableBody, TableCell, TableContainer, TableHead, TableRow, Select, MenuItem, } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import axios from 'axios';
 import UserRegistrationsChart from '../Components/ChartAdmin';
@@ -139,7 +138,7 @@ const AdminDashboard = () => {
       <TableContainer component={Paper} sx={{ mt: 3 }}>
         <Table>
           <TableHead>
-            <TableRow sx={{ backgroundColor: '#005b6e' }}>
+            <TableRow sx={{ backgroundColor: '#336FB0' }}>
               {filter === 'startup' ? (
                 <>
                   <TableCell sx={{ color: 'white' }}>Company Name</TableCell>
@@ -266,11 +265,11 @@ const AdminDashboard = () => {
   return (
     <div style={{ marginTop: '78px', background: '#f5f5f5' }}>
       <CssBaseline />
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, background: 'rgba(0, 116, 144, 1)' }}>
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, background: '#004A98' }}>
         <Toolbar>
           <Avatar sx={{ ml: -3, width: 70, height: 70 }} src='images/logoonly.png'></Avatar>
           <Typography variant="h6" noWrap component="div" sx={{ ml: -1 }}>
-            StartUp Vest
+            Startup Vest
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <IconButton size="medium" aria-label="show 17 new notifications" color="inherit" sx={{ marginRight: 5 }} onClick={handleLogout}>
@@ -322,18 +321,18 @@ const AdminDashboard = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} md={8}>
               <Paper elevation={3} style={{ padding: '20px', height: '100%' }}>
-                <Typography variant="h6" color="#007490">User Growth Graph</Typography>
+                <Typography variant="h6" color="#1E1E1E">User Growth Graph</Typography>
                 <UserRegistrationsChart/>
               </Paper>
             </Grid>
 
             <Grid item xs={12} md={4}>
               <Paper elevation={3} style={{ padding: '20px', height: '100%' }}>
-                <Typography variant="h6" color="#007490">Latest User</Typography>
+                <Typography variant="h6" color="#1E1E1E">Latest User</Typography>
                 <TableContainer component={Paper} sx={{ mt: 1 }}>
                   <Table>
                     <TableHead>
-                      <TableRow sx={{ backgroundColor: '#005b6e'}}>
+                      <TableRow sx={{ backgroundColor: '#336FB0'}}>
                         <TableCell sx={{ color: 'white'}}>Name</TableCell>
                         <TableCell sx={{ color: 'white'}}>Photo</TableCell>
                       </TableRow>
@@ -346,15 +345,15 @@ const AdminDashboard = () => {
                       ) : (
                       users
                         .sort((a, b) => b.id - a.id)
-                        .slice(0, 5)
+                        .slice(0, 10)
                         .map((user) => (
                           <TableRow key={user.id}>
                             <TableCell>{user.firstName} {user.lastName}</TableCell>
                             <TableCell>
                               {user.photo ? (
-                                <Avatar src={user.photo} />
+                                <Avatar src={user.photo} sx={{ border: '1px solid #336FB0' }}/>
                               ) : (
-                                <Avatar>{user.firstName[0]}{user.lastName[0]}</Avatar>
+                                <Avatar sx={{ border: '1px solid #336FB0' }}>{user.firstName[0]}{user.lastName[0]}</Avatar>
                               )}
                             </TableCell>
                           </TableRow>
@@ -372,7 +371,8 @@ const AdminDashboard = () => {
                 <Typography variant="h6">
                     {filter === 'all' ? 'User' : filter === 'startup' ? 'Startup' : filter === 'investor' ? 'Investor' : 'Funding Round'} Information
                   </Typography>
-                  <Select value={filter} onChange={(e) => setFilter(e.target.value)} sx={{ minWidth: 150 }}>
+                  <Select value={filter} onChange={(e) => setFilter(e.target.value)} sx={{ minWidth: 200, height: 45, '.MuiSelect-select': { padding: '8px 14px',
+                    display: 'flex', alignItems: 'center', } }}>
                     <MenuItem value="all">Users</MenuItem>
                     <MenuItem value="startup">Startups</MenuItem>
                     <MenuItem value="investor">Investors</MenuItem>

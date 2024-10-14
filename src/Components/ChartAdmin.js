@@ -32,29 +32,29 @@ const UserRegistrationChart = () => {
           const date = new Date(item.month);
           return date.toLocaleString('default', { month: 'short', year: 'numeric' });
         });
-        const counts = data.map(item => item.count); // Assuming your API returns a count of registrations
+        const counts = data.map(item => item.count); 
 
         setChartData({
           labels,
           datasets: [
             {
-              label: `User Registrations for ${year}`,
+              label: ` User Registrations for ${year}`,
               data: counts,
-              borderColor: 'rgba(75, 192, 192, 1)',
+              borderColor: '#336FB0', 
               backgroundColor: (ctx) => {
                 const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 400);
-                gradient.addColorStop(0, 'rgba(75, 192, 192, 0.5)');
-                gradient.addColorStop(1, 'rgba(75, 192, 192, 0)');
+                gradient.addColorStop(0, 'rgba(51, 111, 176, 0.5)');
+                gradient.addColorStop(1, 'rgba(51, 111, 176, 0)');   
                 return gradient;
               },
               borderWidth: 2,
               fill: true,
               tension: 0.4,
               pointRadius: 4,
-              pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+              pointBackgroundColor: '#336FB0', 
               pointHoverRadius: 7,
-              pointHoverBorderColor: 'rgba(75, 192, 192, 1)',
-              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: '#336FB0',
+              pointHoverBackgroundColor: '#fff', 
             },
           ],
         });
@@ -66,7 +66,7 @@ const UserRegistrationChart = () => {
     };
 
     fetchUserRegistrations();
-  }, [year]); // Add year to the dependency array if you implement year selection later
+  }, [year]); 
 
   if (loading) return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '400px' }}>
@@ -79,7 +79,7 @@ const UserRegistrationChart = () => {
     <Box
       sx={{
         backgroundColor: '#fff',
-        height: '400px',
+        height: '550px',
         display: 'flex',
         flexDirection: 'column',
       }}>
@@ -129,7 +129,7 @@ const UserRegistrationChart = () => {
                   return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
                 },
               },
-              backgroundColor: 'rgba(75, 192, 192, 0.8)',
+              backgroundColor: 'rgba(51, 111, 176, 0.8)',
               titleFont: {
                 size: 14,
               },
