@@ -56,7 +56,7 @@ const MonthlyFundingChart = ({ userId, companyId }) => {
           labels,
           datasets: [
             {
-              label: `Monthly Funding for ${year}`,
+              label: ` Monthly Funding for ${year}`,
               data: totals,
               borderColor: '#336FB0', // Updated border color
               backgroundColor: (ctx) => {
